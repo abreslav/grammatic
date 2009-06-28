@@ -1,7 +1,7 @@
 .*?/generated.*
 .*?/bin/.*
 ^st$
-^.mylyn/backup
+^.mylyn
 ^org.abreslav.grammatic.atf/htmlPreview
 ^addproject.sh
 ^fix_classpath.sh
