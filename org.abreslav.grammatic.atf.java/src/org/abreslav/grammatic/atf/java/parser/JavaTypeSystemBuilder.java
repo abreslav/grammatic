@@ -69,7 +69,6 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 			}
 			return result;
 		}
-		
 	};
 	
 	private final ISubtypingRelation<EGenericType> mySubtypingRelation = JavaSubtypingRelation.INSTANCE;
