@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.grammar/generated"
+    modelPluginID="org.abreslav.grammatic.grammar" templateDirectory="org.abreslav.customjet/templates"
+    dynamicTemplates="true" modelName="Metadata" updateClasspath="false" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>metadata.ecore</foreignModel>
+  <genPackages prefix="Metadata" basePackage="org.abreslav.grammatic" disposableProviderFactory="true"
+      ecorePackage="metadata.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//PunctuationType">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/TILDE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/GRAVE_ACCENT"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/EXCLAMATION"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/AT"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/HASH"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/DOLLAR"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/PERCENT"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/CIRCUMFLEX"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/AMPERSANT"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/ASTERISK"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/LEFT_BRACE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/RIGHT_BRACE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/MINUS"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/PLUS"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/EQUALS"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/LEFT_CURLY"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/RIGHT_CURLY"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/LEFT_BRACKET"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/RIGHT_BRACKET"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/BAR"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/BACKSLASH"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/COLON"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/SEMICOLON"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/QUOTATION_MARK"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/APOSTROPHE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/LESS"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/GREATER"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/COMMA"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/DOT"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/QUESTION"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//PunctuationType/SLASH"/>
+    </genEnums>
+    <genClasses ecoreClass="metadata.ecore#//Namespace">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//Namespace/uri"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//Attribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//Attribute/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//Attribute/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//Attribute/namespace"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//Value"/>
+    <genClasses ecoreClass="metadata.ecore#//StringValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//StringValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//IntegerValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//IntegerValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//IdValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//IdValue/id"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//PunctuationValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//PunctuationValue/type"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//Annotated">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//Annotated/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//TupleValue"/>
+    <genClasses ecoreClass="metadata.ecore#//MultiValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//MultiValue/values"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//CrossReferenceValue">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//CrossReferenceValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//ContainmentReferenceValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//ContainmentReferenceValue/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

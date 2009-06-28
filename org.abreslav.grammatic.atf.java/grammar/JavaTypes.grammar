@@ -1,0 +1,79 @@
+#import 'GrammaticLexer.grammar' {NAME, STRING};
+
+declarations
+	: import* options? (classifierDeclaration | packageDeclaration)*
+	;
+	
+type
+	: classType
+	: primitiveType
+	;
+
+import
+	: '#import' qualifiedName ';'
+	;
+
+options
+	: '#javaoptions' '{' option+ '}'
+	;
+	
+option
+	: NAME '=' STRING ';'
+	;
+
+primitiveType
+	: 'int'
+	| 'byte'
+	| 'short'
+	| 'char'
+	| 'long'
+	| 'boolean'
+	| 'float'
+	| 'double'
+	;	
+
+packageDeclaration
+	: 'package' qualifiedName '{' classifierDeclaration* '}'
+	;
+	
+classifierDeclaration
+	: 'class' NAME genericParameters?
+		('extends' superTypeList)? ';'
+	;
+	
+superTypeList
+	: classType (',' classType)*
+	;
+
+genericParameters
+	: '<' genericParameter (',' genericParameter)* '>'
+	;
+
+genericParameter
+	: NAME ('extends' classTypes)?
+	;
+	
+classTypes
+	: classType ('&' classType)*
+	;
+	
+classType
+	: qualifiedName genericArguments?
+	;
+	
+qualifiedName
+	: (NAME '.')*NAME
+	;
+	
+genericArguments
+	: '<' genericArgument (',' genericArgument)* '>'
+	; 
+	
+genericArgument
+	: classType
+	: wildcard 
+	;
+	
+wildcard
+	: '?' ('extends' classType | 'super' classType)
+	;

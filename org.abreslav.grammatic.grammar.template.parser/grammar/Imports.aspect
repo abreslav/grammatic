@@ -1,0 +1,48 @@
+{
+	name = Imports;
+	package = 'org.abreslav.grammatic.grammar.template.parser';
+}
+
+import
+	[[
+		rules = {{
+			void import();
+		}};
+	]]
+	: ..
+	;	
+	
+importSpec
+	[[
+		rules = {{
+			void importSpec();
+		}};
+	]]
+	: moduleName '{' renaming (',' renaming)* '}'
+	[[
+		moduleName.variable = moduleName;
+		renaming.call = {{renaming($moduleName)}};
+	]]
+	;
+	
+moduleName
+	[[
+		rules = {{
+			String moduleName();
+		}};
+	]]
+	: ..
+	;
+		
+renaming
+	[[
+		rules = {{
+			void renaming(String fileName);
+		}};
+	]]
+	: ($newName=NAME '=')? $oldName=NAME
+	[[
+		newName {separate; variable = newName;};
+		oldName {separate; variable = oldName;};
+	]]
+	;

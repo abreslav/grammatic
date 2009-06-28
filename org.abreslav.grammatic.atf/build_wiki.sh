@@ -1,0 +1,2 @@
+python /home/abreslav/work/grammatic/code/wikisyntax/wiki.py/wikify.py -n 1 ../../wiki/Unification.wiki > htmlPreview/Unification.html
+python /home/abreslav/work/grammatic/code/wikisyntax/wiki.py/wikify.py -n 1 ../../wiki/AttributedTranslationFramework.wiki > htmlPreview/AttributedTranslationFramework.html

@@ -1,0 +1,210 @@
+{
+	name = JavaTypes;
+	package = 'org.abreslav.grammatic.atf.java.parser';
+	imports = {{
+		import org.eclipse.emf.ecore.EClass;
+		import org.eclipse.emf.ecore.EGenericType;
+		import org.eclipse.emf.ecore.EPackage;
+		import org.eclipse.emf.ecore.ETypeParameter;
+		import org.abreslav.grammatic.atf.java.parser.ClassifierKey;
+	}};
+}
+
+declarations
+[[
+	rules = {{
+		void declarations();
+	}};
+]]
+	: import* options? (classifierDeclaration | packageDeclaration)*
+	[[
+		classifierDeclaration.call = {{classifierDeclaration()}};
+	]]
+	;
+
+type
+[[
+	rules = {{
+		EGenericType javaType();
+	}};
+]]
+	: classType
+	: primitiveType
+	;
+	
+import
+[[
+	rules = {{
+		void import();
+	}};
+]]
+	: .. qualifiedName ';'
+	[[
+		qualifiedName.call = {{packageName()}};
+	]]
+	;
+
+options
+[[
+	rules = {{
+		void options();
+	}};
+]]
+	: '#javaoptions' '{' option+ '}'
+	;
+	
+option
+[[
+	rules = {{
+		void option();
+	}};
+]]
+	: NAME '=' STRING ';'
+	;
+
+primitiveType
+[[
+	rules = {{
+		EGenericType primitiveType();
+	}};
+]]
+	: $token=('int'
+	| 'byte'
+	| 'short'
+	| 'char'
+	| 'long'
+	| 'boolean'
+	| 'float'
+	| 'double')
+	[[
+		token.tokenSwitch;
+	]]
+	;	
+
+packageDeclaration
+[[
+	rules = {{
+		EPackage packageDeclaration();
+	}};
+]]
+	: 'package' qualifiedName '{' classifierDeclaration* '}'
+	[[
+		qualifiedName.call = {{packageName()}};
+		classifierDeclaration.call = {{classifierDeclaration()}};
+	]]
+	;
+	
+classifierDeclaration
+[[
+	rules = {{
+		EClass classifierDeclaration();
+	}};
+]]
+	: 'class' NAME genericParameters?
+		('extends' superTypeList)? ';'
+	[[
+		genericParameters.call = {{genericParameters(#result)}};
+		superTypeList.call = {{superTypeList(#result)}};
+	]]
+	;
+	
+superTypeList
+[[
+	rules = {{
+		void superTypeList(EClass eClass);
+	}};
+]]
+	: classType (',' classType)*
+	;
+
+genericParameters
+[[
+	rules = {{
+		void genericParameters(EClass eClass);
+	}};
+]]
+	: '<' genericParameter (',' genericParameter)* '>'
+	;
+
+genericParameter
+[[
+	rules = {{
+		ETypeParameter genericParameter();
+	}};
+]]
+	: NAME ('extends' classTypes)?
+	[[
+		classTypes.call = {{parameterBounds(#result)}};
+	]]
+	;
+	
+classTypes
+[[
+	rules = {{
+		void parameterBounds(ETypeParameter parameter);
+	}};
+]]
+	: classType ('&' classType)*
+	;
+	
+classType
+[[
+	rules = {{
+		EGenericType classType();
+	}};
+]]
+	: qualifiedName genericArguments?
+	[[
+		qualifiedName.call = {{rawClassifierReference()}};
+		qualifiedName.variable = result;
+		genericArguments.call = {{genericArguments($result)}};
+	]]
+	;
+	
+qualifiedName
+[[
+	rules = {{
+		EGenericType rawClassifierReference();
+		String packageName();
+	}};
+]]
+	: (NAME '.')* $=NAME
+	[[
+		variable = last;
+		separate;
+	]]
+	;
+	
+genericArguments
+[[
+	rules = {{
+		void genericArguments(EGenericType gType);
+	}};
+]]
+	: '<' genericArgument (',' genericArgument)* '>'
+	; 
+	
+genericArgument
+[[
+	rules = {{
+			EGenericType genericArgument();
+	}};
+]]
+	: classType
+	: wildcard 
+	;
+	
+wildcard
+[[
+	rules = {{
+		EGenericType wildcard();
+	}};
+]]
+	: '?' ('extends' $e=classType | 'super' $s=classType)
+	[[
+		e.separate;
+		e.variable = upper;
+		s.separate;
+		s.variable = lower;
+	]]
+	;

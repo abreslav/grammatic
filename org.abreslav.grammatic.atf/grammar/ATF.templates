@@ -1,0 +1,191 @@
+#import 
+	'GrammaticLexer.grammar'{NAME, STRING},
+	'GrammaticQuery.grammar'{ruleQueryContainer},
+	'Imports.grammar'{import},
+	'GrammaticCharacter.grammar'{character};
+
+Grammar ATF<
+	Production typeSystemDeclarations,
+	Production atomicType
+>
+{
+	
+typeSystemDeclarations
+	: <typeSystemDeclarations>
+	;
+	
+type 
+	: <atomicType>
+	;
+
+atfModule
+	: import? typeSystemDeclarations 
+		semanticModuleDeclaration? topLevelDeclaration*
+	;
+	
+semanticModule
+	: import? typeSystemDeclarations semanticModuleDeclaration
+	;
+	
+typeSystemModule
+	: import? typeSystemDeclarations
+	;
+	
+topLevelDeclaration
+	: syntacticRuleDeclaration
+	: tokenRuleDeclaration
+	;
+
+semanticModuleDeclaration
+	: '#module' NAME '{' semanticFunction* '}'
+	;
+	
+semanticFunction
+	: functionSignature ';'
+	;
+	
+functionSignature
+	: NAME tuple ('-->' tuple)?
+	;
+
+tuple
+	: '(' attributeDeclarationList? ')'
+	;	
+	
+attributeDeclarationList
+	: attributeDeclaration (',' attributeDeclaration)*
+	;
+	
+attributeDeclaration
+	: type NAME
+	;
+	
+syntacticRuleDeclaration
+	: ruleQueryContainer associatedFunctions?
+	;
+	
+associatedFunctions
+	: '[[' semanticFunction* (syntacticFunction+ | defaultSyntacticFunction) ']]'
+	: defaultSyntacticFunction
+	;
+	
+defaultSyntacticFunction
+	: '#' tuple? ('-->' tuple)? schemeAssignment
+	;
+	
+localDeclarations
+	: ((attributeDeclaration ';') | semanticFunction)*
+	;
+	
+syntacticFunction
+	: functionSignature schemeAssignment
+	; 
+
+schemeAssignment
+	: '{' localDeclarations labelDefinition* '}'
+	;
+
+tokenRuleDeclaration
+	: NAME ':' '#token' ('(' idList ')')? ';'
+	;
+	
+////////////////////////////////////////////////////////////
+	
+labelDefinition
+	: labelList ':' statement
+	: nameList '::' symbolMapping ';'
+	;
+	
+labelList
+	: label (',' label)*
+	;
+	
+label
+	: simpleLabel ('.' NAME)?
+	: '#before'
+	: '#after'
+	;
+	
+simpleLabel
+	: NAME
+	: character
+	: STRING
+	;
+	
+statement
+	: assignment
+	: appending
+	: functionCall ';'
+	: block
+	;
+	
+assignment
+	: attributeReference '=' expression ';'
+	;
+
+expression
+	: singleAttributeReference
+	: functionCall
+	: text
+	: defaultAttributeReference
+	;
+	
+attributeReference
+	: singleAttributeReference
+	: '(' singleAttributeReference (',' singleAttributeReference)* ')'
+	;
+	
+singleAttributeReference
+	: NAME
+	;
+
+functionCall
+	: functionReference arguments
+	;
+	
+functionReference
+	: (NAME '.')? NAME
+	;
+	
+arguments
+	: '(' (expression (',' expression)*)? ')'
+	;
+	
+text
+	: '#text' '(' variable ')'
+	;	
+	
+defaultAttributeReference
+	: variable '#'
+	;
+	
+variable 
+	: NAME
+	;
+
+appending 
+	: singleAttributeReference '+=' expression 
+	;	
+
+block
+	: '{' statement* '}'
+	;
+	
+nameList
+	: variable (',' variable)*
+	;
+	
+idList
+	: NAME (',' NAME)*
+	;
+
+symbolMapping
+	: (attributeReference '=')? associatedFunctionReference arguments
+	;
+
+associatedFunctionReference
+	: NAME
+	: '#'
+	;
+	
+}

@@ -1,0 +1,324 @@
+{
+	name = GrammaticQuery;
+	package = 'org.abreslav.grammatic.query.parser';
+	imports = {{
+		import org.abreslav.grammatic.grammar.Expression;
+		import org.abreslav.grammatic.grammar.Iteration;
+		import org.abreslav.grammatic.metadata.Value;
+		import org.abreslav.grammatic.query.AttributeQuery;
+		import org.abreslav.grammatic.query.AttributeTypeOptions;
+		import org.abreslav.grammatic.query.ExpressionQuery;
+		import org.abreslav.grammatic.query.IterationQuery;
+		import org.abreslav.grammatic.query.MetadataQuery;
+		import org.abreslav.grammatic.query.ProductionQuery;
+		import org.abreslav.grammatic.query.RuleQuery;
+		import org.abreslav.grammatic.query.SymbolQuery;
+		import org.abreslav.grammatic.query.QueryContainer;
+		
+		import org.abreslav.grammatic.grammar.template.parser.SetComplementBuilder;
+	}};
+}
+
+
+ruleQueryContainer 
+	[[
+		rules = {{
+			QueryContainer<RuleQuery> ruleQueryContainer();
+		}};
+	]]
+	: ruleQuery 
+	;
+ruleQuery
+	[[
+		rules = {{
+			RuleQuery ruleQuery();
+		}};
+	]]
+	: symbolQueryWithVar definition ';'
+	[[
+		symbolQueryWithVar.call = {{symbolQueryWithVar(#result)}};
+		definition.call = {{definition(#result)}};
+	]];
+	
+ruleOperation
+	[[
+		rules = {{
+			boolean ruleOperation();
+		}};
+	]]
+	: $op=(':' | '|:')
+	[[
+		op.tokenSwitch;	
+	]];
+		
+definition
+	[[
+		rules = {{
+				void definition(RuleQuery query);
+		}};
+	]]
+	:	productionQuery*
+	[[
+		productionQuery.call = {{productionQuery(query)}};
+	]];
+		
+productionsWildcard
+	[[
+		rules = {{
+				void productionsWildcard(RuleQuery query);
+		}};
+	]]
+	: variablePrefix? '{...}' 
+	;
+	
+variablePrefix
+	[[
+		rules = {{
+				String variablePrefix();
+		}};
+	]]
+	: '$' NAME? '='
+	;
+	
+symbolQueryWithVar
+	[[
+		rules = {{
+				SymbolQuery symbolQueryWithVar(RuleQuery query);
+		}};
+	]]
+	:  variablePrefix? anonymousSymbolQuery
+	:  namedSymbolQuery
+	;
+			
+anonymousSymbolQuery
+	[[
+		rules = {{
+			SymbolQuery anonymousSymbolQuery();
+		}};
+	]]
+	: '#'
+	:  '@' queryMetadata '@'
+	[[
+		queryMetadata.call = {{queryMetadata(#result)}};
+	]];
+
+namedSymbolQuery
+	[[
+		rules = {{
+			SymbolQuery namedSymbolQuery();
+		}};
+	]]
+	: NAME
+	;
+	
+symbolReferenceQuery
+	[[
+		rules = {{
+			ExpressionQuery symbolReferenceQuery();
+		}};
+	]]
+	: anonymousSymbolQuery
+	:  namedSymbolQuery
+	;
+			
+productionQuery 
+	[[
+		rules = {{
+			ProductionQuery productionQuery(RuleQuery query);
+		}};
+	]]
+	: variablePrefix? ruleOperation alternativeQuery
+	:  .. productionsWildcard
+	[[
+		productionsWildcard.call = {{productionsWildcard(query)}};
+	]];
+
+expressionQuery
+	[[
+		rules = {{
+				ExpressionQuery expressionQuery();
+		}};
+	]]
+	: alternativeQuery ';'
+	;
+		
+alternativeQuery
+	[[
+		rules = {{
+				ExpressionQuery alternativeQuery();
+		}};
+	]]
+	: sequenceQuery ('|' (sequenceQuery | alternativeWildcard))*
+	;
+	
+alternativeWildcard
+	[[
+		rules = {{
+			String alternativeWildcard();
+		}};
+	]]
+	: variablePrefix? '...'
+	;
+	
+sequenceQuery
+	[[
+		rules = {{
+				ExpressionQuery sequenceQuery();
+		}};
+	]]
+	: iterationQuery+
+	;
+		
+iterationQuery
+	[[
+		rules = {{
+				ExpressionQuery iterationQuery();
+		}};
+	]]
+	: varOrAtom (queryMetadata)? operation
+	[[
+		varOrAtom.variable = voa;
+		queryMetadata.call = {{queryMetadata($voa)}};
+	]]
+	:  variablePrefix? '..'
+	;
+		
+operation 
+	[[
+		rules = {{
+				IterationQuery operation();
+		}};
+	]]
+	: $op=('*' | '+' | '?')
+	[[
+		op.tokenSwitch; 
+	]]
+	:  #empty
+	;
+	
+varOrAtom
+	[[
+		rules = {{
+			ExpressionQuery varOrAtom();
+		}};
+	]]
+	: atom
+	:  variablePrefix atom
+	;
+	
+atom
+	[[
+		rules = {{
+			ExpressionQuery atom();
+		}};
+	]]
+	: symbolReferenceQuery
+	:  '$' NAME
+	:  '(' alternativeQuery ')'
+	:  lexicalAtom
+	:  '#lex'
+	:  '#empty'
+	;
+		
+////////////////////////////////////////////////
+	
+lexicalAlternative
+	[[
+		rules = {{
+				Expression lexicalAlternative();
+		}};
+	]]
+	: lexicalSequence ('|' lexicalSequence)*
+	;
+	
+lexicalSequence
+	[[
+		rules = {{
+				Expression lexicalSequence();
+		}};
+	]]
+	: lexicalIteration+
+	;
+	
+lexicalIteration
+	[[
+		rules = {{
+				Expression lexicalIteration();
+		}};
+	]]
+	: lexicalAtom lexicalOperation
+	;
+		
+lexicalOperation
+	[[
+		rules = {{
+			Iteration lexicalOperation();
+		}};
+	]]
+	:  $op=('*' | '+' | '?')
+	[[
+		op.tokenSwitch;
+	]]
+	:  #empty
+	;
+	
+lexicalAtom
+	[[
+		rules = {{
+			Expression lexicalAtom();
+		}};
+	]]
+	: lexicalAtomIndependent
+	:  '[[' lexicalAlternative ']]'
+	;
+			
+queryMetadata 
+	[[
+		rules = {{
+			void queryMetadata(MetadataQuery query);
+		}};
+	]]
+	: '{' (attributeQuery (';' attributeQuery?)*)? '}'
+	;
+	
+attributeQuery 
+	[[
+		rules = {{
+			AttributeQuery attributeQuery();
+		}};
+	]]
+	: attributeWithValueQuery
+	[[
+		//attributeWithValueQuery.call = {{attributeWithValueInList(#result)}};
+	]]
+	:  '!' namespaceUri? NAME
+	:  namespaceUri? NAME ':' attributeType
+	;
+	
+attributeWithValueQuery
+	[[
+		rules = {{
+			AttributeQuery attributeWithValueQuery(); 
+		}};
+	]]
+	: namespaceUri? NAME ('=' attributeValue)?
+	;
+		
+namespaceUri
+	[[
+		rules = {{
+			String namespaceUri(); 
+		}};
+	]]
+	: NAME ':'
+	;
+	
+attributeType
+	[[
+		rules = {{
+			AttributeTypeOptions attributeType();
+		}};
+	]]
+	: '#' NAME
+	;
+	

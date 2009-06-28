@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="template"
+    nsURI="http://www.abreslav.org/Grammatic/2008/Template" nsPrefix="template">
+  <eClassifiers xsi:type="ecore:EClass" name="Template">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//TemplateParameter">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" lowerBound="1" containment="true">
+      <eGenericType eClassifier="#//TemplateBody">
+        <eTypeArguments eTypeParameter="#//Template/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TemplateBody" abstract="true" interface="true">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TemplateParameter">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="usagePolicy" eType="#//ParameterUsagePolicy"
+        defaultValueLiteral="CONTAIN_ONCE"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TemplateApplication">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="parametersMustBelongToCalledTemplate"/>
+    </eAnnotations>
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="template" lowerBound="1">
+      <eGenericType eClassifier="#//Template">
+        <eTypeArguments eTypeParameter="#//TemplateApplication/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//TemplateArgument">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//TemplateBody">
+      <eTypeArguments eTypeParameter="#//TemplateApplication/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TemplateArgument">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="multiplicityMustMatch"/>
+    </eAnnotations>
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" lowerBound="1">
+      <eGenericType eClassifier="#//TemplateParameter">
+        <eTypeArguments>
+          <eLowerBound eTypeParameter="#//TemplateArgument/T"/>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//TemplateBody">
+        <eTypeArguments>
+          <eUpperBound eTypeParameter="#//TemplateArgument/T"/>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ParameterReference">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="parameterMustBeVisisbleInThisScope"/>
+    </eAnnotations>
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" lowerBound="1">
+      <eGenericType eClassifier="#//TemplateParameter">
+        <eTypeArguments eTypeParameter="#//ParameterReference/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//TemplateBody">
+      <eTypeArguments eTypeParameter="#//ParameterReference/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ObjectContainer">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="object" lowerBound="1"
+        containment="true">
+      <eGenericType eTypeParameter="#//ObjectContainer/T"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//TemplateBody">
+      <eTypeArguments eTypeParameter="#//ObjectContainer/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ParameterUsagePolicy">
+    <eLiterals name="REFER_ONLY"/>
+    <eLiterals name="CONTAIN_ONCE" value="1"/>
+    <eLiterals name="COPY" value="2"/>
+  </eClassifiers>
+</ecore:EPackage>

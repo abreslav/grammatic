@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/" kind="src" path="src"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="generated"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="generated-parser"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="var" path="ANTLR_RUNTIME" sourcepath="/ANTLR_RUNTIME_SRC"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.interpreter"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.variables"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar.template"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar.template.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.template"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

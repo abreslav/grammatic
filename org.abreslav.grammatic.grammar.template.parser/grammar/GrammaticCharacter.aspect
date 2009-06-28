@@ -1,0 +1,12 @@
+{
+	name = GrammaticCharacter;
+	package = 'org.abreslav.grammatic.grammar.template.parser';
+}
+
+character
+	[[
+		rules = {{
+			char character();
+		}};	
+	]]
+	|: ..;

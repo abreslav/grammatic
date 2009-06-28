@@ -1,0 +1,7 @@
+declaration
+	: type?
+	;
+	
+type 
+	: 'type' 
+	;

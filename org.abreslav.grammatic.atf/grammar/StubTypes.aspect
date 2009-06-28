@@ -1,0 +1,22 @@
+{
+	name = StubTypes;
+	package = 'org.abreslav.grammatic.atf.parser';
+}
+
+declaration
+[[
+	rules = {{
+		void declarations();
+	}};
+]]
+	|: ..
+	;
+	
+type 
+[[
+	rules = {{
+		Object type();
+	}};
+]]
+	|: ..	
+	;

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="metadata"
+    nsURI="http://www.abreslav.org/Grammatic/2008/Metadata" nsPrefix="grammatic-metadata">
+  <eClassifiers xsi:type="ecore:EClass" name="Namespace">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Attribute">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Value"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="namespace" eType="#//Namespace"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Value" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntegerValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IdValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PunctuationValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//PunctuationType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="PunctuationType">
+    <eLiterals name="TILDE" literal="~"/>
+    <eLiterals name="GRAVE_ACCENT" value="1" literal="`"/>
+    <eLiterals name="EXCLAMATION" value="2" literal="!"/>
+    <eLiterals name="AT" value="3" literal="@"/>
+    <eLiterals name="HASH" value="4" literal="#"/>
+    <eLiterals name="DOLLAR" value="5" literal="$"/>
+    <eLiterals name="PERCENT" value="6" literal="%"/>
+    <eLiterals name="CIRCUMFLEX" value="7" literal="^"/>
+    <eLiterals name="AMPERSANT" value="8" literal="&amp;"/>
+    <eLiterals name="ASTERISK" value="9" literal="*"/>
+    <eLiterals name="LEFT_BRACE" value="10" literal="("/>
+    <eLiterals name="RIGHT_BRACE" value="11" literal=")"/>
+    <eLiterals name="MINUS" value="12" literal="-"/>
+    <eLiterals name="PLUS" value="14" literal="+"/>
+    <eLiterals name="EQUALS" value="15" literal="="/>
+    <eLiterals name="LEFT_CURLY" value="16" literal="{"/>
+    <eLiterals name="RIGHT_CURLY" value="17" literal="}"/>
+    <eLiterals name="LEFT_BRACKET" value="18" literal="["/>
+    <eLiterals name="RIGHT_BRACKET" value="19" literal="]"/>
+    <eLiterals name="BAR" value="20" literal="|"/>
+    <eLiterals name="BACKSLASH" value="21" literal="\\"/>
+    <eLiterals name="COLON" value="22" literal=":"/>
+    <eLiterals name="SEMICOLON" value="23" literal=";"/>
+    <eLiterals name="QUOTATION_MARK" value="24" literal="\&quot;"/>
+    <eLiterals name="APOSTROPHE" value="25" literal="'"/>
+    <eLiterals name="LESS" value="26" literal="&lt;"/>
+    <eLiterals name="GREATER" value="27" literal=">"/>
+    <eLiterals name="COMMA" value="28" literal=","/>
+    <eLiterals name="DOT" value="29" literal="."/>
+    <eLiterals name="QUESTION" value="30" literal="?"/>
+    <eLiterals name="SLASH" value="31" literal="/"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotated" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
+        eType="#//Attribute" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TupleValue" eSuperTypes="#//Value #//Annotated"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MultiValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="#//Value" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CrossReferenceValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContainmentReferenceValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeValue" eSuperTypes="#//Value">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
+</ecore:EPackage>

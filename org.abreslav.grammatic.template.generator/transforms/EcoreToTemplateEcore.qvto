@@ -1,0 +1,72 @@
+modeltype ecore uses 'http://www.eclipse.org/emf/2002/Ecore';
+modeltype template uses 'http://www.abreslav.org/Grammatic/2008/Template';
+
+transformation EcoreToTemplateEcore(in Src : ecore, out Dest : ecore);
+
+mapping main() {
+	init {
+		Src.objects()[ecore::EPackage]->map toTemplatePackage();
+	}
+}
+
+mapping ecore::EPackage::toTemplatePackage() : ecore::EPackage {
+	name := self.name + 'Template';
+	nsURI := self.nsURI + 'Template';
+	nsPrefix := self.nsPrefix + '-template';
+	eSubpackages += self.eSubpackages.map toTemplatePackage();
+	eClassifiers += self.eClassifiers[EClass].map toTemplateClass();	
+}
+
+mapping EClass::toTemplateClass() : EClass {
+	name := self.name + 'Template'; 
+	_abstract := self._abstract;
+	interface := self.interface;
+	eGenericSuperTypes += TemplateBody(self);
+	eStructuralFeatures += self.eAllAttributes.clone().oclAsType(EStructuralFeature);
+	eStructuralFeatures += self.eAllReferences.toTemplateReference();
+	eAnnotations += object EAnnotation {
+		source := 'http://www.eclipse.org/emf/2002/Ecore';
+		details += object EStringToStringMapEntry {
+			key := 'constraints';
+			value := 'subtemplatesConformToSpec';
+		};
+	};
+}
+
+query EReference::toTemplateReference() : EReference {
+	var r := self.clone().oclAsType(EReference);
+	r.eGenericType := TemplateBodyBounded(self.eReferenceType);
+	return r;
+}
+
+query TemplateParameter(in class : EClass) : EGenericType {
+	return TemplateParameter.oclAsType(EClass).toBoundedGenericType(class);
+}
+
+query TemplateBody(in class : EClass) : EGenericType {
+	return TemplateBody.oclAsType(EClass).toGenericType(class);
+}
+
+query TemplateBodyBounded(in class : EClass) : EGenericType {
+	return TemplateBody.oclAsType(EClass).toBoundedGenericType(class);
+}
+
+query EClass::toGenericType(in argument : EClass) : EGenericType {
+	return object EGenericType {
+		eClassifier := self;
+		eTypeArguments += object EGenericType {
+			eClassifier := argument;
+		};
+	}
+}
+
+query EClass::toBoundedGenericType(in argument : EClass) : EGenericType {
+	return object EGenericType {
+		eClassifier := self;
+		eTypeArguments += object EGenericType {
+			eUpperBound := object EGenericType {
+				eClassifier := argument;
+			};
+		};
+	}
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.query/src"
+    modelPluginID="org.abreslav.grammatic.query" templateDirectory="org.abreslav.customjet/templates.extended"
+    dynamicTemplates="true" modelName="Query" suppressEMFModelTags="true" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false" usedGenPackages="../../org.abreslav.grammatic.grammar/model/grammar.genmodel#//grammar ../../org.abreslav.grammatic.grammar/model/metadata.genmodel#//metadata">
+  <foreignModel>query.ecore</foreignModel>
+  <genPackages prefix="Query" basePackage="org.abreslav.grammatic" disposableProviderFactory="true"
+      ecorePackage="query.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="query.ecore#//AttributeTypeOptions">
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/STRING"/>
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/INTEGER"/>
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/ID"/>
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/PUNCTUATION"/>
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/TUPLE"/>
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/MULTI"/>
+      <genEnumLiterals ecoreEnumLiteral="query.ecore#//AttributeTypeOptions/EXPRESSION"/>
+    </genEnums>
+    <genClasses ecoreClass="query.ecore#//QueryContainer">
+      <genTypeParameters ecoreTypeParameter="query.ecore#//QueryContainer/T"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//QueryContainer/query"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//QueryContainer/variableDefinitions"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="query.ecore#//Query"/>
+    <genClasses image="false" ecoreClass="query.ecore#//CommutativeOperationQuery">
+      <genTypeParameters ecoreTypeParameter="query.ecore#//CommutativeOperationQuery/D"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//CommutativeOperationQuery/definitions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//CommutativeOperationQuery/open"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference query.ecore#//CommutativeOperationQuery/wildcardVariable"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//RuleQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//RuleQuery/symbol"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference query.ecore#//RuleQuery/symbolVariable"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//SymbolQuery"/>
+    <genClasses ecoreClass="query.ecore#//ProductionQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//ProductionQuery/definition"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="query.ecore#//ExpressionQuery"/>
+    <genClasses ecoreClass="query.ecore#//EmptyQuery"/>
+    <genClasses ecoreClass="query.ecore#//SymbolReferenceQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//SymbolReferenceQuery/symbol"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//ExactExpressionQuery">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference query.ecore#//ExactExpressionQuery/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//LexicalWildcardQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//LexicalWildcardQuery/definition"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//VariableDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//VariableDefinition/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//VariableDefinition/value"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//VariableReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference query.ecore#//VariableReference/variable"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//AlternativeQuery"/>
+    <genClasses ecoreClass="query.ecore#//SequenceQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//SequenceQuery/definitions"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//SequenceWildcard">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference query.ecore#//SequenceWildcard/variable"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//AlternativeWildcard">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference query.ecore#//AlternativeWildcard/variable"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//IterationQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//IterationQuery/definition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//IterationQuery/lowerBound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//IterationQuery/upperBound"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="query.ecore#//MetadataQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//MetadataQuery/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//AttributeQuery">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//AttributeQuery/attributeValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//AttributeQuery/attributeName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//AttributeQuery/namespaceUri"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="query.ecore#//AttributeValueQuery"/>
+    <genClasses ecoreClass="query.ecore#//AttributeType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//AttributeType/type"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//AttributePresence">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute query.ecore#//AttributePresence/present"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//ExactValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//ExactValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="query.ecore#//TypedRegExpValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference query.ecore#//TypedRegExpValue/wildCardSeparatedFragments"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

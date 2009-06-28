@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.abreslav.grammatic.grammar; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.abreslav.grammatic.grammar,
+ org.abreslav.grammatic.grammar.util,
+ org.abreslav.grammatic.metadata,
+ org.abreslav.grammatic.metadata.aspects,
+ org.abreslav.grammatic.metadata.aspects.util,
+ org.abreslav.grammatic.metadata.system,
+ org.abreslav.grammatic.metadata.util
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

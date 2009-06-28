@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+
+	<target name="default" description="description">
+		<property name="ecore2template" value="/org.abreslav.grammatic.template.generator/transforms/EcoreToTemplateEcore.qvto"></property>
+    	<qvto.interpretedTransformation 
+			transformation="${ecore2template}">
+			<targeturidef targeturi="/org.abreslav.grammatic.grammar/model/grammar.ecore"/>
+			<targeturidef targettype="NEW_MODEL" targeturi="/org.abreslav.grammatic.tester/testData/templateInstantiator/GrammarTemplate.ecore"/>
+		</qvto.interpretedTransformation>        
+    	<qvto.interpretedTransformation 
+			transformation="${ecore2template}">
+			<targeturidef targeturi="/org.abreslav.grammatic.grammar/model/metadata.ecore"/>
+			<targeturidef targettype="NEW_MODEL" targeturi="/org.abreslav.grammatic.tester/testData/templateInstantiator/MetadataTemplate.ecore"/>
+		</qvto.interpretedTransformation>        
+    </target>
+
+</project>

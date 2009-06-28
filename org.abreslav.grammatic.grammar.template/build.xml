@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	<taskdef 
+		classpath="../org.abreslav.grammatic.template.generator/deploy/template-generator.jar"
+		classname="org.abreslav.grammatic.template.generator.ant.TemplateGeneratorTask"
+		name="template-gen"
+	/>
+	
+	<target name="default">
+		<property name="grammar-project" value="../../org.abreslav.grammatic.grammar"/>
+		<property name="basetemplateecoreuri" value="../../org.abreslav.grammatic.template/model/template.ecore"/>
+		<property name="instantiatorecoreuri" value="../../org.abreslav.grammatic.template.generator/model/templateInstantiator.ecore"/>
+		<template-gen basedir="${basedir}/model"
+			sourceecoreuri="${grammar-project}/model/metadata.ecore"
+			templateecoreuri="metadata-template.ecore"
+			instantiatoruri="instantiators/metadataInstantiator.xmi"
+			basetemplateecoreuri="${basetemplateecoreuri}"
+			instantiatorecoreuri="${instantiatorecoreuri}"
+		/>
+		<template-gen basedir="${basedir}/model"
+			sourceecoreuri="${grammar-project}/model/grammar.ecore"
+			templateecoreuri="grammar-template.ecore"
+			instantiatoruri="instantiators/grammarInstantiator.xmi"
+			basetemplateecoreuri="${basetemplateecoreuri}"
+			instantiatorecoreuri="${instantiatorecoreuri}"
+		/>
+		<template-gen basedir="${basedir}/model"
+			sourceecoreuri="${grammar-project}/model/aspects.ecore"
+			templateecoreuri="aspects-template.ecore"
+			instantiatoruri="instantiators/aspectsInstantiator.xmi"
+			basetemplateecoreuri="${basetemplateecoreuri}"
+			instantiatorecoreuri="${instantiatorecoreuri}"
+		/>
+		<!--<emf.Ecore2Java model="model/metadata-template.ecore" genmodel="model/metadata-template.genmodel"></emf.Ecore2Java>-->
+	</target>
+	<!--
+	<target name="ecore2templateAndinstantiator">
+		<property name="transformationsFolder" value="/org.abreslav.grammatic.template.generator/transforms"></property>
+		<property name="ecore2template" value="${transformationsFolder}/EcoreToTemplateEcore.qvto"></property>
+		<property name="trace2instantiator" value="${transformationsFolder}/TraceToInstantiatorModel.qvto"></property>
+    	<qvto.interpretedTransformation 
+			transformation="${ecore2template}"  
+    		tracefile="${traceFile}">
+			<targeturidef targeturi="${ecoreFile}"/>
+			<targeturidef targettype="NEW_MODEL" targeturi="${template.ecoreFile}"/>
+		</qvto.interpretedTransformation>        
+    	<qvto.interpretedTransformation 
+			transformation="${trace2instantiator}">
+			<targeturidef targeturi="${traceFile}"/>
+			<targeturidef targettype="NEW_MODEL" targeturi="${instantiatorFile}"/>
+		</qvto.interpretedTransformation>        
+	</target>
+	
+	<target name="default" description="description">
+		<property name="targetFolder" value="/org.abreslav.grammatic.grammar.template/model"></property>
+		<property name="traceFolder" value="${targetFolder}/traces"></property>
+
+		<antcall target="ecore2templateAndinstantiator">
+			<param name="ecoreFile" value="/org.abreslav.grammatic.grammar/model/grammar.ecore"/>
+			<param name="template.ecoreFile" value="${targetFolder}/grammar.template.ecore"/>
+			<param name="traceFile" value="${traceFolder}/grammar.qvtotrace"/>
+			<param name="instantiatorFile" value="${targetFolder}/instantiators/grammarInstantiator.xmi"/>
+		</antcall>
+		<antcall target="ecore2templateAndinstantiator">
+			<param name="ecoreFile" value="/org.abreslav.grammatic.grammar/model/metadata.ecore"/>
+			<param name="template.ecoreFile" value="${targetFolder}/metadata.template.ecore"/>
+			<param name="traceFile" value="${traceFolder}/metadata.qvtotrace"/>
+			<param name="instantiatorFile" value="${targetFolder}/instantiators/metadataInstantiator.xmi"/>
+		</antcall>
+		<antcall target="ecore2templateAndinstantiator">
+			<param name="ecoreFile" value="/org.abreslav.grammatic.grammar/model/aspects.ecore"/>
+			<param name="template.ecoreFile" value="${targetFolder}/aspects.template.ecore"/>
+			<param name="traceFile" value="${traceFolder}/aspects.qvtotrace"/>
+			<param name="instantiatorFile" value="${targetFolder}/instantiators/aspectsInstantiator.xmi"/>
+		</antcall>
+    </target>
+-->
+</project>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http://www.abreslav.org/Grammatic/2008/Grammar" 
+       class = "org.abreslav.grammatic.grammar.GrammarPackage"
+       genModel = "model/grammar.genmodel" /> 
+  </extension>
+  <extension
+        point="org.eclipse.emf.ecore.protocol_parser">
+     <parser
+           class="org.abreslav.grammatic.metadata.system.NamespaceFactory"
+           protocolName="grammatic">
+     </parser>
+  </extension>
+
+</plugin>

@@ -1,0 +1,104 @@
+#import 
+	'GrammaticLexer.grammar'{STRING, NAME}, 
+	'GrammaticCharacter.grammar'{character}, 
+	'GrammaticLexicalGrammar.grammar'{basicLexicalAtom}, 
+	'GrammaticMetadata.grammar'{metadata},
+	'Imports.grammar'{import};
+
+grammar 
+	: import* (defaultTemplate | '#grammar' templateApplication)
+	;
+	
+lexicalAtomIndependent
+	: basicLexicalAtom
+	;	
+	
+templateLibrary 
+	: import* templateDeclaration*
+	;
+	
+defaultTemplate
+	: rule*
+	;
+	
+templateApplication
+	: NAME ('<' templateArguments '>')?
+	;
+	
+templateArguments
+	: templateArgument (',' templateArgument)*
+	;
+
+templateArgument
+	: (':' production)*
+	;
+	
+production
+	: alternative
+	;
+	
+templateDeclaration 
+	: type NAME '<' templateParameters? '>' templateBody
+	;
+	
+type
+	: NAME
+	;
+	
+templateParameters
+	: templateParameter (',' templateParameter)*
+	;
+	
+templateParameter
+	: ('#refer' | '#copy')? type operation NAME
+	;
+
+templateBody
+	: '{' rule* '}'
+	;
+
+rule
+	: NAME metadata? (':' productionTemplate)+ ';'
+	;
+	
+productionTemplate
+	: alternative
+	: templateParameterReference
+	;
+
+templateParameterReference
+	: '<' NAME '>'
+	;
+	
+alternative
+	: sequence ('|' sequence)*	
+	;
+
+expression
+	: alternative ';'
+	;
+
+sequence
+	: iteration (iteration)*
+	;
+	
+iteration
+	: atom metadata? operation
+	;
+	
+operation 
+	: '*' | '+' | '?'
+	: #empty
+	;
+	
+atom
+	: NAME
+	: '(' alternative ')'
+	: lexicalAtom
+	: '#empty'
+	;
+	
+lexicalAtom
+	:  basicLexicalAtom
+	: '[[' alternative ']]'
+	;

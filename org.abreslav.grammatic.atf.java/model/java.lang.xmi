@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore">
+  <ecore:EPackage name="java.lang">
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractMethodError" eSuperTypes="/0/IncompatibleClassChangeError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Appendable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ArithmeticException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ArrayIndexOutOfBoundsException" eSuperTypes="/0/IndexOutOfBoundsException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ArrayStoreException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="AssertionError" eSuperTypes="/0/Error"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Boolean">
+      <eGenericSuperTypes eClassifier="/1/Serializable"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Boolean"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Byte">
+      <eGenericSuperTypes eClassifier="/0/Number"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Byte"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Character">
+      <eGenericSuperTypes eClassifier="/0/Object"/>
+      <eGenericSuperTypes eClassifier="/1/Serializable"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Character"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CharSequence"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ClassCastException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ClassCircularityError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ClassFormatError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Class" eSuperTypes="/1/Serializable /2/GenericDeclaration /2/Type /2/AnnotatedElement">
+      <eTypeParameters name="T"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ClassLoader"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ClassNotFoundException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Cloneable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="CloneNotSupportedException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Comparable">
+      <eTypeParameters name="T"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Compiler"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Double">
+      <eGenericSuperTypes eClassifier="/0/Number"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Double"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="EnumConstantNotPresentException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Enum">
+      <eTypeParameters name="E">
+        <eBounds eClassifier="/0/Enum">
+          <eTypeArguments eTypeParameter="/0/Enum/E"/>
+        </eBounds>
+      </eTypeParameters>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eTypeParameter="/0/Enum/E"/>
+      </eGenericSuperTypes>
+      <eGenericSuperTypes eClassifier="/1/Serializable"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Error" eSuperTypes="/0/Throwable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ExceptionInInitializerError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Exception" eSuperTypes="/0/Throwable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Float">
+      <eGenericSuperTypes eClassifier="/0/Number"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Float"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="IllegalAccessError" eSuperTypes="/0/IncompatibleClassChangeError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IllegalAccessException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IllegalArgumentException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IllegalMonitorStateException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IllegalStateException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IllegalThreadStateException" eSuperTypes="/0/IllegalArgumentException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IncompatibleClassChangeError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IndexOutOfBoundsException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="InheritableThreadLocal">
+      <eTypeParameters name="T"/>
+      <eGenericSuperTypes eClassifier="/0/ThreadLocal">
+        <eTypeArguments eTypeParameter="/0/InheritableThreadLocal/T"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="InstantiationError" eSuperTypes="/0/IncompatibleClassChangeError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="InstantiationException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Integer">
+      <eGenericSuperTypes eClassifier="/0/Number"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Integer"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="InternalError" eSuperTypes="/0/VirtualMachineError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="InterruptedException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Iterable">
+      <eTypeParameters name="T"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="LinkageError" eSuperTypes="/0/Error"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Long">
+      <eGenericSuperTypes eClassifier="/0/Number"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Long"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Math"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NegativeArraySizeException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NoClassDefFoundError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NoSuchFieldError" eSuperTypes="/0/IncompatibleClassChangeError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NoSuchFieldException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NoSuchMethodError" eSuperTypes="/0/IncompatibleClassChangeError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NoSuchMethodException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NullPointerException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NumberFormatException" eSuperTypes="/0/IllegalArgumentException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Number" eSuperTypes="/1/Serializable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Object"/>
+    <eClassifiers xsi:type="ecore:EClass" name="OutOfMemoryError" eSuperTypes="/0/VirtualMachineError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Package" eSuperTypes="/2/AnnotatedElement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ProcessBuilder"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Process"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Readable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Runnable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="RuntimeException" eSuperTypes="/0/Exception"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Runtime"/>
+    <eClassifiers xsi:type="ecore:EClass" name="RuntimePermission" eSuperTypes="/3/BasicPermission"/>
+    <eClassifiers xsi:type="ecore:EClass" name="SecurityException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="SecurityManager"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Short">
+      <eGenericSuperTypes eClassifier="/0/Number"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/Short"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StackOverflowError" eSuperTypes="/0/VirtualMachineError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StackTraceElement" eSuperTypes="/1/Serializable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StrictMath"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StringBuffer" eSuperTypes="/1/Serializable /0/CharSequence /0/Appendable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StringBuilder" eSuperTypes="/0/Appendable /1/Serializable /0/CharSequence"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StringIndexOutOfBoundsException" eSuperTypes="/0/IndexOutOfBoundsException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="String">
+      <eGenericSuperTypes eClassifier="/1/Serializable"/>
+      <eGenericSuperTypes eClassifier="/0/Comparable">
+        <eTypeArguments eClassifier="/0/String"/>
+      </eGenericSuperTypes>
+      <eGenericSuperTypes eClassifier="/0/CharSequence"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="System"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ThreadDeath" eSuperTypes="/0/Error"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ThreadGroup"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Thread" eSuperTypes="/0/Runnable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="UncaughtExceptionHandler"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ThreadLocal">
+      <eTypeParameters name="T"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Throwable" eSuperTypes="/1/Serializable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="TypeNotPresentException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="UnknownError" eSuperTypes="/0/VirtualMachineError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsatisfiedLinkError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsupportedClassVersionError" eSuperTypes="/0/ClassFormatError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsupportedOperationException" eSuperTypes="/0/RuntimeException"/>
+    <eClassifiers xsi:type="ecore:EClass" name="VerifyError" eSuperTypes="/0/LinkageError"/>
+    <eClassifiers xsi:type="ecore:EClass" name="VirtualMachineError" eSuperTypes="/0/Error"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Void"/>
+  </ecore:EPackage>
+  <ecore:EPackage name="java.io">
+    <eClassifiers xsi:type="ecore:EClass" name="Serializable"/>
+  </ecore:EPackage>
+  <ecore:EPackage name="java.lang.reflect">
+    <eClassifiers xsi:type="ecore:EClass" name="AnnotatedElement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="GenericDeclaration"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Type"/>
+  </ecore:EPackage>
+  <ecore:EPackage name="java.security">
+    <eClassifiers xsi:type="ecore:EClass" name="BasicPermission"/>
+  </ecore:EPackage>
+</xmi:XMI>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>org.abreslav.grammatic.template.generator</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+<!--		<buildCommand>
+			<name>org.eclipse.m2m.qvt.oml.QvtBuilder</name>
+			<arguments>
+				<dictionary>
+					<key>src_container</key>
+					<value>transforms</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
+-->
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+<!--		<nature>org.eclipse.m2m.qvt.oml.project.TransformationNature</nature>-->
+	</natures>
+</projectDescription>

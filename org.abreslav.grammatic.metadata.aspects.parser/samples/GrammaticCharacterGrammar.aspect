@@ -1,0 +1,40 @@
+character 
+	$-> CHARACTER
+	{
+		ast={{
+			CHARACTER
+			[
+				char character();
+			]		
+		}}
+	}
+	$-> CODE
+	{ 
+		ast={{
+			CODE
+			[
+				char character();
+			]		
+		}}	
+	};
+
+range $|> .. rangeItem+ .. ;
+{ 
+	ast = {{
+		^(!CHARACTER_SET rangeItem+) [
+			Expression range();
+		]
+	}} 
+}
+
+rangeItem $=|> $from=character .. $to=character ;
+{
+	from:varName = from;
+	to:varName = to;
+	ast = {{
+		^(!CHARACTER_RANGE $from $to) [
+			void rangeComplementItem(SetComplementBuilder builder);
+			CharacterRange rangeItem();
+		]
+	}};
+}

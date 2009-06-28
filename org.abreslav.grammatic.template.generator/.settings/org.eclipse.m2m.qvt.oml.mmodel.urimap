@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uriMap:MappingContainer xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:uriMap="http:///www.eclipse.org/m2m/qvt/oml/MModelUriMap/1.0.0">
+  <mapping sourceURI="http://grammar" targetURI="platform:/resource/org.abreslav.grammatic.grammar/model/grammar.ecore"/>
+  <mapping sourceURI="http://www.abreslav.org/Grammatic/2008/Template" targetURI="platform:/resource/org.abreslav.grammatic.template/model/template.ecore"/>
+  <mapping sourceURI="http://www.abreslav.org/Grammatic/2008/Metadata" targetURI="platform:/resource/org.abreslav.grammatic.grammar/model/metadata.ecore"/>
+  <mapping sourceURI="http://www.abreslav.org/Grammatic/2008/template/instantiator" targetURI="platform:/resource/org.abreslav.grammatic.template.generator/model/templateInstantiator.ecore"/>
+</uriMap:MappingContainer>

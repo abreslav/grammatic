@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.grammar/generated"
+    modelPluginID="org.abreslav.grammatic.grammar" modelName="Grammar" updateClasspath="false"
+    suppressEMFModelTags="true" importerID="org.eclipse.emf.importer.ecore" bundleManifest="false"
+    complianceLevel="6.0" copyrightFields="false" usedGenPackages="metadata.genmodel#//metadata">
+  <foreignModel>grammar.ecore</foreignModel>
+  <genPackages prefix="Grammar" basePackage="org.abreslav.grammatic" disposableProviderFactory="true"
+      ecorePackage="grammar.ecore#/">
+    <genClasses ecoreClass="grammar.ecore#//Grammar">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//Grammar/symbols"/>
+    </genClasses>
+    <genClasses ecoreClass="grammar.ecore#//Symbol">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute grammar.ecore#//Symbol/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//Symbol/productions"/>
+    </genClasses>
+    <genClasses ecoreClass="grammar.ecore#//Production">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//Production/expression"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="grammar.ecore#//Expression"/>
+    <genClasses ecoreClass="grammar.ecore#//Empty"/>
+    <genClasses ecoreClass="grammar.ecore#//SymbolReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference grammar.ecore#//SymbolReference/symbol"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="grammar.ecore#//Combination">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//Combination/expressions"/>
+    </genClasses>
+    <genClasses ecoreClass="grammar.ecore#//Sequence"/>
+    <genClasses ecoreClass="grammar.ecore#//Alternative"/>
+    <genClasses image="false" ecoreClass="grammar.ecore#//Iteration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//Iteration/expression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute grammar.ecore#//Iteration/lowerBound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute grammar.ecore#//Iteration/upperBound"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="grammar.ecore#//LexicalDefinition"/>
+    <genClasses ecoreClass="grammar.ecore#//CharacterRange">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute grammar.ecore#//CharacterRange/lowerBound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute grammar.ecore#//CharacterRange/upperBound"/>
+    </genClasses>
+    <genClasses ecoreClass="grammar.ecore#//LexicalExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//LexicalExpression/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="grammar.ecore#//ExpressionValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference grammar.ecore#//ExpressionValue/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="grammar.ecore#//StringExpression">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute grammar.ecore#//StringExpression/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

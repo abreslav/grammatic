@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	<import file="../org.abreslav.grammatic.bootstrap/buildCommons.xml"/>
+	<target name="generateGrammars">
+    	<property name="project" value="${atfProj}"/>
+    	<property name="projectDir" value="${basedir}/../${project}"/>
+    	<property name="targetPackageDir" value="${projectDir}/generated/"/>
+    	
+    	<property name="grammardir" value="${projectDir}/grammar/" /> 
+    	<property name="generatedgrammardir" value="${projectDir}/generated-grammar/"/>
+
+    	<grammatic grammardir="${grammardir}" generatedgrammardir="${generatedgrammardir}" targetpackagedir="${targetPackageDir}/"
+        	grammarname="ATF"
+    	>
+        	<importdir path="${basedir}/../${grammarParserProj}/grammar"/>
+        	<importdir path="${basedir}/../${queryParserProj}/grammar"/>
+        	<aspectapplication grammarname="ATF" aspectname="ATF"/>
+        	<aspectapplication grammarname="StubTypes" aspectname="StubTypes"/>
+        	<aspectapplication grammarname="GrammaticQuery" aspectname="GrammaticQuery"/>
+    		<aspectapplication grammarname="GrammaticCharacter" aspectname="GrammaticCharacter"/>
+    		<aspectapplication grammarname="GrammaticMetadata" aspectname="GrammaticMetadata"/>
+    		<aspectapplication grammarname="GrammaticLexicalGrammar" aspectname="GrammaticLexicalGrammar"/>
+    		<aspectapplication grammarname="GrammaticGrammarTemplate" aspectname="GrammaticGrammarTemplate"/>
+    		<aspectapplication grammarname="Imports" aspectname="Imports"/>
+        </grammatic>
+    	<delete dir="${projectDir}/generated/org/abreslav/grammatic/grammar"></delete>
+    	<delete dir="${projectDir}/generated/org/abreslav/grammatic/query"></delete>
+    	<delete file="${projectDir}/generated/org/abreslav/grammatic/atf/parser/IStubTypesBuilders.java"></delete>
+    	<delete file="${projectDir}/generated/org/abreslav/grammatic/atf/parser/StubTypesBuildersPools.java"></delete>
+    </target>
+
+	<import file="../org.abreslav.grammatic.bootstrap/buildGrammar.xml"/>
+	
+	<target name="default">
+		<antcall target="generateGrammars"></antcall>
+<!--		<property name="targetFolder" value="generated-parser/org/abreslav/grammatic/atf/parser"/>
+		<antcall target="buildGrammar">
+			<param name="doclear" value="true"/>
+			<param name="project" value="org.abreslav.grammatic.atf"/>
+			<param name="grammarFile" value="ATF.g"/>
+			<param name="treeGrammarFile" value="ATF.g"/>
+			<param name="lib" value="generated-grammar"/>
+			<param name="targetFolder" value="/tmp/atftemp"/>
+		</antcall>
+    	<delete dir="/tmp/atftemp"></delete>-->
+    </target>
+</project>

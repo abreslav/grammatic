@@ -1,0 +1,245 @@
+{
+	name = GrammaticGrammarTemplate;
+	package = 'org.abreslav.grammatic.grammar.template.parser';
+	imports = {{
+		import org.abreslav.grammatic.template.Template;
+		import org.abreslav.grammatic.template.TemplateApplication;
+		import org.abreslav.grammatic.template.TemplateArgument;
+		import org.abreslav.grammatic.template.TemplateBody;
+		import org.abreslav.grammatic.template.TemplateParameter;
+		import org.abreslav.grammatic.template.ParameterReference;
+		import org.abreslav.grammatic.grammar.Expression;
+		import org.abreslav.grammatic.grammar.Grammar;
+		import org.abreslav.grammatic.grammar.Production;
+		import org.abreslav.grammatic.grammar.Symbol;
+		import org.abreslav.grammatic.grammar.template.grammarTemplate.IterationTemplate;
+		import org.eclipse.emf.ecore.EClass;
+	}};
+}
+
+grammar 
+	[[
+		rules = {{
+			Grammar grammar_();
+		}};
+	]]
+	: ..
+	;
+	
+lexicalAtomIndependent
+	[[
+		rules = {{Expression lexicalAtomIndependent();}};
+	]]
+	: ..
+	;	
+	
+templateLibrary 
+	[[
+		rules = {{
+			void templateLibrary();
+		}};
+	]]
+	: import* templateDeclaration*
+	;
+	
+defaultTemplate
+	[[
+		rules = {{
+			Grammar defaultTemplate();
+		}};
+	]]
+	: ..
+	;
+	
+templateApplication
+	[[
+		rules = {{
+			TemplateApplication<Grammar> templateApplication();
+		}};
+	]]
+	: NAME ('<' templateArguments '>')?
+	[[
+		templateArguments.call = {{templateArguments(#result)}};
+	]]
+	;
+	
+templateArguments
+	[[
+		rules = {{
+			void templateArguments(TemplateApplication<?> templateApp);
+		}};
+	]]
+	: templateArgument (',' templateArgument)*
+	;
+
+templateArgument
+	[[
+		rules = {{
+			TemplateArgument<Production> templateArgument();
+		}};
+	]]
+	: (#lex production)*
+	;
+	
+production
+	[[
+		rules = {{
+			Production production();
+		}};
+	]]
+	: alternative
+	;
+	
+templateDeclaration 
+	[[
+		rules = {{
+			Template<Grammar> templateDeclaration();
+		}};
+	]]
+	: type NAME '<' templateParameters? '>' ..
+	[[
+		templateParameters.call = {{templateParameters(#result)}};
+	]]
+	;
+	
+type
+	[[
+		rules = {{
+			EClass type();
+		}};
+	]]
+	: NAME
+	;
+	
+templateParameters
+	[[
+		rules = {{
+			void templateParameters(Template<?> template);
+		}};
+	]]
+	: templateParameter (',' templateParameter)*
+	;
+	
+templateParameter
+	[[
+		rules = {{
+			TemplateParameter<?> templateParameter();
+		}};
+	]]
+	: ..
+	;
+
+templateBody
+	[[
+		rules = {{
+			TemplateBody<Grammar> templateBody();
+		}};
+	]]
+	: ..
+	;
+
+rule
+	[[
+		rules = {{
+			TemplateBody<Symbol> rule();
+		}};
+	]]
+	: NAME metadata? ..
+	[[
+		metadata.call = {{metadata(#result)}};
+	]]
+	;
+	
+productionTemplate
+	[[
+		rules = {{
+			TemplateBody<Production> productionTemplate();
+		}};
+	]]
+	: alternative
+	: ..
+	;
+	
+templateParameterReference
+	[[
+		rules = {{
+			ParameterReference<?> templateParameterReference();
+		}};
+	]]
+	: ..
+	;
+	
+alternative
+	[[
+		rules = {{
+			TemplateBody<? extends Expression> alternative();
+		}};
+	]]
+	: ..
+	;
+
+expression
+	[[
+		rules = {{
+			Expression expression();
+		}};
+	]]
+	: ..
+	;
+
+sequence
+	[[
+		rules = {{
+			TemplateBody<? extends Expression> sequence();
+		}};
+	]]
+	: ..
+	;
+	
+iteration
+	[[
+		rules = {{
+		  	TemplateBody<? extends Expression> iteration();
+		}};
+	]]
+	: atom metadata? ..
+	[[
+		atom.variable = at;
+  		metadata.call = {{metadata($at)}};
+	]]	
+	;
+	
+operation 
+	[[
+		rules = {{
+			IterationTemplate operation();
+		}};
+	]]
+	: $=('*' | '+' | '?')
+	[[
+		tokenSwitch; 
+	]]
+	: #empty
+	;
+
+atom
+	[[
+		rules = {{
+			TemplateBody<? extends Expression> atom();
+		}};
+	]]
+	|: ..
+	;
+	
+lexicalAtom
+	[[
+		rules = {{
+			TemplateBody<? extends Expression> lexicalAtom();
+		}};
+	]]
+	: $=basicLexicalAtom
+	[[
+		call = {{basicLexicalAtom()}};
+	]]
+	: '[[' alternative ']]'
+	;

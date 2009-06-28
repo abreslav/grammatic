@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin
+      name="%pluginName"
+      id="org.abreslav.grammatic.atf"
+      version="1.0.0"
+      provider-name="%providerName">
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.emf.ecore" export="true"/>
+   </requires>
+
+   <runtime>
+      <library name=".">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.abreslav.org/garmmatic/2009/ATF"
+            class="org.abreslav.grammatic.atf.AtfPackage"
+            genModel="model/atf.genmodel"/>
+   </extension>
+
+</plugin>

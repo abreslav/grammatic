@@ -1,0 +1,76 @@
+metadata scheme ATF for package 'grammar';
+
+define variable [SF : Namespace];
+
+namespaces atf {
+
+	class Grammar {
+		semanticModules : SemanticModule*;
+		typeSystemOptions : {*};
+		moduleOptions : {
+			moduleName : String;
+			options : {*};
+		}*;
+	}
+	
+	class Symbol {
+		{ 
+			// implies runtime check for being a token ???
+			token : #presence;
+			tokenClasses : String*;
+		} or {
+			semanticFunctions : FunctionSignature*;
+			{ 
+				// Is renamed by post-processor
+				defaultSyntacticFunction : FunctionSignature;
+				defaultNamespace : Namespace defines [SF];
+			} or {
+				functionNameToNamespace : {String -> Namespace defines [SF]};
+				functionNameToFunction : {String -> FunctionSignature};
+			}
+		}
+	}
+}
+
+namespace variable [SF] {
+	class Symbol {
+		semanticFunctions : FunctionSignature*;
+		syntacticFunction : FunctionSignature;
+		before : Statement?;
+		after : Statement?;
+	}
+
+	class Expression {
+		before : Statement?;
+		after : Statement?;
+		// must be lexical
+		assignTextToAttribute : ATFAttributeReference?; 
+	}
+	
+	class Production {
+		before : Statement?;
+		after : Statement?;
+	}
+	
+	class SymbolReference {
+		// !!! executed after Expression.before and before Expression.after
+	
+		// must not be a token if has more than one
+		assignedToAttributes : ATFAttributeReference*;
+		{
+		    // must not be a token
+			associatedFunctionName : String;
+		} or {
+		    // if nothing is set, this is set by post-processor
+			associatedWithDefaultFunction : #presence;
+		}
+		// filled by post-processor (at application time)
+		// must be a token
+		associatedWithAToken : #presence;
+		// not available for tokens
+		associatedFunction : FunctionSignature;
+		associatedNamespace : Namespace defines [SF];
+		// must not be a token
+		associatedCallArguments : ATFExpression*;
+	}
+}

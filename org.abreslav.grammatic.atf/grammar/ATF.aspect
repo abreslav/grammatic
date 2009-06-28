@@ -1,0 +1,437 @@
+{
+	name = ATF;
+	package = 'org.abreslav.grammatic.atf.parser';
+	imports = {{
+		import java.util.List;
+		import java.util.Set;
+		import org.abreslav.grammatic.atf.ATFAttribute;
+		import org.abreslav.grammatic.atf.ATFAttributeAssignment;
+		import org.abreslav.grammatic.atf.ATFAttributeReference;
+		import org.abreslav.grammatic.atf.Block;
+		import org.abreslav.grammatic.atf.CollectionAppending;
+		import org.abreslav.grammatic.atf.FunctionCall;
+		import org.abreslav.grammatic.atf.FunctionSignature;
+		import org.abreslav.grammatic.atf.SemanticModule;
+		import org.abreslav.grammatic.atf.Statement;
+		import org.abreslav.grammatic.atf.ATFExpression;
+		import org.abreslav.grammatic.metadata.Attribute;
+		import org.abreslav.grammatic.metadata.Namespace;
+		import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
+		import org.abreslav.grammatic.metadata.aspectdef.AssignmentRule;
+		import org.abreslav.grammatic.query.QueryContainer;
+		import org.abreslav.grammatic.query.RuleQuery;
+		import org.abreslav.grammatic.query.VariableDefinition;
+	}};
+}
+	
+typeSystemDeclarations
+	[[
+		rules = {{
+			void typeSystemDeclarations();
+		}};
+	]]
+	|: ..
+	;	
+	
+type 
+	[[
+		rules = {{
+			Object atfType();
+		}};
+	]]
+	: ..
+	;
+
+atfModule
+	[[
+		rules = {{
+			AspectDefinition atfModule();
+		}};
+	]]
+	: import? typeSystemDeclarations semanticModuleDeclaration? $=topLevelDeclaration*
+	[[
+		call = {{topLevelDeclaration(#result)}};
+	]]
+	;
+	
+semanticModule
+	[[
+		rules = {{
+			SemanticModule semanticModule();
+		}};
+	]]
+	: import? typeSystemDeclarations semanticModuleDeclaration
+	;
+	
+typeSystemModule
+	[[
+		rules = {{
+			void typeSystemModule();
+		}};
+	]]
+	: import? typeSystemDeclarations
+	;
+
+topLevelDeclaration
+	[[
+		rules = {{
+			void topLevelDeclaration(AspectDefinition aspectDef);
+		}};
+	]]
+	: syntacticRuleDeclaration
+	: tokenRuleDeclaration
+	;
+
+semanticModuleDeclaration
+	[[
+		rules = {{
+			SemanticModule semanticModuleDeclaration();
+		}};
+	]]
+	: '#module' NAME '{' semanticFunction* '}'
+	;
+	
+semanticFunction
+	[[
+		rules = {{
+			FunctionSignature semanticFunction();
+		}};
+	]]
+	: functionSignature ';'
+	;
+	
+functionSignature
+	[[
+		rules = {{
+			FunctionSignature functionSignature();
+		}};
+	]]
+	: NAME $in=tuple ('-->' $out=tuple)?
+	[[
+		in.variable = in;
+		out.variable = out;
+	]]
+	;
+
+tuple
+	[[
+		rules = {{
+			List<ATFAttribute> tuple();
+		}};
+	]]
+	: '(' attributeDeclarationList? ')'
+	;	
+	
+attributeDeclarationList
+	[[
+		rules = {{
+			List<ATFAttribute> attributeDeclarationList();
+		}};
+	]]
+	: attributeDeclaration (',' attributeDeclaration)*
+	;
+	
+attributeDeclaration
+	[[
+		rules = {{
+			ATFAttribute attributeDeclaration();
+		}};
+	]]
+	: type NAME
+	;
+	
+syntacticRuleDeclaration
+	[[
+		rules = {{
+			AssignmentRule syntacticRuleDeclaration();
+		}};
+	]]
+	: ruleQueryContainer $functions=associatedFunctions?
+	[[
+		// Stupid hack: we need ruleQueryContainer to be handled first
+		functions.call = {{associatedFunctions(#result)}};
+	]]
+	;
+
+associatedFunctions
+	[[
+		rules = {{
+			void associatedFunctions(AssignmentRule ar);
+		}};
+	]]
+	: '[[' semanticFunction* (syntacticFunction+ | defaultSyntacticFunction) ']]'
+	: defaultSyntacticFunction
+	;
+	
+defaultSyntacticFunction
+	[[
+		rules = {{
+			Namespace defaultSyntacticFunction();
+		}};
+	]]
+	: '#' $input=tuple? ('-->' $output=tuple)? $=schemeAssignment
+	[[
+		input.variable = inputAttributes;
+		input.separate;
+		output.variable = outputAttributes;
+		call = {{schemeAssignment(#result)}};
+	]]
+	;
+	
+syntacticFunction
+	[[
+		rules = {{
+			Namespace syntacticFunction();
+		}};
+	]]
+	: functionSignature $=schemeAssignment
+	[[
+		call = {{schemeAssignment(#result)}};
+	]]
+	; 
+
+schemeAssignment
+	[[
+		rules = {{
+			// The same stupid hack: needed for other functions to create their result
+			void schemeAssignment(Namespace ns);
+		}};
+	]]
+	: '{' localDeclarations labelDefinition* '}'
+	;
+
+localDeclarations
+	[[
+		rules = {{
+			void localDeclarations();
+		}};
+	]]
+	: ((attributeDeclaration ';') | semanticFunction)*
+	;
+	
+tokenRuleDeclaration
+	[[
+		rules = {{
+			AssignmentRule tokenRuleDeclaration();
+		}};
+	]]
+	: NAME ':' '#token' ('(' idList ')')? ..
+	;
+	
+////////////////////////////////////////////////////////////
+	
+labelDefinition
+	[[
+		rules = {{
+			void labelDefinition();
+		}};
+	]]
+	: labelList ':' statement
+	: nameList '::' symbolMapping ..
+	[[
+		nameList.variable = nl;
+		symbolMapping.call = {{symbolMapping($nl)}};
+	]]
+	;
+	
+labelList
+	[[
+		rules = {{
+			List<Attribute> labelList();
+		}};
+	]]
+	: label (',' label)*
+	;
+	
+label
+	[[
+		rules = {{
+			Attribute label();
+		}};
+	]]
+	: $=simpleLabel ('.' NAME)?
+	: '#before'
+	: '#after'
+	;
+	
+simpleLabel
+	[[
+		rules = {{
+			VariableDefinition simpleLabel();
+		}};
+	]]
+	: NAME
+	: character
+	: STRING
+	;
+	
+statement
+	[[
+		rules = {{
+			Statement statement();
+		}};
+	]]
+	: assignment
+	: appending
+	: functionCall ';'
+	: block
+	;
+	
+assignment
+	[[
+		rules = {{
+			ATFAttributeAssignment assignment();
+		}};
+	]]
+	: attributeReference '=' expression ';'
+	;
+
+attributeReference
+	[[
+		rules = {{
+			ATFAttributeAssignment attributeReference();
+		}};
+	]]
+	: singleAttributeReference
+	: '(' singleAttributeReference (',' singleAttributeReference)* ')'
+	;
+	
+singleAttributeReference
+	[[
+		rules = {{
+			ATFAttributeReference singleAttributeReference();
+		}};
+	]]
+	: NAME
+	;
+
+expression
+	[[
+		rules = {{
+			ATFExpression atfExpression();
+		}};
+	]]
+	: singleAttributeReference
+	: functionCall
+	: text
+	: defaultAttributeReference
+	;
+	
+functionCall
+	[[
+		rules = {{
+			FunctionCall functionCall();
+		}};
+	]]
+	: functionReference $=arguments
+	[[
+		call = {{arguments(#result)}};
+	]]
+	;
+	
+functionReference
+	[[
+		rules = {{
+			FunctionSignature functionReference();
+		}};
+	]]
+	: ($=NAME '.')? NAME
+	[[
+		variable = module;
+	]]
+	;
+	
+arguments
+	[[
+		rules = {{
+			void arguments(FunctionCall call);
+			List<ATFExpression> expressionList();
+		}};
+	]]
+	: '(' (expression (',' expression)*)? ')'
+	;
+	
+text
+	[[
+		rules = {{
+			ATFAttribute text();
+		}};
+	]]
+	: '#text' '(' variable ')'
+	;	
+	
+defaultAttributeReference
+	[[
+		rules = {{
+			ATFAttribute defaultAttributeReference();
+		}};
+	]]
+	: variable '#'
+	;
+	
+variable 
+	[[
+		rules = {{
+			VariableDefinition variable();
+		}};
+	]]
+	: NAME
+	;
+	
+appending 
+	[[
+		rules = {{
+			CollectionAppending appending();
+		}};
+	]]
+	: singleAttributeReference '+=' expression 
+	;	
+
+block
+	[[
+		rules = {{
+			Block block();
+		}};
+	]]
+	: '{' statement* '}'
+	;
+	
+nameList
+	[[
+		rules = {{
+			Set<VariableDefinition> nameList();
+		}};
+	]]
+	: variable (',' variable)*
+	;
+
+idList
+	[[
+		rules = {{
+			Set<String> idList();
+		}};
+	]]
+	: NAME (',' NAME)*
+	;
+	
+symbolMapping
+	[[
+		rules = {{
+			void symbolMapping(Set<VariableDefinition> names);
+		}};
+	]]
+	: (attributeReference '=')? associatedFunctionReference arguments
+	[[
+		arguments.call = {{expressionList()}};
+	]]
+	;
+
+associatedFunctionReference
+	[[
+		rules = {{
+			String associatedFunctionReference();
+		}};
+	]]
+	: NAME
+	: '#'
+	;

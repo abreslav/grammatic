@@ -1,0 +1,89 @@
+type : primitive || class;
+primitive : 'int';
+class : 'Expression' || 'Mult' || 'Scope';
+-----------------------
+
+int -Java-> int;
+Expression -Java-> org/my/Expression;
+Mult -Java-> org/my/Mult;
+Scope -Java-> org/my/Parser.Scope;
+
+-----------------------
+
+Mult < Expression; 
+
+-----------------------
+
+one() --> (int result);
+
+// do we need local declarations?
+// if not, do we need namespaces for semantic actions?
+
+//--------------------------------------!!!-
+sum : $m1:mult (('+' | '-') $m2:mult)* {end};
+//--------------------------------------^^^-
+[[
+	sumAST(Scope s) --> (Expression result) {
+		m1.before: result = null();
+		mult:: m = multAST(s);
+		m1: multOrSum = m;
+		'+' : sign = one();
+		'-' : sign = minusOne();
+		m2: {
+			result = appendToSum(result, sign, m, multOrSum);
+			multOrSum = result;
+		}
+		end: result = multOrSum;
+	};
+// inferred:
+// sign : int
+// null() --> Expression	
+// minusOne() --> T (might be inferred as int through one())
+// appendToSum(Expression, T, Mult, max[Mult, Expression] => Expression) 	
+	sumValue() --> (int result) {
+		m1.before: {
+			result = zero();
+			sign = one();
+		}
+		mult:: m = multValue();
+		mult: result = add(result, m, sign);
+	}
+// sign : int
+// zero() --> int
+// add(int, int, int)
+]]
+
+mult : $f1:factor ('*' factor)*;
+[[
+	multAST(Scope s) --> (Mult result) {
+		f1.before : result = createMult();
+		factor :: f = factorAST(s);
+		factor : addFactor(result, f);  
+	}
+	
+	multValue() --> (int result) {
+		f1.before : result = one();
+		factor :: f = factorValue();
+		factor : result = mul(result, f);
+	}
+]]
+
+factor : NUM || VAR || .. sum ..;
+[[
+	factorAST(Scope s) --> (Expression e) {
+		NUM: e = createConstant(NUM);
+		VAR: e = createVarReference(VAR, s);
+		sum:: sum = sumAST(s);
+		sum: e = sum;
+	};
+	
+	factorValue() --> (int result) {
+		NUM: result = strToInt(NUM);
+		VAR: reportUnknownValue();
+		sum:: s = sumValue();
+		sum: result = s;
+	};
+
+]]
+
+NUM : #token;

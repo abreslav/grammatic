@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.m2m.qvt.oml.QvtTransformation">
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.clearContents1" value="true"/>
+<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.clearContents2" value="true"/>
+<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.clearContents3" value="true"/>
+<mapAttribute key="org.eclipse.m2m.qvt.oml.interpreter.configurationProperties"/>
+<intAttribute key="org.eclipse.m2m.qvt.oml.interpreter.elemCount" value="2"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName1" value=""/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName2" value=""/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName3" value=""/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="file:/org.abreslav.grammatic.template.generator/transforms/EcoreToTemplateEcore.qvto"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/org.abreslav.grammatic.grammar/model/aspects.ecore"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/org.abreslav.grammatic.grammar.template/model/aspects.template.ecore"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel3" value="platform:/resource/org.abreslav.grammatic.template.generator/GrammarTemplate.ecore"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType1" value="NEW_MODEL"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType2" value="NEW_MODEL"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType3" value="NEW_MODEL"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.traceFile" value="/org.abreslav.grammatic.grammar.template/model/traces/aspects.qvtotrace"/>
+<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.useTraceFile" value="true"/>
+</launchConfiguration>

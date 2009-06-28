@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="variables"
+    nsURI="http://www.abreslav.org/Grammatic/2008/Query/Variables" nsPrefix="grammatic-query-variables">
+  <eClassifiers xsi:type="ecore:EClass" name="VariableValue" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ItemValue" eSuperTypes="#//VariableValue">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="item" lowerBound="1">
+      <eGenericType eTypeParameter="#//ItemValue/T"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ListValue" abstract="true" eSuperTypes="#//VariableValue">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1">
+      <eGenericType eTypeParameter="#//ListValue/T"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SequencePartValue">
+    <eGenericSuperTypes eClassifier="#//ListValue">
+      <eTypeArguments eClassifier="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlternativePartValue">
+    <eGenericSuperTypes eClassifier="#//ListValue">
+      <eTypeArguments eClassifier="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RulePartValue">
+    <eGenericSuperTypes eClassifier="#//ListValue">
+      <eTypeArguments eClassifier="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Production"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionValue">
+    <eGenericSuperTypes eClassifier="#//ItemValue">
+      <eTypeArguments eClassifier="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ProductionValue">
+    <eGenericSuperTypes eClassifier="#//ItemValue">
+      <eTypeArguments eClassifier="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Production"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SymbolValue">
+    <eGenericSuperTypes eClassifier="#//ItemValue">
+      <eTypeArguments eClassifier="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>

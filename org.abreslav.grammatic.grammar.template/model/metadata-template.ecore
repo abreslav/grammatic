@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="metadataTemplate" nsURI="http://www.abreslav.org/Grammatic/2008/MetadataTemplate" nsPrefix="grammatic-metadata-template">
+  <eClassifiers xsi:type="ecore:EClass" name="NamespaceTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Namespace"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Value"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="namespace">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Namespace"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ValueTemplate" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Value"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//StringValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntegerValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//IntegerValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IdValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//IdValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PunctuationValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type">
+      <eType xsi:type="ecore:EEnum" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//PunctuationType"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//PunctuationValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AnnotatedTemplate" abstract="true" interface="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Annotated"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TupleValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//TupleValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MultiValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Value"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//MultiValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>

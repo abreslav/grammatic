@@ -1,0 +1,328 @@
+// namespaces
+// default impls with no name (call and declaration)
+// omitting input/output attributes if none
+// first action within a production -- how to address to it?
+// the same for the last
+// first and last actions within a rule
+// looks like we need a per-production declaration system,
+//   but it will cause header duplication :(
+// automatically create and assign an attribute for a call with a deafult impl
+// assigning null to attributes by default?
+// reusing fragments of syntactic implementations
+// #switch tokens for tokenSwitch
+
+#import 'docs/some.module' {some}; 
+
+#javaoptions {
+	grammarName = 'Grammatic';
+	package = 'a.b.c';
+	factoryInterfaceName = 'SomeName';
+		
+}
+
+createString (String token) --> (String result);
+
+///////////////////////
+
+WS : #token(whitespace); 
+COMMENT : #token(whitespace);
+LETTER : #token(fragment);
+NAME : #token;
+CHAR_IN_QUOTES : #token(fragment);
+CHARACTER : #token;
+STRING : #token;
+HEX_DIGIT : #token(fragment);
+CODE : #token;
+INT : #token;
+
+////////////////////////////
+
+
+character
+	: CHARACTER
+	: CODE
+	;
+#() --> (char c) {
+		CHARACTER : c = getCharacter(CHARACTER);
+		CODE : c = getCharByCode(CODE);
+}
+	
+
+//////////////////////////////	
+
+basicLexicalAtom
+	:  STRING
+	:  character
+	:  '.'
+	:  range
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	STRING : result = createString(STRING);
+//	character:: character = character(); -- implicit call  
+	character : result = createCharacter(character);
+	'.' : result = createFullRange();
+// range:: range = range(); 
+	range : result = range;
+}
+
+range
+	: '[' rangeItem+ ']'
+ 	: rangeComplement
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	'['.before : result = createRangeBuilder();   
+	rangeItem:: item = rangeItem();
+	rangeItem : addRangeItem(result, item);
+//  rangeComplement:: rangeComplement = rangeComplement();
+	rangeComplement : result = rangeComplement();
+}
+
+rangeComplement
+	: '[^' rangeItem+ ']'
+	;
+# --> (SetComplementBuilder result) {
+	'[^'.before : result = createComplementBuilder();
+	rangeItem:: rangeComplementItem(result);
+}
+	
+rangeItem
+	: $only=character
+	: $from=character '--' $to=character
+	;
+[[
+	rangeComplementItem(SetComplementBuilder builder) {
+//		only:: only = character();
+//		from:: from = character();
+//		to:: to = character();
+		only : removeSubrange(builder, only, only);
+		to : removeSubrange(builder, from, to);
+	}
+	rangeItem() --> (TemplateBody<CharacterRange> result) {
+//		only:: only = character();
+//		from:: from = character();
+//		to:: to = character();
+		only : addSubrange(result, only, only);
+		to : addSubrange(result, from, to);	
+	}
+]]
+
+
+////////////////////////////////////////////
+
+metadata 
+	: '{' (attribute (';' attribute?)*)? '}'
+	;
+[[
+	metadata(EObject subject) {
+		attribute:: attribute(subject);	
+	}
+	
+	attributeList() --> (TupleValue result) {
+		#before : result = createTupleValue();
+		attribute:: attributeInList(result);
+	}
+]]
+
+namespace
+	: NAME ':'
+	;
+# --> (Namespace namespace) {
+	#after : namespace = createNamespace(NAME);  
+}
+	
+attribute 
+	: namespace? NAME ('=' attributeValue)?
+	;
+[[
+	attribute(EObject subject) {
+		#before : {
+			namespace = null();
+			attributeValue = null();
+		}
+		// namespace:: namespace = #();
+		// attributeValue:: attributeValue = #();
+		#after : writeAttribute(subject, namespace, NAME, attributeValue);
+	} 
+	attributeInList(Annotated subject) {
+		#before : {
+			namespace = null();
+			attributeValue = null();
+		}
+		// namespace:: namespace = #();
+		// attributeValue:: attributeValue = #();
+		#after : addAttribute(subject, namespace, NAME, attributeValue);
+	}
+]]			
+	
+attributeValue
+	: character
+	: INT
+	: STRING
+	: NAME
+	: metadata
+	$t=: '{{' term* '}}'
+	: '[[' alternative ']]'
+	;
+# --> (Value result) {
+	character : result = createCharacterValue(character);
+	INT : result = createIntValue(INT);
+	STRING : result = createStringValue(STRING);
+	NAME : result = createIdValue(NAME);
+	metadata:: result = attributeList();
+	t.before : multi = createMultiValue();
+	term : addItem(multi, term);
+	t.after : result = multi;
+	alternative : result = createExpressionValue(alternative);
+}
+	
+term 
+	:  attributeValue 
+	:  punctuation
+	;
+# --> (Value result) {
+	attributeValue:: result = #();
+	punctuation : result = createPunctuationValue(punctuation); 
+}
+	
+punctuation
+	: $tokens=('`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
+	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
+	| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
+	| '?' | '<' | '>')
+	;
+# --> (PunctuationType result) {
+	tokens: result = punctuationType(#text(tokens));
+}
+
+//////////////////////////////////////////
+
+import
+	: '#import' importSpec (',' importSpec)* ';'
+	;	
+# (RenamingManager manager) {
+	importSpec:: #(result);
+}
+	
+importSpec
+	: STRING '{' renaming (',' renaming)* '}'
+	;
+# (RenamingManager manager) {
+	STRING : moduleName = createString(STRING);
+	renaming:: #(manager, moduleName);
+}
+	
+renaming
+	: ($old=NAME '=')? $new=NAME
+	;
+# (RenamingManager manager, String moduleName) {
+	new : addRenaming(manager, moduleName, old, new);
+}
+
+///////////////////////////////////////////
+
+grammar 
+	: import* (defaultTemplate | '#grammar' templateApplication)
+	;
+# --> (Grammar result) {
+	#before : renamings = getRenamingManager();
+	import:: #(renamings);
+	// defaultTemplate
+	// templateApplication
+}
+	
+lexicalAtomIndependent
+	: basicLexicalAtom
+	;	
+	
+templateLibrary 
+	: import* templateDeclaration*
+	;
+	
+defaultTemplate
+	: rule*
+	;
+	
+templateApplication
+	: NAME ('<' templateArguments '>')?
+	;
+	
+templateArguments
+	: templateArgument (',' templateArgument)*
+	;
+
+templateArgument
+	: (':' production)*
+	;
+	
+production
+	: alternative
+	;
+	
+templateDeclaration 
+	: type NAME '<' templateParameters? '>' templateBody
+	;
+	
+type
+	: NAME
+	;
+	
+templateParameters
+	: templateParameter (',' templateParameter)*
+	;
+	
+templateParameter
+	: ('#refer' | '#copy')? type operation NAME
+	;
+
+templateBody
+	: '{' rule* '}'
+	;
+
+rule
+	: NAME metadata? ':' productionTemplate (':' productionTemplate)* ';'
+	;
+	
+productionTemplate
+	: alternative
+	: templateParameterReference
+	;
+
+templateParameterReference
+	: '<' NAME '>'
+	;
+	
+alternative
+	: sequence ('|' sequence)*	
+	;
+
+expression
+	: alternative ';'
+	;
+
+sequence
+	: iteration (iteration)*
+	;
+	
+iteration
+	: atom metadata? operation
+	;
+	
+operation 
+	: '*' | '+' | '?'
+	: #empty
+	;
+	
+atom
+	: NAME
+	: '(' alternative ')'
+	: lexicalAtom
+	: '#empty'
+	;
+	
+lexicalAtom
+	:  basicLexicalAtom
+	: '[[' alternative ']]'
+	;
+# {
+	#before : some();
+}

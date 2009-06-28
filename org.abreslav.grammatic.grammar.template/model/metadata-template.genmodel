@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.grammar.template/generated"
+    modelPluginID="org.abreslav.grammatic.grammar.template" modelName="Metadata-template"
+    updateClasspath="false" importerID="org.eclipse.emf.importer.ecore" bundleManifest="false"
+    complianceLevel="6.0" copyrightFields="false" usedGenPackages="../../org.abreslav.grammatic.grammar/model/metadata.genmodel#//metadata ../../org.abreslav.grammatic.template/model/template.genmodel#//template">
+  <foreignModel>metadata-template.ecore</foreignModel>
+  <genPackages prefix="MetadataTemplate" basePackage="org.abreslav.grammatic.grammar.template"
+      disposableProviderFactory="true" ecorePackage="metadata-template.ecore#/">
+    <genClasses ecoreClass="metadata-template.ecore#//NamespaceTemplate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata-template.ecore#//NamespaceTemplate/uri"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata-template.ecore#//AttributeTemplate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata-template.ecore#//AttributeTemplate/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata-template.ecore#//AttributeTemplate/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata-template.ecore#//AttributeTemplate/namespace"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata-template.ecore#//ValueTemplate"/>
+    <genClasses ecoreClass="metadata-template.ecore#//StringValueTemplate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata-template.ecore#//StringValueTemplate/value"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata-template.ecore#//IntegerValueTemplate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata-template.ecore#//IntegerValueTemplate/value"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata-template.ecore#//IdValueTemplate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata-template.ecore#//IdValueTemplate/id"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata-template.ecore#//PunctuationValueTemplate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata-template.ecore#//PunctuationValueTemplate/type"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata-template.ecore#//AnnotatedTemplate">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata-template.ecore#//AnnotatedTemplate/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata-template.ecore#//TupleValueTemplate">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata-template.ecore#//TupleValueTemplate/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata-template.ecore#//MultiValueTemplate">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata-template.ecore#//MultiValueTemplate/values"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

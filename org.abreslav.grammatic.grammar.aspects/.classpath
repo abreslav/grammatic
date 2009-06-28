@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar"/>
+	<classpathentry kind="var" path="EMF_ECORE"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.common"/>
+	<classpathentry kind="var" path="EMF_COMMON"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.metadata.aspects.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.interpreter"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

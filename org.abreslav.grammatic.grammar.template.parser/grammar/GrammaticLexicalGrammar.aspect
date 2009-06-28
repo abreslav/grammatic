@@ -1,0 +1,59 @@
+{
+	name = GrammaticLexicalGrammar;
+	package = 'org.abreslav.grammatic.grammar.template.parser';
+	imports = {{
+		import org.abreslav.grammatic.grammar.CharacterRange;
+		import org.abreslav.grammatic.grammar.Expression;
+		import org.abreslav.grammatic.template.TemplateBody;
+	}};
+}
+
+basicLexicalAtom
+	[[
+		rules = {{
+				TemplateBody<? extends Expression> basicLexicalAtom();
+		}};
+	]]
+	: STRING
+	: character
+	: '.'
+	: range
+	;
+
+range
+	[[
+		rules = {{
+			TemplateBody<? extends Expression> range();
+		}};
+	]]
+	: '[' rangeItem+ ']'
+	[[
+		rangeItem.call = {{rangeItem()}};
+	]]
+	: rangeComplement
+	;
+rangeComplement
+	[[
+		rules = {{
+				SetComplementBuilder rangeComplement();
+		}};
+	]]
+	:  '[^' rangeItem+ ']'
+	[[
+		rangeItem.call = {{rangeComplementItem(#result)}};
+	]]
+	;
+rangeItem
+	[[
+		rules = {{
+				void rangeComplementItem(SetComplementBuilder builder);
+				TemplateBody<CharacterRange> rangeItem();
+		}};
+	]]
+	: character
+	: $from=character '--' $to=character
+	[[
+		from.variable = from;
+		to.variable = to;
+	]]
+	;

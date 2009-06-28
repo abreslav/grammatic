@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	<target name="default">
+		<antcall target="generateGrammars"></antcall>
+		<antcall target="generateParser"></antcall>
+    </target>
+
+	<import file="../org.abreslav.grammatic.bootstrap/buildCommons.xml"/>
+	<target name="generateGrammars">
+    	<property name="project" value="${queryParserProj}"/>
+    	<property name="projectDir" value="${basedir}/../${project}"/>
+    	<property name="targetPackageDir" value="${projectDir}/generated/"/>
+    	
+    	<property name="grammardir" value="${projectDir}/grammar/" /> 
+    	<property name="generatedgrammardir" value="${projectDir}/generated-grammar/"/>
+
+    	<grammatic grammardir="${grammardir}" generatedgrammardir="${generatedgrammardir}" targetpackagedir="${targetPackageDir}/"
+        	grammarname="GrammaticQuery"
+    	>
+        	<importdir path="${basedir}/../${grammarParserProj}/grammar"/>
+        	<aspectapplication grammarname="GrammaticQuery" aspectname="GrammaticQuery"/>
+    		<aspectapplication grammarname="GrammaticCharacter" aspectname="GrammaticCharacter"/>
+    		<aspectapplication grammarname="GrammaticMetadata" aspectname="GrammaticMetadata"/>
+    		<aspectapplication grammarname="GrammaticLexicalGrammar" aspectname="GrammaticLexicalGrammar"/>
+    		<aspectapplication grammarname="GrammaticGrammarTemplate" aspectname="GrammaticGrammarTemplate"/>
+        </grammatic>
+    	<delete dir="${projectDir}/generated/org/abreslav/grammatic/grammar"></delete>
+    </target>
+
+	<import file="../org.abreslav.grammatic.bootstrap/buildGrammar.xml"/>
+	<target name="generateParser">
+		<property name="targetFolder" value="${basedir}/generated-parser/org/abreslav/grammatic/query/parser"/>
+		<antcall target="buildGrammar">
+			<param name="doclear" value="true"/>
+			<param name="project" value="org.abreslav.grammatic.query.tester"/>
+			<param name="grammarFile" value="GrammaticQuery.g"/>
+			<param name="treeGrammarFile" value="GrammaticQueryTree.g"/>
+			<param name="lib" value="${basedir}/generated-grammar"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+		</antcall>
+    </target>
+</project>

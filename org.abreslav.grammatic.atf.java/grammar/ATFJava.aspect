@@ -1,0 +1,11 @@
+{
+	parserName = ATFJava;
+	parserPackage = 'org.abreslav.grammatic.atf.java.parser';
+}
+
+associatedFunctions
+	|: .. $=semanticFunction* ..
+	[[
+		backtrack;
+	]]
+	;

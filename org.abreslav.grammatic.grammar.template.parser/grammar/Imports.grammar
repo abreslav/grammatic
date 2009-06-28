@@ -1,0 +1,15 @@
+#import 'GrammaticLexer.grammar'{STRING, NAME};
+
+import
+	: '#import' importSpec (',' importSpec)* ';'
+	;	
+	
+importSpec
+	: moduleName '{' renaming (',' renaming)* '}'
+	;
+	
+moduleName : STRING;
+
+renaming
+	: (NAME '=')? NAME
+	;

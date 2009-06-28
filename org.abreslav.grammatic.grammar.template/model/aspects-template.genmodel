@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.grammar.template/generated"
+    modelPluginID="org.abreslav.grammatic.grammar.template" modelName="Aspects-template"
+    updateClasspath="false" importerID="org.eclipse.emf.importer.ecore" bundleManifest="false"
+    complianceLevel="6.0" copyrightFields="false" usedGenPackages="../../org.abreslav.grammatic.grammar/model/aspects.genmodel#//aspects ../../org.abreslav.grammatic.grammar/model/metadata.genmodel#//metadata ../../org.abreslav.grammatic.template/model/template.genmodel#//template">
+  <foreignModel>aspects-template.ecore</foreignModel>
+  <genPackages prefix="AspectsTemplate" basePackage="org.abreslav.grammatic.grammar.template"
+      disposableProviderFactory="true" ecorePackage="aspects-template.ecore#/">
+    <genClasses ecoreClass="aspects-template.ecore#//MetadataAspectTemplate">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aspects-template.ecore#//MetadataAspectTemplate/assignments"/>
+    </genClasses>
+    <genClasses ecoreClass="aspects-template.ecore#//AttributeAssignmentTemplate">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference aspects-template.ecore#//AttributeAssignmentTemplate/subject"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference aspects-template.ecore#//AttributeAssignmentTemplate/attributes"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

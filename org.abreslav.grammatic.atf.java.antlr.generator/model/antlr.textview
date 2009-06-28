@@ -1,0 +1,138 @@
+antlr.ANTLRGrammar # {
+	grammar <name>;
+	
+	<options>
+	
+	@header {
+		package <package>;
+		
+		<imports>
+	}
+	
+	@lexer::header {
+	    package <package>;
+	}\
+	
+	<members>\
+	
+	<rules>
+}
+
+#nonempty antrl.ANTLRGrammar.options # {
+	options {
+		<#this>
+	}
+}
+
+antlr.Option {
+	<name> = <value>;
+	
+}
+
+antlr.Import # {
+	import <imported>;
+	
+}
+
+antlr.SyntacticalRule # {
+	<name>\ <parameters>\ <resultVariable>
+	<init>\
+	<after>\
+	: <productions; separator="| ">
+	;
+}
+
+#nonempty antlr.SyntacticalRule.init # {
+	@init {
+		<#this>
+	}
+}
+
+#nonempty antlr.SyntacticalRule.after # {
+	@after {
+		<#this>
+	}
+}
+
+#nonempty antlr.SyntacticalRule.resultVariable # {
+	returns [<#this>]
+}
+
+#nonempty antlr.SyntacticalRule.parameters # {
+	[<#this; separator=", ">]
+}
+
+antlr.Parameter # {
+	<type> <name>
+}
+
+antlr.ANTLRProduction # {
+	<before>\ <expression>\ <after>
+	
+}
+
+antlr.ANTLRExpression # {
+	<options>\ <before>\ <#dispatch>\ <after>
+}
+
+#nonempty antlr.ANTLRExpression.options # {
+	options {<#this>}:
+}
+
+antlr.ANTLREmpty # {
+	/* empty */
+}
+
+antlr.ANTLRSequence # {
+	<expressions; separator="\ ">
+}
+
+antlr.ANTLRAlternative # {
+	<expressions; separator=" | ">
+}
+
+antlr.ANTLRIteration # {
+	(<expression>)<type.literal>
+}
+
+antlr.ANTLRLexicalLiteral # {
+	'<escape(value)>'
+}
+
+antlr.ANTLRCharacterRange # {
+	'<escape(lowerBound)>'..'<escape(upperBound)>'
+}
+
+antlr.RuleCall # {
+	<variableName?"<variableName>="><rule.name><arguments>
+}
+
+#nonempty antlr.RuleCall.arguments # {
+	[<#this; separator=", ">]
+}
+
+antlr.LexicalRule # {
+	<fragment?"fragment">\ <name>
+		: <whitespace?"{$channel = HIDDEN;}"> <productions>
+		;
+}
+
+Statement # {
+	<#dispatch>;
+}
+
+Assignment # {
+	<definition?<variable.type>>\ <variable.name> = <value>
+}
+
+FunctionCall # {
+	<variableName>.<function.name>(<arguments; separator=", ">)
+}
+
+VariableReference # {
+	<variableName>
+}
+
+ParameterReference # {
+	<parameter.name>
+}

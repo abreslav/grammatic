@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="atf"
+    nsURI="http://www.abreslav.org/garmmatic/2009/ATF" nsPrefix="atf">
+  <eClassifiers xsi:type="ecore:EClass" name="ATFNamed" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ATFAttribute" eSuperTypes="#//ATFNamed">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FunctionSignature" eSuperTypes="#//ATFNamed">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inputAttributes" upperBound="-1"
+        eType="#//ATFAttribute" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outputAttributes" upperBound="-1"
+        eType="#//ATFAttribute" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SemanticModule" eSuperTypes="#//ATFNamed">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="functions" upperBound="-1"
+        eType="#//FunctionSignature" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ATFExpression" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ATFAttributeReference" eSuperTypes="#//ATFExpression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attribute" lowerBound="1"
+        eType="#//ATFAttribute"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FunctionCall" eSuperTypes="#//ATFExpression #//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="function" lowerBound="1"
+        eType="#//FunctionSignature"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+        eType="#//ATFExpression" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Statement" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ATFAttributeAssignment" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftSide" lowerBound="1"
+        upperBound="-1" eType="#//ATFAttributeReference" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightSide" lowerBound="1"
+        eType="#//ATFExpression" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CollectionAppending" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftSide" lowerBound="1"
+        eType="#//ATFAttributeReference" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightSide" lowerBound="1"
+        eType="#//ATFExpression" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Block" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
+        eType="#//Statement" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,54 @@
+group Pools;
+
+main(package, imports, name, moduleImplementationProvider, moduleImplementationTypes) ::= <<
+
+package <package>;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<imports:{import <it>;<\n>}>
+
+public class <name> {
+
+	private static final int MAX_POOL_SIZE = 9;
+
+	private final <moduleImplementationProvider> myModuleImplementationProvider;
+<moduleImplementationTypes:{
+	private List\<I<it>\> my<it>Pool;}
+>
+
+	public <name>(
+			<moduleImplementationProvider> moduleImplementationProvider) {
+		myModuleImplementationProvider = moduleImplementationProvider;
+	}
+
+<moduleImplementationTypes:{<implementationSupport(it)>}>
+}
+>>
+
+implementationSupport(basicName) ::= <<
+	private final List\<I<basicName>\> get<basicName>Pool() {
+		if (my<basicName>Pool == null) {
+			my<basicName>Pool = new ArrayList\<I<basicName>\>();
+		}
+		return my<basicName>Pool;
+	}
+	
+	public final I<basicName> get<basicName>() {
+		List\<I<basicName>\> pool = get<basicName>Pool();
+		if (pool.isEmpty()) {
+			return myModuleImplementationProvider.get<basicName>();
+		}
+		return pool.remove(pool.size() - 1); 
+	}
+	
+	public final void release<basicName>(I<basicName> builder) {
+		builder.release();
+		List\<I<basicName>\> pool = get<basicName>Pool();
+		if (pool.size() \< MAX_POOL_SIZE) {
+			pool.add(builder);
+		}
+	}
+	
+>>

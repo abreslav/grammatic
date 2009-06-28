@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="grammarTemplate" nsURI="http://www.abreslav.org/Grammatic/2008/GrammarTemplate" nsPrefix="grammatic-grammar-template">
+  <eClassifiers xsi:type="ecore:EClass" name="GrammarTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbols" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Grammar"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SymbolTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="productions" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Production"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ProductionTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Production"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionTemplate" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EmptyTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Empty"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SymbolReferenceTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbol" lowerBound="1">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//SymbolReference"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CombinationTemplate" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" lowerBound="1" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Combination"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SequenceTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" lowerBound="1" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Sequence"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlternativeTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" lowerBound="1" upperBound="-1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Alternative"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IterationTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" defaultValueLiteral="0">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" defaultValueLiteral="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Iteration"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LexicalDefinitionTemplate" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//LexicalDefinition"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CharacterRangeTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//CharacterRange"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LexicalExpressionTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//LexicalExpression"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionValueTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1" containment="true">
+      <eGenericType>
+        <eTypeArguments>
+          <eUpperBound>
+            <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+          </eUpperBound>
+        </eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//ExpressionValue"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringExpressionTemplate">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="subtemplatesConformToSpec"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eGenericSuperTypes>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//StringExpression"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../org.abreslav.grammatic.template/model/template.ecore#//TemplateBody"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>

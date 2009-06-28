@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="query"
+    nsURI="http://www.abreslav.org/Grammatic/2008/Query" nsPrefix="grammatic-query">
+  <eClassifiers xsi:type="ecore:EClass" name="QueryContainer">
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//Query"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="query" lowerBound="1" containment="true">
+      <eGenericType eTypeParameter="#//QueryContainer/T"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variableDefinitions" upperBound="-1"
+        eType="#//VariableDefinition" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Query" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CommutativeOperationQuery" abstract="true"
+      eSuperTypes="#//Query">
+    <eTypeParameters name="D">
+      <eBounds eClassifier="#//Query"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definitions" upperBound="-1"
+        containment="true">
+      <eGenericType eTypeParameter="#//CommutativeOperationQuery/D"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="open" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="wildcardVariable" eType="#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RuleQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbol" lowerBound="1"
+        eType="#//SymbolQuery" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbolVariable" eType="#//VariableDefinition"/>
+    <eGenericSuperTypes eClassifier="#//Query"/>
+    <eGenericSuperTypes eClassifier="#//CommutativeOperationQuery">
+      <eTypeArguments eClassifier="#//ProductionQuery"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SymbolQuery" eSuperTypes="#//MetadataQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ProductionQuery" eSuperTypes="#//MetadataQuery">
+    <eAnnotations source="my">
+      <details key="label" value="definition._label()"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="#//ExpressionQuery"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionQuery" abstract="true" eSuperTypes="#//MetadataQuery"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EmptyQuery" eSuperTypes="#//ExpressionQuery">
+    <eAnnotations source="my">
+      <details key="label" value="'#empty'"/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SymbolReferenceQuery" eSuperTypes="#//ExpressionQuery">
+    <eAnnotations source="my">
+      <details key="label" value="symbol._label()"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbol" lowerBound="1"
+        eType="#//SymbolQuery" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExactExpressionQuery" eSuperTypes="#//ExpressionQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1"
+        eType="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LexicalWildcardQuery" eSuperTypes="#//ExpressionQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" eType="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//LexicalDefinition"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VariableDefinition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//Query"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//ExpressionQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlternativeQuery">
+    <eGenericSuperTypes eClassifier="#//ExpressionQuery"/>
+    <eGenericSuperTypes eClassifier="#//CommutativeOperationQuery">
+      <eTypeArguments eClassifier="#//ExpressionQuery"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SequenceQuery" eSuperTypes="#//ExpressionQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definitions" upperBound="-1"
+        eType="#//ExpressionQuery" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SequenceWildcard" eSuperTypes="#//ExpressionQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlternativeWildcard" eSuperTypes="#//Query">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IterationQuery" eSuperTypes="#//ExpressionQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="definition" lowerBound="1"
+        eType="#//ExpressionQuery" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MetadataQuery" abstract="true" eSuperTypes="#//Query">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" upperBound="-1"
+        eType="#//AttributeQuery" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributeValue" lowerBound="1"
+        eType="#//AttributeValueQuery" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attributeName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="namespaceUri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeValueQuery" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeType" eSuperTypes="#//AttributeValueQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//AttributeTypeOptions"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AttributeTypeOptions">
+    <eLiterals name="STRING"/>
+    <eLiterals name="INTEGER" value="1"/>
+    <eLiterals name="ID" value="2"/>
+    <eLiterals name="PUNCTUATION" value="3"/>
+    <eLiterals name="TUPLE" value="4"/>
+    <eLiterals name="MULTI" value="5"/>
+    <eLiterals name="EXPRESSION" value="6"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributePresence" eSuperTypes="#//AttributeValueQuery">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="present" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExactValue" eSuperTypes="#//AttributeValueQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="ecore:EClass ../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Value"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypedRegExpValue" eSuperTypes="#//AttributeValueQuery">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="wildCardSeparatedFragments"
+        upperBound="-1" eType="ecore:EClass ../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Value"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

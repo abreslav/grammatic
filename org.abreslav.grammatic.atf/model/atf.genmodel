@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.atf/generated"
+    modelPluginID="org.abreslav.grammatic.atf" modelName="Atf" updateClasspath="false"
+    importerID="org.eclipse.emf.importer.ecore" bundleManifest="false" complianceLevel="6.0"
+    copyrightFields="false">
+  <foreignModel>atf.ecore</foreignModel>
+  <genPackages prefix="Atf" basePackage="org.abreslav.grammatic" disposableProviderFactory="true"
+      ecorePackage="atf.ecore#/">
+    <genClasses image="false" ecoreClass="atf.ecore#//ATFNamed">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute atf.ecore#//ATFNamed/name"/>
+    </genClasses>
+    <genClasses ecoreClass="atf.ecore#//ATFAttribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute atf.ecore#//ATFAttribute/type"/>
+    </genClasses>
+    <genClasses ecoreClass="atf.ecore#//FunctionSignature">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//FunctionSignature/inputAttributes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//FunctionSignature/outputAttributes"/>
+    </genClasses>
+    <genClasses ecoreClass="atf.ecore#//SemanticModule">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//SemanticModule/functions"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="atf.ecore#//Expression"/>
+    <genClasses ecoreClass="atf.ecore#//ATFAttributeReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference atf.ecore#//ATFAttributeReference/attribute"/>
+    </genClasses>
+    <genClasses ecoreClass="atf.ecore#//FunctionCall">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference atf.ecore#//FunctionCall/function"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//FunctionCall/arguments"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="atf.ecore#//Statement"/>
+    <genClasses ecoreClass="atf.ecore#//ATFAttributeAssignment">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//ATFAttributeAssignment/leftSide"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//ATFAttributeAssignment/rightSide"/>
+    </genClasses>
+    <genClasses ecoreClass="atf.ecore#//CollectionAppending">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//CollectionAppending/leftSide"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//CollectionAppending/rightSide"/>
+    </genClasses>
+    <genClasses ecoreClass="atf.ecore#//Block">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference atf.ecore#//Block/statements"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

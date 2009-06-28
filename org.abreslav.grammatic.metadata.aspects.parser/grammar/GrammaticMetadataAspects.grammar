@@ -1,0 +1,47 @@
+#import 
+	'GrammaticLexer.grammar'{NAME}, 
+	'GrammaticMetadata.grammar'{attribute}, 
+	'GrammaticQuery.grammar'{productionQuery, symbolQueryWithVar},
+	'Imports.grammar'{import};
+
+aspect
+	: import* grammarAssignment? assignmentRule*
+	;
+	
+grammarAssignment
+	: metadataDefinition
+	;
+	
+assignmentRule
+	: createQueryContainer createRuleQuery 
+	  symbolQueryWithVar symbolMetadataAssignment? productionAssignment* ';'	
+	; 
+	 
+createQueryContainer
+	: #empty 
+	;
+	 
+createRuleQuery
+	: #empty
+	;
+
+symbolMetadataAssignment
+	: '[[' (attribute ';')* ']]'
+	;
+	
+productionAssignment
+	: productionQuery assignments?
+	;
+
+assignments 
+	: '[[' assignment* ']]'
+	;		
+	
+assignment
+	: NAME metadataDefinition ';'
+	: (NAME '.')? attribute ';'
+	;	
+	
+metadataDefinition
+	: '{' (attribute (';' attribute?)*)? '}'
+	;		

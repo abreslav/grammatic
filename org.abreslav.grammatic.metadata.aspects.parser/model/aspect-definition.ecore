@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="aspectdef"
+    nsURI="http://www.abreslav.org/Grammatic/2008/AspectDefinition" nsPrefix="aspect-definition">
+  <eClassifiers xsi:type="ecore:EClass" name="AspectDefinition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="assignmentRules" upperBound="-1"
+        eType="#//AssignmentRule" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="grammarAssignment" eType="#//GrammarAssignment"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AssignmentRule">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="matchesLowerBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="matchesUpperBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="queryContainer" lowerBound="1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.abreslav.grammatic.query/model/query.ecore#//QueryContainer">
+        <eTypeArguments>
+          <eUpperBound eClassifier="ecore:EClass ../../org.abreslav.grammatic.query/model/query.ecore#//Query"/>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="assignments" upperBound="-1"
+        eType="#//Assignment" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Assignment" eSuperTypes="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Annotated">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variable" lowerBound="1"
+        eType="ecore:EClass ../../org.abreslav.grammatic.query/model/query.ecore#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GrammarAssignment" eSuperTypes="../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Annotated"/>
+</ecore:EPackage>

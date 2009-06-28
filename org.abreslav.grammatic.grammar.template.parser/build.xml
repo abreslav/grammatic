@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	
+	<import file="../org.abreslav.grammatic.bootstrap/buildCommons.xml"/>
+	<target name="generateGrammars">
+    	<property name="project" value="org.abreslav.grammatic.grammar.template.parser"/>
+    	<property name="projectDir" value="${basedir}/../${project}"/>
+    	<property name="targetPackageDir" value="${projectDir}/generated/"/>
+    	
+    	<property name="grammardir" value="${projectDir}/grammar/" /> 
+    	<property name="generatedgrammardir" value="${projectDir}/generated-grammar/"/>
+
+    	<grammatic grammardir="${grammardir}" generatedgrammardir="${generatedgrammardir}" 
+    		targetpackagedir="${targetPackageDir}/"
+        	grammarname="GrammaticGrammarTemplate"
+    	>
+    		<aspectapplication grammarname="GrammaticCharacter" aspectname="GrammaticCharacter"/>
+    		<aspectapplication grammarname="GrammaticMetadata" aspectname="GrammaticMetadata"/>
+    		<aspectapplication grammarname="GrammaticLexicalGrammar" aspectname="GrammaticLexicalGrammar"/>
+    		<aspectapplication grammarname="GrammaticGrammarTemplate" aspectname="GrammaticGrammarTemplate"/>
+    		<aspectapplication grammarname="Imports" aspectname="Imports"/>
+        </grammatic>
+    </target>
+
+	<import file="../org.abreslav.grammatic.bootstrap/buildGrammar.xml"/>
+	<target name="default">
+		<antcall target="generateGrammars"></antcall>
+		<property name="targetFolder" value="generated-parser/org/abreslav/grammatic/grammar/template/parser"/>
+		<property name="project" value="org.abreslav.grammatic.grammar.template.parser"/>
+		<antcall target="buildGrammar">
+  			<param name="targetFolder" value="generated-parser/org/abreslav/grammatic/grammar/template/parser"/>
+			<param name="project" value="org.abreslav.grammatic.grammar.template.parser"/>
+			<param name="grammarFile" value="GrammaticGrammarTemplate.g"/>
+			<param name="lib" value="grammar"/>
+	        <param name="lexerJava" value="${targetFolder}/GrammaticGrammarTemplaterLexer.java"/>
+	        <param name="package" value="${project}"/>
+		</antcall>
+
+	</target>
+
+</project>

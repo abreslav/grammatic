@@ -1,0 +1,22 @@
+group ParserMembers;
+
+main(poolVars) ::= <<
+<poolVars:{
+	private <it.provider.poolsClassName> <it.fieldName>;}
+>
+
+    public void setModuleImplementations(
+    	<poolVars:{<it.provider.providerInterfaceName> <it.constructorParameterName>}; separator=", \n">
+	) {
+		<poolVars:{this.<it.fieldName> = new <it.provider.poolsClassName>(<it.constructorParameterName>);<\n>}>
+    }
+
+    public void displayRecognitionError(String[] tokenNames,
+            RecognitionException e) {
+		String hdr = getErrorHeader(e);
+		String msg = getErrorMessage(e, tokenNames);
+		super.displayRecognitionError(tokenNames, e);
+		throw new IllegalArgumentException(hdr + " " + msg, e);
+    }
+
+>>;

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.template/generated"
+    modelPluginID="org.abreslav.grammatic.template" modelName="Template" updateClasspath="false"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>template.ecore</foreignModel>
+  <genPackages prefix="Template" basePackage="org.abreslav.grammatic" disposableProviderFactory="true"
+      ecorePackage="template.ecore#/">
+    <genClasses ecoreClass="template.ecore#//Template">
+      <genTypeParameters ecoreTypeParameter="template.ecore#//Template/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute template.ecore#//Template/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference template.ecore#//Template/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference template.ecore#//Template/body"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="template.ecore#//TemplateBody">
+      <genTypeParameters ecoreTypeParameter="template.ecore#//TemplateBody/T"/>
+    </genClasses>
+    <genClasses ecoreClass="template.ecore#//TemplateParameter">
+      <genTypeParameters ecoreTypeParameter="template.ecore#//TemplateParameter/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute template.ecore#//TemplateParameter/name"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference template.ecore#//TemplateParameter/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute template.ecore#//TemplateParameter/lowerBound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute template.ecore#//TemplateParameter/upperBound"/>
+    </genClasses>
+    <genClasses ecoreClass="template.ecore#//TemplateApplication">
+      <genTypeParameters ecoreTypeParameter="template.ecore#//TemplateApplication/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference template.ecore#//TemplateApplication/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference template.ecore#//TemplateApplication/arguments"/>
+    </genClasses>
+    <genClasses ecoreClass="template.ecore#//TemplateArgument">
+      <genTypeParameters ecoreTypeParameter="template.ecore#//TemplateArgument/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference template.ecore#//TemplateArgument/parameter"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference template.ecore#//TemplateArgument/value"/>
+    </genClasses>
+    <genClasses ecoreClass="template.ecore#//ParameterReference">
+      <genTypeParameters ecoreTypeParameter="template.ecore#//ParameterReference/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference template.ecore#//ParameterReference/parameter"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

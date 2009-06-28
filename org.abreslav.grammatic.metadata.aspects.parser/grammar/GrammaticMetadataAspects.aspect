@@ -1,0 +1,134 @@
+{
+	name = GrammaticMetadataAspects;
+	package = 'org.abreslav.grammatic.metadata.aspectdef.parser';
+	imports = {{
+		import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
+		import org.abreslav.grammatic.metadata.aspectdef.AssignmentRule;
+		import org.abreslav.grammatic.metadata.aspectdef.Assignment;
+		import org.abreslav.grammatic.metadata.aspectdef.GrammarAssignment;
+		import org.abreslav.grammatic.query.QueryContainer;
+		import org.abreslav.grammatic.query.RuleQuery;
+		import org.abreslav.grammatic.query.SymbolQuery;
+		import org.abreslav.grammatic.query.ProductionQuery;
+	}};
+}
+
+aspect
+	[[
+		rules = {{
+			AspectDefinition aspect();
+		}};
+	]]
+	: ..
+	;
+	
+grammarAssignment
+	[[
+		rules = {{
+			GrammarAssignment grammarAssignment();
+		}};
+	]]
+	: $=metadataDefinition
+	[[
+		call = {{metadataDefinition(#result)}};
+	]]
+	;
+	
+assignmentRule
+	[[
+		rules = {{
+			AssignmentRule assignmentRule();
+		}};
+	]]
+	: createQueryContainer createRuleQuery 
+			symbolQueryWithVar symbolMetadataAssignment? productionAssignment* ';'
+	[[
+		createQueryContainer.variable = qC;
+		createRuleQuery.variable = rQ;
+		productionAssignment.call = {{productionAssignment(#result, $qC, $rQ)}};
+		symbolQueryWithVar.call = {{symbolQueryWithVar($rQ)}};
+	]]
+	; 
+	 
+createQueryContainer
+	[[
+		rules = {{
+			QueryContainer<RuleQuery> createQueryContainer();
+		}};
+	]]
+	: #empty 
+	;
+	 
+createRuleQuery
+	[[
+		rules = {{
+			RuleQuery createRuleQuery();
+		}};
+	]]
+	: #empty
+	;
+	 	
+symbolMetadataAssignment
+	[[
+		rules = {{
+			Assignment symbolMetadataAssignment();
+		}};
+	]]
+	: .. (.. attribute ..)* ..
+	[[
+		attribute.call = {{attributeInList(#result)}};
+	]]
+	;
+	
+productionAssignment
+	[[
+		rules = {{
+			void productionAssignment(AssignmentRule rule, QueryContainer<RuleQuery> queryContainer, RuleQuery theRuleQuery);
+		}};
+	]]
+	: productionQuery assignments?
+	[[
+		assignments.call = {{assignments(rule, queryContainer)}};
+		productionQuery.call = {{productionQuery(theRuleQuery)}};
+	]]
+	;
+
+assignments 
+	[[
+		rules = {{
+			void assignments(AssignmentRule rule, QueryContainer<RuleQuery> queryContainer);
+		}};
+	]]
+	: '[[' assignment* ']]'
+	[[
+		assignment.call = {{assignment(queryContainer)}};
+	]]
+	;		
+	
+assignment
+	[[
+		rules = {{
+			Assignment assignment(QueryContainer<RuleQuery> queryContainer);
+		}};
+	]]
+	: NAME metadataDefinition ';'
+	[[
+		metadataDefinition.call = {{metadataDefinition(#result)}};
+	]] 
+	: (NAME '.')? attribute ';'
+	[[
+		attribute.call = {{attributeInList(#result)}}; 
+	]]
+	;	
+	
+metadataDefinition
+	[[
+		rules = {{
+			void metadataDefinition(Annotated asgnmnt);
+		}};
+	]]
+	: '{' (attribute (';' attribute?)*)? '}'
+	[[
+		attribute.call = {{attributeInList(asgnmnt)}}; 
+	]]
+	;		

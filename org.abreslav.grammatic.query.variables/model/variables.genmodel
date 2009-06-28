@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.query.variables/src"
+    modelPluginID="org.abreslav.grammatic.query.variables" templateDirectory="org.abreslav.customjet/templates"
+    dynamicTemplates="true" modelName="Variables" suppressEMFTypes="true" suppressEMFMetaData="true"
+    suppressEMFModelTags="true" suppressInterfaces="true" importerID="org.eclipse.emf.importer.ecore"
+    suppressContainment="true" complianceLevel="6.0" copyrightFields="false" usedGenPackages="../../org.abreslav.grammatic.grammar/model/grammar.genmodel#//grammar ../../org.abreslav.grammatic.grammar/model/metadata.genmodel#//metadata">
+  <foreignModel>variables.ecore</foreignModel>
+  <genPackages prefix="Variables" basePackage="org.abreslav.grammatic.query" disposableProviderFactory="true"
+      ecorePackage="variables.ecore#/">
+    <genClasses image="false" ecoreClass="variables.ecore#//VariableValue"/>
+    <genClasses ecoreClass="variables.ecore#//ItemValue">
+      <genTypeParameters ecoreTypeParameter="variables.ecore#//ItemValue/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference variables.ecore#//ItemValue/item"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="variables.ecore#//ListValue">
+      <genTypeParameters ecoreTypeParameter="variables.ecore#//ListValue/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference variables.ecore#//ListValue/items"/>
+    </genClasses>
+    <genClasses ecoreClass="variables.ecore#//SequencePartValue"/>
+    <genClasses ecoreClass="variables.ecore#//AlternativePartValue"/>
+    <genClasses ecoreClass="variables.ecore#//RulePartValue"/>
+    <genClasses ecoreClass="variables.ecore#//ExpressionValue"/>
+    <genClasses ecoreClass="variables.ecore#//ProductionValue"/>
+    <genClasses ecoreClass="variables.ecore#//SymbolValue"/>
+  </genPackages>
+</genmodel:GenModel>

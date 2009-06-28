@@ -1,0 +1,82 @@
+{
+	name = GrammaticMetadata;
+	type = parser;
+	package = 'org.abreslav.grammatic.grammar.template.parser';
+	imports = {{
+		import org.eclipse.emf.ecore.EObject;
+		import org.abreslav.grammatic.metadata.Namespace;
+		import org.abreslav.grammatic.metadata.PunctuationType;
+		import org.abreslav.grammatic.metadata.TupleValue;
+		import org.abreslav.grammatic.metadata.Value;
+		import org.abreslav.grammatic.metadata.Annotated;
+		import org.abreslav.grammatic.grammar.Expression;
+		import org.abreslav.grammatic.template.TemplateBody;
+	}};
+}
+
+metadata 
+	[[
+		rules = {{
+			void metadata(EObject subject);
+			TupleValue attributeList();
+		}};
+	]]
+	: '{' (attribute (';' attribute?)*)? '}'
+	[[
+		attribute.call = {
+			metadata = {{attribute(subject)}};
+			attributeList = {{attributeInList(#result)}};
+		};
+	]]
+	;
+attribute
+	[[
+		rules = {{
+			void attribute(EObject subject); 
+			void attributeInList(Annotated subject);			
+		}};
+	]]
+	: ..
+	;
+namespace
+	[[
+		rules = {{
+			Namespace namespace();
+		}};
+	]]
+	: ..
+	;
+attributeValue
+	[[
+		rules = {{
+			Value attributeValue();
+		}};	
+	]]
+	|: $=metadata
+	[[
+		call = {{attributeList()}}; 
+	]]
+	;
+term 
+	[[
+		rules = {{
+				Value term();
+		}};	
+	]]
+	: attributeValue 
+	: punctuation
+	;
+punctuation
+	[[
+		rules = {{
+			PunctuationType punctuation();
+		}};	
+	]]
+	:   $=('`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
+	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
+	| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
+	| '?' | '<' | '>')
+	[[
+		tokenSwitch;
+	]]
+	;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project org.abreslav.grammatic.template.generator">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/media/data/work/grammatic/code/org.abreslav.grammatic.template.generator/deploy/template-generator.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="Test"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/home/abreslav/work/grammatic/code/org.abreslav.grammatic.template.generator/bin"/>
+            <fileset dir="/media/data/work/grammatic/code/org.abreslav.grammatic.template/bin"/>
+            <fileset dir="/media/data/work/grammatic/code/org.abreslav.grammatic.common/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.emf.ecore_2.4.0.v200806091234.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.emf.common_2.4.0.v200806091234.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.core.runtime_3.4.0.v20080512.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.osgi_3.4.0.v20080605-1900.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.equinox.common_3.4.0.v20080421-2006.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.core.jobs_3.4.0.v20080512.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610/runtime_registry_compatibility.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.equinox.registry_3.4.0.v20080516-0950.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.equinox.preferences_3.2.200.v20080421-2006.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.core.contenttype_3.3.0.v20080604-1400.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.equinox.app_1.1.0.v20080421-2006.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.eclipse.emf.ecore.xmi_2.4.0.v200806091234.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/usr/share/eclipse/plugins/org.apache.ant_1.7.0.v200803061910/lib/ant.jar"/>
+        </jar>
+    </target>
+</project>
