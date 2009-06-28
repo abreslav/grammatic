@@ -1,0 +1,22 @@
+a : 'a';
+b : b b;
+m : #empty;
+
+ aaa 
+ 	: b b 
+ 	: 'x';
+
+X : #empty 'a';
+Y : #empty 'b';
+some 
+	: X 
+	: Y Y 
+	: #empty 
+	: 'z' 
+	: 'x' 
+	: 'y' 
+	: 'y' 
+	: some ; 
+zzz 
+	: 'a' 
+	: 'b';

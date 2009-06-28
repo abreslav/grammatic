@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="BuildGrammar" default="buildGrammar">
+	
+    <target name="buildGrammar">    	
+    	
+    	<property name="antlr.version" value="3.1.1"/>
+    	<property name="antlr.location" value="/usr/share/antlr-${antlr.version}/lib/"/>
+    	<property name="antlr.classpath" value="${antlr.location}stringtemplate-3.2.jar;${antlr.location}antlr-2.7.7.jar;${antlr.location}antlr-${antlr.version}.jar"/>
+    	
+    	<!--<delete dir="generated-parser/org"/>-->
+    	<java failonerror="true"
+    		classpath="${antlr.classpath}" 
+    		classname="org.antlr.Tool"
+    		>
+    		<arg value="-fo"/> <arg path="${targetFolder}"/>
+    		<arg value="-lib"/> <arg path="${lib}"/>
+    		<arg file="${basedir}/generated-grammar/${grammarFile}"/>
+    	</java>
+    	<!--
+    	<java  failonerror="true" 
+    		classpath="${antlr.classpath}" 
+    		classname="org.antlr.Tool"
+    		>
+    		<arg value="-fo"/> <arg path="${targetFolder}"/>
+    		<arg value="-lib"/> <arg path="${basedir}/generated-grammar"/>
+    		<arg file="${basedir}/generated-grammar/${treeGrammarFile}"/>
+    	</java>
+		-->
+    	<!--<eclipse.refreshLocal resource="${project}/generated-parser" depth="-1"/>-->
+    </target>
+
+	<target name="injectPackage">
+        <property name="temp" value="${targetFolder}/temp"/>
+    	<copy file="${lexerJava}" tofile="${temp}"/>
+    	<exec executable="echo" output="${lexerJava}">
+    		<arg value="package ${package};"/>
+    	</exec>
+    	<exec executable="cat" append="true" output="${lexerJava}">
+    		<arg value="${temp}"/>
+    	</exec>
+    	<delete file="${temp}"></delete>
+    	<!--<eclipse.refreshLocal resource="${project}/${targetFolder}" depth="-1"/>-->
+	</target>
+</project>

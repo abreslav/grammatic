@@ -1,0 +1,8 @@
+character
+	: CHARACTER
+	: CODE
+	;
+#() --> (char c) {
+		CHARACTER : c = getCharacter(CHARACTER#);
+		CODE : c = getCharByCode(CODE#);
+}

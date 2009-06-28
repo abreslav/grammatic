@@ -1,0 +1,108 @@
+import java.io.Serializable;
+import java.security.BasicPermission;
+
+package java.lang {
+	class AbstractMethodError extends IncompatibleClassChangeError;
+	class Appendable;
+	class ArithmeticException extends RuntimeException;
+	class ArrayIndexOutOfBoundsException extends IndexOutOfBoundsException;
+	class ArrayStoreException extends RuntimeException;
+	class AssertionError extends Error;
+	class Boolean extends java.io.Serializable, Comparable<Boolean>;
+	class Byte extends Number, Comparable<Byte>;
+	class Character extends Object, java.io.Serializable, Comparable<Character>;
+	class CharSequence;
+	class ClassCastException extends RuntimeException;
+	class ClassCircularityError extends LinkageError;
+	class ClassFormatError extends LinkageError;
+	class Class<T> extends java.io.Serializable, java.lang.reflect.GenericDeclaration, java.lang.reflect.Type, java.lang.reflect.AnnotatedElement;
+	class ClassLoader;
+	class ClassNotFoundException extends Exception;
+	class Cloneable;
+	class CloneNotSupportedException extends Exception;
+	class Comparable<T>;
+	class Compiler;
+	class Double extends Number, Comparable<Double>;
+	class EnumConstantNotPresentException extends RuntimeException;
+	class Enum<E extends Enum<E> > extends Comparable<E>, Serializable;
+	class Error extends Throwable;
+	class ExceptionInInitializerError extends LinkageError;
+	class Exception extends Throwable;
+	class Float extends Number, Comparable<Float>;
+	class IllegalAccessError extends IncompatibleClassChangeError;
+	class IllegalAccessException extends Exception;
+	class IllegalArgumentException extends RuntimeException;
+	class IllegalMonitorStateException extends RuntimeException;
+	class IllegalStateException extends RuntimeException;
+	class IllegalThreadStateException extends IllegalArgumentException;
+	class IncompatibleClassChangeError extends LinkageError;
+	class IndexOutOfBoundsException extends RuntimeException;
+	class InheritableThreadLocal<T> extends ThreadLocal<T>;
+	class InstantiationError extends IncompatibleClassChangeError;
+	class InstantiationException extends Exception;
+	class Integer extends Number, Comparable<Integer>;
+	class InternalError extends VirtualMachineError;
+	class InterruptedException extends Exception;
+	class Iterable<T>;
+	class LinkageError extends Error;
+	class Long extends Number, Comparable<Long>;
+	class Math;
+	class NegativeArraySizeException extends RuntimeException;
+	class NoClassDefFoundError extends LinkageError;
+	class NoSuchFieldError extends IncompatibleClassChangeError;
+	class NoSuchFieldException extends Exception;
+	class NoSuchMethodError extends IncompatibleClassChangeError;
+	class NoSuchMethodException extends Exception;
+	class NullPointerException extends RuntimeException;
+	class NumberFormatException extends IllegalArgumentException;
+	class Number extends java.io.Serializable;
+	class Object;
+	class OutOfMemoryError extends VirtualMachineError;
+	class Package extends java.lang.reflect.AnnotatedElement;
+	class ProcessBuilder;
+	class Process;
+	class Readable;
+	class Runnable;
+	class RuntimeException extends Exception;
+	class Runtime;
+	class RuntimePermission extends BasicPermission;
+	class SecurityException extends RuntimeException;
+	class SecurityManager;
+	class Short extends Number, Comparable<Short>;
+	class StackOverflowError extends VirtualMachineError;
+	class StackTraceElement extends java.io.Serializable;
+	class StrictMath;
+	class StringBuffer extends java.io.Serializable, CharSequence, Appendable;
+	class StringBuilder extends Appendable, java.io.Serializable, CharSequence;
+	class StringIndexOutOfBoundsException extends IndexOutOfBoundsException;
+	class String extends java.io.Serializable, Comparable<String>, CharSequence;
+	class System;
+	class ThreadDeath extends Error;
+	class ThreadGroup;
+	class Thread extends Runnable;
+	class UncaughtExceptionHandler;
+	class ThreadLocal<T>;
+	class Throwable extends Serializable;
+	class TypeNotPresentException extends RuntimeException;
+	class UnknownError extends VirtualMachineError;
+	class UnsatisfiedLinkError extends LinkageError;
+	class UnsupportedClassVersionError extends ClassFormatError;
+	class UnsupportedOperationException extends RuntimeException;
+	class VerifyError extends LinkageError;
+	class VirtualMachineError extends Error;
+	class Void;
+}
+
+package java.io {
+	class Serializable;
+}
+
+package java.lang.reflect {
+	class AnnotatedElement;
+	class GenericDeclaration;
+	class Type;
+}
+
+package java.security {
+	class BasicPermission;
+}

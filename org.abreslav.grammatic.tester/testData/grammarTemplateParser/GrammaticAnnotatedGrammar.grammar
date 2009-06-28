@@ -1,0 +1,55 @@
+#import 
+	'GrammaticLexer.grammar'{NAME}, 
+	'GrammaticCharacter.grammar'{character}, 
+	'GrammaticLexicalGrammar.grammar'{basicLexicalAtom}, 
+	'GrammaticMetadata.grammar'{metadata};
+
+annotatedGrammar 
+	: metadata? imports? rule*
+	;
+	
+imports
+	: '#import' NAME (',' NAME)* ';'
+	;
+	
+	
+rule
+	: NAME metadata? ':' production ('||' production)* ';'
+	;
+	
+production
+	: ('@' metadata)? alternative ('@' metadata)?
+	;
+	
+alternative
+	: sequence ('|' sequence)*	
+	;
+
+expression
+	: alternative ';'
+	;
+
+sequence
+	: iteration (iteration)*
+	;
+	
+iteration
+	: atom (metadata)? operation
+	;
+	
+operation 
+	: '*' | '+' | '?'
+	: #empty
+	;
+	
+atom
+	: NAME
+	: '(' alternative ')'
+	: lexicalAtom
+	: '#empty'
+	;
+	
+lexicalAtom
+	:  basicLexicalAtom
+	: '[[' alternative ']]'
+	;

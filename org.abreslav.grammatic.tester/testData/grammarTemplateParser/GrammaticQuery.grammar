@@ -1,0 +1,139 @@
+#import 
+	'GrammaticLexer.grammar'{NAME}, 
+	'GrammaticMetadata.grammar'{attributeValue}, 
+	'GrammaticLexicalGrammar.grammar'{basicLexicalAtom}, 
+	'GrammaticCharacter.grammar'{character};
+
+ruleQueryContainer
+	: ruleQuery
+	;
+
+ruleQuery
+	: symbolQueryWithVar definition ';'
+	;
+	
+definition
+	: productionQuery*
+	; 
+
+variablePrefix
+	: '$' NAME? ':'
+	;
+		
+symbolQueryWithVar
+	: variablePrefix? anonymousSymbolQuery
+	: namedSymbolQuery
+	;
+		
+anonymousSymbolQuery
+	: '#'
+	: '@' queryMetadata '@'
+	;
+	
+namedSymbolQuery
+	: NAME
+	;
+
+symbolReferenceQuery
+	: anonymousSymbolQuery
+	: namedSymbolQuery
+	;
+		
+productionQuery 
+	: variablePrefix? ruleOperation alternativeQuery
+	: '-->' productionsWildcard
+	;
+
+productionsWildcard
+	: variablePrefix? '{...}'
+	;
+	
+ruleOperation
+	: '-->' | '|>'
+	;
+		
+expressionQuery
+	: alternativeQuery ';'
+	;
+	
+alternativeQuery
+	: sequenceQuery ('|' (sequenceQuery | alternativeWildcard))*
+	;
+
+alternativeWildcard
+	: variablePrefix? '...'
+	;
+
+sequenceQuery
+	: iterationQuery+
+	;
+	
+iterationQuery
+	: varOrAtom (queryMetadata)? operation
+	: variablePrefix? '..'
+	;
+	
+operation 
+	: '*' | '+' | '?'
+	: #empty
+	;
+
+varOrAtom
+	: atom
+	:  variablePrefix atom
+	;
+
+atom
+	: symbolReferenceQuery
+	: '$' NAME
+	: '(' alternativeQuery ')'
+	: lexicalAtom
+	: '#lex'
+	: '#empty'
+	;
+	
+queryMetadata 
+	: '{' (attributeQuery (';' attributeQuery?)*)? '}'
+	;
+
+attributeQuery 
+	: attributeWithValueQuery
+	: '!' namespaceUri? NAME
+	: namespaceUri? NAME ':' attributeType 
+	;		 
+
+attributeWithValueQuery
+	: namespaceUri? NAME ('=' attributeValue)?
+	;
+	
+namespaceUri
+	: NAME ':'
+	;
+
+attributeType
+	: '#' NAME
+	;
+	
+////////////////////////////////////////////////
+	
+lexicalAlternative
+	: lexicalSequence ('|' lexicalSequence)*
+	;
+
+lexicalSequence
+	: lexicalIteration+
+	;
+	
+lexicalIteration
+	: lexicalAtom lexicalOperation
+	;
+	
+lexicalOperation
+	: '*' | '+' | '?'
+	: #empty
+	;
+
+lexicalAtom
+	: basicLexicalAtom
+	: '[[' lexicalAlternative ']]'
+	;

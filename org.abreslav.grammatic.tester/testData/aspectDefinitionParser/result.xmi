@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="ASCII"?>
+<aspect-definition:AspectDefinition xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aspect-definition="http://www.abreslav.org/Grammatic/2008/AspectDefinition" xmlns:grammatic-grammar="http://www.abreslav.org/Grammatic/2008/Grammar" xmlns:grammatic-metadata="http://www.abreslav.org/Grammatic/2008/Metadata" xmlns:grammatic-query="http://www.abreslav.org/Grammatic/2008/Query">
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@assignmentRules.0/@queryContainer/@variableDefinitions.0">
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:SequenceQuery">
+            <definitions xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.0/@queryContainer/@variableDefinitions.1"/>
+            <definitions xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.0/@queryContainer/@variableDefinitions.1"/>
+          </definition>
+        </definitions>
+        <symbol/>
+      </query>
+      <variableDefinitions name="xx">
+        <value xsi:type="grammatic-query:SymbolQuery"/>
+      </variableDefinitions>
+      <variableDefinitions name="b">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol name="b"/>
+        </value>
+      </variableDefinitions>
+    </queryContainer>
+    <assignments variable="//@assignmentRules.0/@queryContainer/@variableDefinitions.0">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:IntegerValue" value="5"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.0/@queryContainer/@variableDefinitions.1">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:IntegerValue"/>
+      </attributes>
+    </assignments>
+  </assignmentRules>
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@assignmentRules.1/@queryContainer/@variableDefinitions.0">
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:SequenceQuery">
+            <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+              <symbol name="b"/>
+            </definitions>
+            <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+              <symbol name="b"/>
+            </definitions>
+          </definition>
+        </definitions>
+        <symbol name="b"/>
+      </query>
+      <variableDefinitions name="b"/>
+    </queryContainer>
+    <assignments variable="//@assignmentRules.1/@queryContainer/@variableDefinitions.0">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:IntegerValue"/>
+      </attributes>
+    </assignments>
+  </assignmentRules>
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@assignmentRules.2/@queryContainer/@variableDefinitions.0">
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:ExactExpressionQuery">
+            <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="97" upperBound="97"/>
+          </definition>
+        </definitions>
+        <symbol name="a"/>
+      </query>
+      <variableDefinitions name="a"/>
+    </queryContainer>
+    <assignments variable="//@assignmentRules.2/@queryContainer/@variableDefinitions.0">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:IntegerValue" value="5"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.2/@queryContainer/@variableDefinitions.0">
+      <attributes name="a">
+        <value xsi:type="grammatic-metadata:IdValue" id="b"/>
+      </attributes>
+    </assignments>
+  </assignmentRules>
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@assignmentRules.3/@queryContainer/@variableDefinitions.0">
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:SequenceWildcard"/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.3/@queryContainer/@variableDefinitions.1">
+          <definition xsi:type="grammatic-query:SequenceQuery">
+            <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+              <symbol/>
+            </definitions>
+            <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+              <symbol/>
+            </definitions>
+          </definition>
+        </definitions>
+        <symbol/>
+      </query>
+      <variableDefinitions name="aaaa">
+        <value xsi:type="grammatic-query:SymbolQuery"/>
+      </variableDefinitions>
+      <variableDefinitions name="abc"/>
+    </queryContainer>
+    <assignments variable="//@assignmentRules.3/@queryContainer/@variableDefinitions.0">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+      <attributes name="c">
+        <value xsi:type="grammatic-metadata:StringValue" value="asd"/>
+      </attributes>
+      <attributes name="d">
+        <value xsi:type="grammatic-metadata:TupleValue">
+          <attributes name="asd">
+            <value xsi:type="grammatic-metadata:IdValue" id="dsa"/>
+          </attributes>
+        </value>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.3/@queryContainer/@variableDefinitions.1">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="d"/>
+      </attributes>
+    </assignments>
+  </assignmentRules>
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@assignmentRules.4/@queryContainer/@variableDefinitions.0">
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.1"/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.3">
+          <definition xsi:type="grammatic-query:SequenceQuery">
+            <definitions xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.2"/>
+            <definitions xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.2"/>
+          </definition>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.5">
+          <definition xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.4"/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.6">
+          <definition xsi:type="grammatic-query:ExactExpressionQuery">
+            <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="122" upperBound="122"/>
+          </definition>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.7">
+          <definition xsi:type="grammatic-query:ExactExpressionQuery">
+            <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="120" upperBound="120"/>
+          </definition>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.8">
+          <definition xsi:type="grammatic-query:ExactExpressionQuery">
+            <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="121" upperBound="121"/>
+          </definition>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.10">
+          <definition xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.9"/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:VariableReference" variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.11"/>
+        </definitions>
+        <symbol name="some"/>
+      </query>
+      <variableDefinitions name="some"/>
+      <variableDefinitions name="X">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol name="X"/>
+        </value>
+      </variableDefinitions>
+      <variableDefinitions name="Y">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol name="Y"/>
+        </value>
+      </variableDefinitions>
+      <variableDefinitions name="$"/>
+      <variableDefinitions name="Y">
+        <value xsi:type="grammatic-query:EmptyQuery"/>
+      </variableDefinitions>
+      <variableDefinitions name="$"/>
+      <variableDefinitions name="s"/>
+      <variableDefinitions name="$"/>
+      <variableDefinitions name="$"/>
+      <variableDefinitions name="$">
+        <value xsi:type="grammatic-query:ExactExpressionQuery">
+          <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="121" upperBound="121"/>
+        </value>
+      </variableDefinitions>
+      <variableDefinitions name="sss"/>
+      <variableDefinitions name="some">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol name="some"/>
+        </value>
+      </variableDefinitions>
+    </queryContainer>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.1">
+      <attributes name="a">
+        <value xsi:type="grammatic-metadata:IdValue" id="b"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.2">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.4">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.6">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.7">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.8">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.9">
+      <attributes name="b">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.10">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:StringValue" value="s"/>
+      </attributes>
+      <attributes name="y">
+        <value xsi:type="grammatic-metadata:StringValue" value="x"/>
+      </attributes>
+    </assignments>
+    <assignments variable="//@assignmentRules.4/@queryContainer/@variableDefinitions.11">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:IdValue" id="c"/>
+      </attributes>
+    </assignments>
+  </assignmentRules>
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@assignmentRules.5/@queryContainer/@variableDefinitions.0">
+        <definitions xsi:type="grammatic-query:ProductionQuery">
+          <definition xsi:type="grammatic-query:EmptyQuery"/>
+        </definitions>
+        <symbol/>
+      </query>
+      <variableDefinitions name="$$"/>
+    </queryContainer>
+    <assignments variable="//@assignmentRules.5/@queryContainer/@variableDefinitions.0">
+      <attributes name="x">
+        <value xsi:type="grammatic-metadata:IntegerValue" value="239"/>
+      </attributes>
+    </assignments>
+  </assignmentRules>
+  <assignmentRules>
+    <queryContainer>
+      <query xsi:type="grammatic-query:RuleQuery" open="true" symbolVariable="//@assignmentRules.6/@queryContainer/@variableDefinitions.0">
+        <symbol name="zzz"/>
+      </query>
+      <variableDefinitions name="zzz"/>
+    </queryContainer>
+  </assignmentRules>
+</aspect-definition:AspectDefinition>

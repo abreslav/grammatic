@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/" kind="src" path="src"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="generated"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.interpreter"/>
+	<classpathentry kind="var" path="EMF_COMMON_PLUGIN"/>
+	<classpathentry kind="var" path="ECORE_PLUGIN"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.variables"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.template"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.template.generator"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar.template"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.bootstrap"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.metadata.aspects.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar.template.parser"/>
+	<classpathentry kind="var" path="ANTLR_RUNTIME" sourcepath="/ANTLR_RUNTIME_SRC"/>
+	<classpathentry kind="var" path="EMF_ECORE_XMI_PLUGIN"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar.aspects"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.cfgraph"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf.java"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

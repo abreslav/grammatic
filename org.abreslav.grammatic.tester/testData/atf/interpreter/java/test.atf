@@ -1,0 +1,22 @@
+test
+	: 'x'
+	;
+#() --> (int r, long l, double d, char cc) {
+	int i;
+	byte b;
+	short s;
+	char c;
+	float f;
+	String str;
+	Object obj;
+	'x' : {
+		b = zero();
+		s = zero();
+		c = czero();
+		i = b;
+		r = i;
+		l = b;
+		d = s;
+		cc = c;
+	}
+}

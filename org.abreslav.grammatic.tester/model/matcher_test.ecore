@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="matcher_test"
+    nsURI="http://www.abreslav.org/grammartic/2008/tests/matcher" nsPrefix="matcher_test">
+  <eClassifiers xsi:type="ecore:EClass" name="MatcherTests">
+    <eGenericSuperTypes eClassifier="ecore:EClass test.ecore#//Tests">
+      <eTypeArguments eClassifier="#//MatcherTest"/>
+      <eTypeArguments eClassifier="#//MatcherTests"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MatcherTest" eSuperTypes="test.ecore#//AbstractTest">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="expectedToBeEqual" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variableValues" upperBound="-1"
+        eType="#//ExpectedVariableValue" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbol" lowerBound="1"
+        eType="ecore:EClass ../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpectedVariableValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="ecore:EClass ../../org.abreslav.grammatic.query.variables/model/variables.ecore#//VariableValue"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

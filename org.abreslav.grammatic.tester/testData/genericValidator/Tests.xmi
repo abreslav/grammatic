@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ASCII"?>
+<validator-test:ValidatorTests xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:grammatic-grammar-template="http://www.abreslav.org/Grammatic/2008/GrammarTemplate" xmlns:template="http://www.abreslav.org/Grammatic/2008/Template" xmlns:validator-test="http://www.abreslav.org/grammartic/2008/tests/validator" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/GrammarTemplate ../../../org.abreslav.grammatic.grammar.template/model/grammar-template.ecore#/0 http://www.abreslav.org/Grammatic/2008/Template ../../../org.abreslav.grammatic.template/model/template.ecore http://www.abreslav.org/grammartic/2008/tests/validator ../../model/validator_test.ecore">
+  <tests xsi:type="validator-test:ValidatorTest" text="initial" exprectedToBeOK="false">
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends SymbolReference> does not bound ObjectContainer&lt;EFactory>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends Expression> does not bound TemplateApplication&lt;Grammar>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends Symbol> does not bound AlternativeTemplate" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends Symbol> does not bound TemplateApplication&lt;Grammar>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends Symbol> does not bound ParameterReference&lt;EStringToStringMapEntry>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <data xsi:type="template:Template" name="x">
+      <parameters name="xx">
+        <type href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+      </parameters>
+      <parameters name="yy">
+        <type href="http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry"/>
+      </parameters>
+      <parameters name="ee">
+        <type href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//SymbolReference"/>
+      </parameters>
+      <body xsi:type="grammatic-grammar-template:GrammarTemplate">
+        <symbols xsi:type="grammatic-grammar-template:AlternativeTemplate">
+          <expressions xsi:type="grammatic-grammar-template:EmptyTemplate"/>
+          <expressions xsi:type="template:TemplateApplication" template="//@tests.0/@data">
+            <arguments parameter="//@tests.0/@data/@parameters.2">
+              <values xsi:type="template:ObjectContainer">
+                <object xsi:type="ecore:EFactory"/>
+              </values>
+            </arguments>
+          </expressions>
+        </symbols>
+        <symbols xsi:type="grammatic-grammar-template:SymbolTemplate"/>
+        <symbols xsi:type="template:TemplateApplication" template="//@tests.0/@data"/>
+        <symbols xsi:type="template:ParameterReference" parameter="//@tests.0/@data/@parameters.0"/>
+        <symbols xsi:type="template:ParameterReference" parameter="//@tests.0/@data/@parameters.1"/>
+      </body>
+    </data>
+  </tests>
+  <tests xsi:type="validator-test:ValidatorTest" text="TemplateParameter" exprectedToBeOK="false">
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends Symbol> does not bound ParameterReference&lt;DiagnosticTest>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <data xsi:type="template:Template" name="parameterTest">
+      <parameters name="correct">
+        <type href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+      </parameters>
+      <parameters name="incorrect">
+        <type href="../../model/validator_test.ecore#//DiagnosticTest"/>
+      </parameters>
+      <body xsi:type="grammatic-grammar-template:GrammarTemplate">
+        <symbols xsi:type="template:ParameterReference" parameter="//@tests.1/@data/@parameters.0"/>
+        <symbols xsi:type="template:ParameterReference" parameter="//@tests.1/@data/@parameters.1"/>
+      </body>
+    </data>
+  </tests>
+  <tests xsi:type="validator-test:ValidatorTest" text="cycle with collection" exprectedToBeOK="false">
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends Symbol> does not bound TemplateApplication&lt;Grammar>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <data xsi:type="template:Template" name="avoidable cycle">
+      <body xsi:type="grammatic-grammar-template:GrammarTemplate">
+        <symbols xsi:type="template:TemplateApplication" template="//@tests.2/@data"/>
+      </body>
+    </data>
+  </tests>
+  <tests xsi:type="validator-test:ValidatorTest" text="cycle">
+    <data xsi:type="template:Template" name="cycle">
+      <body xsi:type="template:TemplateApplication" template="//@tests.3/@data"/>
+    </data>
+  </tests>
+  <tests xsi:type="validator-test:ValidatorTest" text="the first is not the best">
+    <data xsi:type="template:TemplateArgument">
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="ecore:EEnum"/>
+      </values>
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="ecore:EDataType"/>
+      </values>
+    </data>
+  </tests>
+  <tests xsi:type="validator-test:ValidatorTest" text="inconsistent collection" exprectedToBeOK="false">
+    <errors severity="4" code="1" message="Type TemplateBody&lt;? extends EDataType> does not bound ObjectContainer&lt;EmptyTemplate>" source="org.abreslav.grammatic.template.validator.GenericBasedEObjectValidator"/>
+    <data xsi:type="template:TemplateArgument">
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="ecore:EEnum"/>
+      </values>
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="ecore:EDataType"/>
+      </values>
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="grammatic-grammar-template:EmptyTemplate"/>
+      </values>
+    </data>
+  </tests>
+</validator-test:ValidatorTests>

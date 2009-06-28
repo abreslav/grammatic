@@ -1,0 +1,278 @@
+// many
+
+manySingle 
+	: 'y' 'z' 'x' 'y' 'z' 'x' 'b' 'b' 'y' 'z' 'x' 'b' 'y' 'z' 'x';
+
+manySingleRemove 
+	: 'b' 'b' 'b';
+
+manySeqencePart 
+	: 'a' 'a' '(' 'x' ')' 'a' '(' 'x' ')' 'a';
+
+manySeqencePartRemove 
+	: 'a' 'a' 'a' 'a';
+
+// External 
+
+addExternalReferenceTest
+	: 'a' a
+	;
+	
+/// Expression 
+
+// After
+
+afterSequenceTest
+	: 'a' 'b' 'c' 'x'
+	;
+	
+intoSequenceAfterTest
+	: 'a' 'b' 'x' 'c'
+	;
+	
+intoAlternativeAfterTest
+	: 'a' | ('b' 'x')
+	;
+	
+intoAlternativeSequenceAfterNonSequenceTest
+	: 'a' | ('b' 'x' 'y')
+	;
+	
+intoIterationAfterTest
+	: ('a' 'x')*
+	;
+	
+intoIterationSequenceAfterNonSequenceTest
+	: ('a' 'x' 'y')*
+	;
+
+// Before
+
+beforeSequenceTest
+	: 'x' 'a' 'b' 'c'
+	;
+	
+intoSequenceBeforeTest
+	: 'a' 'x' 'b' 'c'
+	;
+	
+intoAlternativeBeforeTest
+	: 'a' | ('x' 'b')
+	;
+	
+intoAlternativeSequenceBeforeNonSequenceTest
+	: 'a' | ('x' 'y' 'b')
+	;
+	
+intoIterationBeforeTest
+	: ('x' 'a')*
+	;
+	
+intoIterationSequenceBeforeNonSequenceTest
+	: ('x' 'y' 'a')*
+	;
+	
+// Remove
+
+removeProductionContents
+	: #empty;
+	
+removeIterationContents
+	: 'a';
+	
+removeAllSequenceContents
+	: 'a' | 'd'
+	;
+	
+removeAlmostAllSequenceContents
+	: 'a' | 'c' | 'd'
+	;
+	
+removeSequenceItem
+	: 'a' 'c'
+	;
+	
+removeAllAlterativeContents
+	: 'a' 'd'
+	;
+	
+removeAlmostAllAlterativeContents
+	: 'a' ('c') 'd'
+	;
+	
+removeAlternativeItem
+	: 'a' | 'c'
+	;
+
+// Instead
+
+insteadSequenceIntoSequence
+	: 'a' 'x' 'y' 'c';
+	
+insteadSomethingIntoSequence
+	: 'a' ('x' | 'y') 'c';
+	
+insteadAlterantiveIntoAlternative
+	: 'a' | 'x' | 'y' | 'c';
+	
+insteadSomethingIntoAlternative
+	: 'a' | 'y'* | 'c';
+	
+insteadIntoIteration
+	: ('x' 'y')*;
+	
+insteadIntoProduction
+	: 'x';
+
+/// Production
+
+productionTest 
+	: 'a' : 'b' : 'x' : 'y' : 'z'
+	;
+
+rulePartBeforeTest
+	: 'a' : 'b' : 'c' : 'd' : 'x'
+;
+
+rulePartAfterTest
+	: 'a' : 'b' : 'c' : 'd' : 'x'
+	;
+
+rulePartInsteadTest
+	: 'a' : 'x'
+	;
+
+rulePartRemoveTest
+	: 'a' 
+	;
+	
+alternativePartAfterTest
+	: 'a' | 'b' | 'c' | 'x'
+	;
+
+alternativePartAlternativeAfterTest
+	: 'a' | 'b' | 'c' | 'x' | 'y'
+	;
+
+alternativePartBeforeTest
+	: 'a' | 'b' | 'c' | 'x'
+	;
+
+alternativePartAlternativeBeforeTest
+	: 'a' | 'b' | 'c' | 'x' | 'y'
+	;
+
+
+alternativePartIsteadTest
+	: 'a' | 'x'
+	;
+
+alternativePartIsteadAlternativeTest
+	: 'a' | 'x' | 'y' 
+	;
+
+alternativePartIsteadAllTest
+	: 'x' 'y'
+	;
+
+alternativePartRemoveTest
+	: 'a' | 'b'
+	;
+
+alternativePartRemoveAlmostAllTest
+	: 'a'
+	;
+
+alternativePartRemoveAllTest
+	: #empty
+	;
+
+sequencePartBeforeTest
+	: 'a' 'x' 'b' 'c' 'd'
+	;
+
+sequencePartSequenceBeforeTest
+	: 'a' 'x' 'y' 'b' 'c' 'd'
+	;
+
+sequencePartAfterTest
+	: 'a' 'b' 'c' 'x' 'd'
+	;
+
+sequencePartSequenceAfterTest
+	: 'a' 'b' 'c' 'x' 'y' 'd'
+	;
+
+sequencePartInsteadTest
+	: 'a' 'x' 'd'
+	;
+
+sequencePartSequenceInsteadTest
+	: 'a' 'x' 'y' 'd'
+	;
+
+sequencePartInsteadAllTest
+	: 'x'
+	;
+
+sequencePartRemoveTest
+	: 'a' 'd'
+	;
+
+sequencePartRemoveAlmostAllTest
+	: 'a'
+	;
+
+sequencePartRemoveAllTest
+	: #empty
+	;
+
+NAME : 'name';
+
+attribute : NAME '(' 'value' 'code' ')';
+
+productionQuery : 'productionQuery';
+
+symbolQueryWithVar : 'symbolQueryWithVar';
+
+aspect
+	: grammarAssignment? assignmentRule* 'foo'
+	;
+	
+grammarAssignment
+	: $=metadataDefinition
+	;
+	
+assignmentRule
+	: createQueryContainer createRuleQuery 
+			symbolQueryWithVar symbolMetadataAssignment? productionAssignment* ';'
+	; 
+	 
+createQueryContainer
+	: #empty 
+	;
+	 
+createRuleQuery
+	: #empty
+	;
+	 	
+symbolMetadataAssignment
+	: ('@' attribute ';')*
+	;
+	
+productionAssignment
+	: productionQuery assignments?
+	;
+
+assignments 
+	: assignment*
+	;		
+	
+assignment
+	: '@' NAME metadataDefinition ';'
+	: '@' (NAME '.')? attribute ';'
+	;	
+	
+metadataDefinition
+	: '{' ($a1=attribute (';' $a2=attribute?)*)? '}'
+	;		

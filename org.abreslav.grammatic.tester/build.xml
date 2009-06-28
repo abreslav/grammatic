@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	<import file="../org.abreslav.grammatic.bootstrap/buildCommons.xml"/>
+	<target name="generateGrammars">
+    	<property name="project" value="org.abreslav.grammatic.tester"/>
+    	<property name="projectDir" value="${basedir}/../${project}"/>
+    	<property name="targetPackageDir" value="${projectDir}/generated/"/>
+
+		<property name="grammardir" value="${projectDir}/testData/atf/grammar/" /> 
+    	<property name="generatedgrammardir" value="${projectDir}/generated-grammar/"/>
+
+    	<grammatic grammardir="${grammardir}" generatedgrammardir="${generatedgrammardir}" targetpackagedir="${targetPackageDir}/"
+        	grammarname="ATFTest"
+    	>
+        	<importdir path="${basedir}/../${grammarParserProj}/grammar"/>
+        	<importdir path="${basedir}/../${queryParserProj}/grammar"/>
+        	<importdir path="${basedir}/../${atfProj}/grammar"/>
+        	<importdir path="${projectDir}/testData/atf/grammar/"/>
+        	<aspectapplication grammarname="ATFTest" aspectname="ATF"/>
+        	<aspectapplication grammarname="ATFTest" aspectname="ATFTest"/>
+        	<aspectapplication grammarname="TestTypes" aspectname="TestTypes"/>
+        	<aspectapplication grammarname="GrammaticQuery" aspectname="GrammaticQuery"/>
+    		<aspectapplication grammarname="GrammaticCharacter" aspectname="GrammaticCharacter"/>
+    		<aspectapplication grammarname="GrammaticMetadata" aspectname="GrammaticMetadata"/>
+    		<aspectapplication grammarname="GrammaticLexicalGrammar" aspectname="GrammaticLexicalGrammar"/>
+    		<aspectapplication grammarname="GrammaticGrammarTemplate" aspectname="GrammaticGrammarTemplate"/>
+    		<aspectapplication grammarname="Imports" aspectname="Imports"/>
+        </grammatic>
+    	<delete dir="${projectDir}/generated/org/abreslav/grammatic/grammar"></delete>
+    	<delete dir="${projectDir}/generated/org/abreslav/grammatic/query"></delete>
+    </target>
+
+	<import file="../org.abreslav.grammatic.bootstrap/buildGrammar.xml"/>
+	
+	<target name="default">
+		<antcall target="generateGrammars"></antcall>
+		<property name="targetFolder" value="generated/org/abreslav/grammatic/atf/interpreter"/>
+		<antcall target="buildGrammar">
+			<param name="doclear" value="true"/>
+			<param name="project" value="org.abreslav.grammatic.atf"/>
+			<param name="grammarFile" value="ATFTest.g"/>
+			<param name="lib" value="generated-grammar"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+		</antcall>
+    </target>
+</project>

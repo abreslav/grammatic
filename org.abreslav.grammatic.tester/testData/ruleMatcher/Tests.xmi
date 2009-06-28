@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="ASCII"?>
+<matcher_test:MatcherTests xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grammatic-grammar="http://www.abreslav.org/Grammatic/2008/Grammar" xmlns:grammatic-query-variables="http://www.abreslav.org/Grammatic/2008/Query/Variables" xmlns:matcher_test="http://www.abreslav.org/grammartic/2008/tests/matcher" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/Grammar ../../../org.abreslav.grammatic.grammar/model/grammar.ecore http://www.abreslav.org/Grammatic/2008/Query/Variables ../../../org.abreslav.grammatic.query.variables/model/variables.ecore http://www.abreslav.org/grammartic/2008/tests/matcher ../../model/matcher_test.ecore" name="some">
+  <subTests xsi:type="matcher_test:MatcherTests" name="novars">
+    <tests xsi:type="matcher_test:MatcherTest" text="# : # ;" expectedToBeEqual="true">
+      <symbol name="x">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.0/@tests.0/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="# : # : #empty ;" expectedToBeEqual="true">
+      <symbol name="a">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.1/@tests.0/@symbol"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+      </symbol>
+    </tests>
+  </subTests>
+  <subTests xsi:type="matcher_test:MatcherTests" name="vars">
+    <tests xsi:type="matcher_test:MatcherTest" text="$a=# : $a ;" expectedToBeEqual="true">
+      <variableValues name="a">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.0/@tests.0/@symbol"/>
+      </variableValues>
+      <symbol name="x">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.1/@tests.0/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$a=# : $a ;">
+      <symbol name="x">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.0/@tests.1/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$a=# : #empty : $a ;" expectedToBeEqual="true">
+      <variableValues name="a">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.1/@tests.2/@symbol"/>
+      </variableValues>
+      <symbol name="y">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.1/@tests.2/@symbol"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$a=# : #empty : $a ;">
+      <variableValues name="a">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.1/@tests.3/@symbol"/>
+      </variableValues>
+      <symbol name="y">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.0/@tests.1/@symbol"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+      </symbol>
+    </tests>
+  </subTests>
+  <subTests xsi:type="matcher_test:MatcherTests" name="fromsample">
+    <tests xsi:type="matcher_test:MatcherTest" text="@{system:name='Expression'}@ : $def={...} ;" expectedToBeEqual="true">
+      <variableValues name="def">
+        <value xsi:type="grammatic-query-variables:RulePartValue" items="//@subTests.2/@tests.0/@symbol/@productions.0 //@subTests.2/@tests.0/@symbol/@productions.1"/>
+      </variableValues>
+      <symbol name="Expression">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$Operation=@{system:name='Operation'}@ : {...} ;" expectedToBeEqual="true">
+      <variableValues name="Operation">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.2/@tests.1/@symbol"/>
+      </variableValues>
+      <symbol name="Operation">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange"/>
+          </expression>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$Op=@{system:name='Op'}@ |: $op=#;" expectedToBeEqual="true">
+      <variableValues name="Op">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.2/@tests.2/@symbol"/>
+      </variableValues>
+      <variableValues name="op">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.2/@symbol/@productions.2/@expression"/>
+      </variableValues>
+      <symbol name="Op">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.2/@tests.2/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$E=@{system:name='Exp'}@ : $E $Op=@{system:name='Exp'}@ $E : $atoms={...};" expectedToBeEqual="true">
+      <variableValues name="E">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.2/@tests.3/@symbol"/>
+      </variableValues>
+      <variableValues name="Op">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.3/@symbol/@productions.0/@expression/@expressions.1"/>
+      </variableValues>
+      <variableValues name="atoms">
+        <value xsi:type="grammatic-query-variables:RulePartValue" items="//@subTests.2/@tests.3/@symbol/@productions.1 //@subTests.2/@tests.3/@symbol/@productions.2"/>
+      </variableValues>
+      <symbol name="Exp">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.2/@tests.3/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.2/@tests.3/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.2/@tests.3/@symbol"/>
+          </expression>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$N=# : $N $a=.. : $b={...} ;" expectedToBeEqual="true">
+      <variableValues name="N">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.2/@tests.4/@symbol"/>
+      </variableValues>
+      <variableValues name="a">
+        <value xsi:type="grammatic-query-variables:SequencePartValue" items="//@subTests.2/@tests.4/@symbol/@productions.1/@expression/@expressions.1 //@subTests.2/@tests.4/@symbol/@productions.1/@expression/@expressions.2"/>
+      </variableValues>
+      <variableValues name="b">
+        <value xsi:type="grammatic-query-variables:ProductionValue" item="//@subTests.2/@tests.4/@symbol/@productions.0"/>
+      </variableValues>
+      <symbol name="X">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.2/@tests.4/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:Iteration">
+              <expression xsi:type="grammatic-grammar:Empty"/>
+            </expressions>
+            <expressions xsi:type="grammatic-grammar:Iteration" lowerBound="1">
+              <expression xsi:type="grammatic-grammar:Empty"/>
+            </expressions>
+          </expression>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="# |: $N=@{system:type='nonterminal'}@ ;" expectedToBeEqual="true">
+      <variableValues name="N">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.5/@symbol/@productions.0/@expression"/>
+      </variableValues>
+      <symbol name="N">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.2/@tests.5/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="$op=@{system:name='op'}@ |: $OP=@{system:type='terminal'}@ ;" expectedToBeEqual="true">
+      <variableValues name="op">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.2/@tests.6/@symbol"/>
+      </variableValues>
+      <variableValues name="OP">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.6/@symbol/@productions.0/@expression"/>
+      </variableValues>
+      <symbol name="op">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference">
+            <symbol href="Grammar.xmi#//@symbols.0"/>
+          </expression>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="# |: $l=# $op=# $r=# ;" expectedToBeEqual="true">
+      <variableValues name="l">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.7/@symbol/@productions.0/@expression/@expressions.0"/>
+      </variableValues>
+      <variableValues name="op">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.7/@symbol/@productions.0/@expression/@expressions.1"/>
+      </variableValues>
+      <variableValues name="r">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.2/@tests.7/@symbol/@productions.0/@expression/@expressions.2"/>
+      </variableValues>
+      <symbol name="Z">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:SymbolReference">
+              <symbol href="Grammar.xmi#//@symbols.0"/>
+            </expressions>
+            <expressions xsi:type="grammatic-grammar:SymbolReference">
+              <symbol href="Grammar.xmi#//@symbols.0"/>
+            </expressions>
+            <expressions xsi:type="grammatic-grammar:SymbolReference">
+              <symbol href="Grammar.xmi#//@symbols.0"/>
+            </expressions>
+          </expression>
+        </productions>
+      </symbol>
+    </tests>
+  </subTests>
+  <subTests xsi:type="matcher_test:MatcherTests" name="productionVars">
+    <tests xsi:type="matcher_test:MatcherTest" text="# $p=: #;" expectedToBeEqual="true">
+      <variableValues name="p">
+        <value xsi:type="grammatic-query-variables:ProductionValue" item="//@subTests.3/@tests.0/@symbol/@productions.0"/>
+      </variableValues>
+      <symbol name="W">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.3/@tests.0/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+  </subTests>
+  <subTests xsi:type="matcher_test:MatcherTests" name="quickVars">
+    <tests xsi:type="matcher_test:MatcherTest" text="WWW $p=: #;" expectedToBeEqual="true">
+      <variableValues name="p">
+        <value xsi:type="grammatic-query-variables:ProductionValue" item="//@subTests.4/@tests.0/@symbol/@productions.0"/>
+      </variableValues>
+      <variableValues name="WWW">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.4/@tests.0/@symbol"/>
+      </variableValues>
+      <symbol name="WWW">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.0/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="WWW1 $p=: #;">
+      <variableValues name="p">
+        <value xsi:type="grammatic-query-variables:ProductionValue" item="//@subTests.4/@tests.1/@symbol/@productions.0"/>
+      </variableValues>
+      <variableValues name="WWW">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.4/@tests.1/@symbol"/>
+      </variableValues>
+      <symbol name="WWW">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.1/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="Exp : Exp $Op=@{system:name='Exp'}@ Exp : $atoms={...};" expectedToBeEqual="true">
+      <variableValues name="Exp">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.4/@tests.2/@symbol"/>
+      </variableValues>
+      <variableValues name="Op">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.4/@tests.2/@symbol/@productions.0/@expression/@expressions.1"/>
+      </variableValues>
+      <variableValues name="atoms">
+        <value xsi:type="grammatic-query-variables:RulePartValue" items="//@subTests.4/@tests.2/@symbol/@productions.1 //@subTests.4/@tests.2/@symbol/@productions.2"/>
+      </variableValues>
+      <symbol name="Exp">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.2/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.2/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.2/@symbol"/>
+          </expression>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="# : Exp;" expectedToBeEqual="true">
+      <variableValues name="Exp">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.4/@tests.3/@symbol/@productions.0/@expression"/>
+      </variableValues>
+      <symbol name="Exp">
+        <productions>
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.3/@symbol"/>
+        </productions>
+      </symbol>
+    </tests>
+    <tests xsi:type="matcher_test:MatcherTest" text="# : Exp $Op=@{system:name='Exp'}@ Exp : $atoms={...};" expectedToBeEqual="true">
+      <variableValues name="Exp">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.4/@tests.4/@symbol/@productions.0/@expression/@expressions.0"/>
+      </variableValues>
+      <variableValues name="Op">
+        <value xsi:type="grammatic-query-variables:ExpressionValue" item="//@subTests.4/@tests.4/@symbol/@productions.0/@expression/@expressions.1"/>
+      </variableValues>
+      <variableValues name="atoms">
+        <value xsi:type="grammatic-query-variables:RulePartValue" items="//@subTests.4/@tests.4/@symbol/@productions.1 //@subTests.4/@tests.4/@symbol/@productions.2"/>
+      </variableValues>
+      <symbol name="Exp">
+        <productions>
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.4/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.4/@symbol"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@subTests.4/@tests.4/@symbol"/>
+          </expression>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:Empty"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange"/>
+        </productions>
+      </symbol>
+    </tests>
+  </subTests>
+  <subTests xsi:type="matcher_test:MatcherTests" name="foundBugs">
+    <tests xsi:type="matcher_test:MatcherTest" text="rulePartBeforeTest : 'A' : $x={...};" expectedToBeEqual="true">
+      <variableValues name="rulePartBeforeTest">
+        <value xsi:type="grammatic-query-variables:SymbolValue" item="//@subTests.5/@tests.0/@symbol"/>
+      </variableValues>
+      <variableValues name="x">
+        <value xsi:type="grammatic-query-variables:RulePartValue" items="//@subTests.5/@tests.0/@symbol/@productions.1 //@subTests.5/@tests.0/@symbol/@productions.2 //@subTests.5/@tests.0/@symbol/@productions.3"/>
+      </variableValues>
+      <symbol name="rulePartBeforeTest">
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="65" upperBound="65"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="66" upperBound="66"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="67" upperBound="67"/>
+        </productions>
+        <productions>
+          <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="68" upperBound="68"/>
+        </productions>
+      </symbol>
+    </tests>
+  </subTests>
+</matcher_test:MatcherTests>

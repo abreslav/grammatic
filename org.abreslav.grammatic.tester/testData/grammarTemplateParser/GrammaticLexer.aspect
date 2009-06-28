@@ -1,0 +1,10 @@
+WS : [0x0000--0x0020]+;
+NAME : LETTER (LETTER | ['0'--'9'])*;
+CHARACTER : '\'' CHAR_IN_QUOTES '\'';
+STRING : '\'' CHAR_IN_QUOTES CHAR_IN_QUOTES+ '\'';
+CODE : '0x' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+INT : '-'? ['0'--'9']+;
+LETTER : ['a'--'z' 'A'--'Z' '_'];
+COMMENT : '//' ([^'\n'])* '\n';
+CHAR_IN_QUOTES : ('\\'[^'\n' '\r']) | [^'\\' '\n'  '\r'  '\''];
+HEX_DIGIT : ['0'--'9' 'a'--'f' 'A'--'F'];

@@ -1,0 +1,5 @@
+#import 
+	'GrammaticMetadata.templates'{GrammaticMetadata}, 
+	'GrammaticAnnotatedGrammar.grammar'{alternative};
+
+#grammar GrammaticMetadata<: '[[' alternative ']]'>

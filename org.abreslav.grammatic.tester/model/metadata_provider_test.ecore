@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="metadata_provider_test"
+    nsURI="http://www.abreslav.org/grammartic/2008/tests/metadata-provider" nsPrefix="metadata-provider-test">
+  <eClassifiers xsi:type="ecore:EClass" name="MetadataProviderTests">
+    <eGenericSuperTypes eClassifier="ecore:EClass test.ecore#//Tests">
+      <eTypeArguments eClassifier="#//MetadataProviderTest"/>
+      <eTypeArguments eClassifier="#//MetadataProviderTests"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MetadataProviderTest" eSuperTypes="test.ecore#//AbstractTest">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="objects" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aspect" lowerBound="1"
+        eType="ecore:EClass ../../org.abreslav.grammatic.grammar/model/aspects.ecore#//MetadataAspect"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

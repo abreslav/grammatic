@@ -1,0 +1,43 @@
+#import 
+	'GrammaticLexer.grammar' {NAME, INT, STRING}, 
+	'GrammaticCharacter.grammar' {character};
+
+Grammar GrammaticMetadata<
+	Production* additionalAttributeValues
+>
+{
+	metadata 
+		: '{' (attribute (';' attribute?)*)? '}'
+		;
+		
+	namespace
+		: NAME ':'
+		;
+		
+	attribute 
+		: namespace? NAME ('=' attributeValue)?
+		;
+		
+	attributeValue
+		: character
+		: INT
+		: STRING
+		: NAME
+		: metadata
+		: '{{' term* '}}'
+		: <additionalAttributeValues>
+		;
+		
+	term 
+		:  attributeValue 
+		:  punctuation
+		;
+		
+	punctuation
+		: '`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
+		| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
+		| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
+		| '?' | '<' | '>'
+		;
+		
+}

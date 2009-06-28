@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="ASCII"?>
+<parser_test:ParserTests xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grammatic-metadata="http://www.abreslav.org/Grammatic/2008/Metadata" xmlns:grammatic-query="http://www.abreslav.org/Grammatic/2008/Query" xmlns:parser_test="http://www.abreslav.org/grammartic/2008/tests/parser" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/Metadata ../../../org.abreslav.grammatic.grammar/model/metadata.ecore http://www.abreslav.org/Grammatic/2008/Query ../../../org.abreslav.grammatic.query/model/query.ecore http://www.abreslav.org/grammartic/2008/tests/parser ../../model/parser_test.ecore">
+  <subTests xsi:type="parser_test:ParserTests" name="simple syntax">
+    <tests xsi:type="parser_test:ParserTest" text="# -> #empty ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:EmptyQuery"/>
+          </definitions>
+          <symbol/>
+        </query>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="@ {name=10} @ -> (# | # #) | # ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:AlternativeQuery">
+              <definitions xsi:type="grammatic-query:AlternativeQuery">
+                <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+                  <symbol/>
+                </definitions>
+                <definitions xsi:type="grammatic-query:SequenceQuery">
+                  <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+                    <symbol/>
+                  </definitions>
+                  <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+                    <symbol/>
+                  </definitions>
+                </definitions>
+              </definitions>
+              <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+                <symbol/>
+              </definitions>
+            </definition>
+          </definitions>
+          <symbol>
+            <attributes attributeName="name">
+              <attributeValue xsi:type="grammatic-query:ExactValue">
+                <value xsi:type="grammatic-metadata:IntegerValue" value="10"/>
+              </attributeValue>
+            </attributes>
+          </symbol>
+        </query>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="@ {name='abc'} @ -> #empty ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:EmptyQuery"/>
+          </definitions>
+          <symbol>
+            <attributes attributeName="name">
+              <attributeValue xsi:type="grammatic-query:ExactValue">
+                <value xsi:type="grammatic-metadata:StringValue" value="abc"/>
+              </attributeValue>
+            </attributes>
+          </symbol>
+        </query>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="# -> #empty || {...} ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" open="true">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:EmptyQuery"/>
+          </definitions>
+          <symbol/>
+        </query>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="# -> {...} ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" open="true">
+          <symbol/>
+        </query>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="# |> #empty ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" open="true">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:EmptyQuery"/>
+          </definitions>
+          <symbol/>
+        </query>
+      </query>
+    </tests>
+  </subTests>
+  <subTests xsi:type="parser_test:ParserTests" name="variables">
+    <tests xsi:type="parser_test:ParserTest" text="a:# -> a;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@subTests.1/@tests.0/@query/@variableDefinitions.0">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:VariableReference" variable="//@subTests.1/@tests.0/@query/@variableDefinitions.0"/>
+          </definitions>
+          <symbol/>
+        </query>
+        <variableDefinitions name="a">
+          <value xsi:type="grammatic-query:SymbolQuery"/>
+        </variableDefinitions>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="c:# -> d:(#empty) | c ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@subTests.1/@tests.1/@query/@variableDefinitions.0">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:AlternativeQuery">
+              <definitions xsi:type="grammatic-query:VariableReference" variable="//@subTests.1/@tests.1/@query/@variableDefinitions.1"/>
+              <definitions xsi:type="grammatic-query:VariableReference" variable="//@subTests.1/@tests.1/@query/@variableDefinitions.0"/>
+            </definition>
+          </definitions>
+          <symbol/>
+        </query>
+        <variableDefinitions name="c">
+          <value xsi:type="grammatic-query:SymbolQuery"/>
+        </variableDefinitions>
+        <variableDefinitions name="d">
+          <value xsi:type="grammatic-query:EmptyQuery"/>
+        </variableDefinitions>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="a:# -> a || #empty;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" symbolVariable="//@subTests.1/@tests.2/@query/@variableDefinitions.0">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:VariableReference" variable="//@subTests.1/@tests.2/@query/@variableDefinitions.0"/>
+          </definitions>
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:EmptyQuery"/>
+          </definitions>
+          <symbol/>
+        </query>
+        <variableDefinitions name="a">
+          <value xsi:type="grammatic-query:SymbolQuery"/>
+        </variableDefinitions>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="# -> #empty || e:{...} ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" open="true" wildcardVariable="//@subTests.1/@tests.3/@query/@variableDefinitions.0">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:EmptyQuery"/>
+          </definitions>
+          <symbol/>
+        </query>
+        <variableDefinitions name="e"/>
+      </query>
+    </tests>
+    <tests xsi:type="parser_test:ParserTest" text="# -> f:{...} ;">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" open="true" wildcardVariable="//@subTests.1/@tests.4/@query/@variableDefinitions.0">
+          <symbol/>
+        </query>
+        <variableDefinitions name="f"/>
+      </query>
+    </tests>
+  </subTests>
+  <subTests xsi:type="parser_test:ParserTests" name="metadata">
+    <tests xsi:type="parser_test:ParserTest" text="E:@{system:name='Exp'}@ -> E Op:@{system:name='Exp'}@ E || atoms:{...};">
+      <query>
+        <query xsi:type="grammatic-query:RuleQuery" open="true" wildcardVariable="//@subTests.2/@tests.0/@query/@variableDefinitions.1" symbolVariable="//@subTests.2/@tests.0/@query/@variableDefinitions.0">
+          <definitions xsi:type="grammatic-query:ProductionQuery">
+            <definition xsi:type="grammatic-query:SequenceQuery">
+              <definitions xsi:type="grammatic-query:VariableReference" variable="//@subTests.2/@tests.0/@query/@variableDefinitions.0"/>
+              <definitions xsi:type="grammatic-query:VariableReference" variable="//@subTests.2/@tests.0/@query/@variableDefinitions.2"/>
+              <definitions xsi:type="grammatic-query:VariableReference" variable="//@subTests.2/@tests.0/@query/@variableDefinitions.0"/>
+            </definition>
+          </definitions>
+          <symbol>
+            <attributes attributeName="name" namespaceUri="grammatic://www.abreslav.org/Grammatic/2008/Metadata/namespaces/system">
+              <attributeValue xsi:type="grammatic-query:ExactValue">
+                <value xsi:type="grammatic-metadata:StringValue" value="Exp"/>
+              </attributeValue>
+            </attributes>
+          </symbol>
+        </query>
+        <variableDefinitions name="E">
+          <value xsi:type="grammatic-query:SymbolQuery">
+            <attributes attributeName="name" namespaceUri="grammatic://www.abreslav.org/Grammatic/2008/Metadata/namespaces/system">
+              <attributeValue xsi:type="grammatic-query:ExactValue">
+                <value xsi:type="grammatic-metadata:StringValue" value="Exp"/>
+              </attributeValue>
+            </attributes>
+          </value>
+        </variableDefinitions>
+        <variableDefinitions name="atoms"/>
+        <variableDefinitions name="Op">
+          <value xsi:type="grammatic-query:SymbolReferenceQuery">
+            <symbol>
+              <attributes attributeName="name" namespaceUri="grammatic://www.abreslav.org/Grammatic/2008/Metadata/namespaces/system">
+                <attributeValue xsi:type="grammatic-query:ExactValue">
+                  <value xsi:type="grammatic-metadata:StringValue" value="Exp"/>
+                </attributeValue>
+              </attributes>
+            </symbol>
+          </value>
+        </variableDefinitions>
+      </query>
+    </tests>
+  </subTests>
+</parser_test:ParserTests>

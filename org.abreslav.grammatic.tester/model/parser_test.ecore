@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="parser_test"
+    nsURI="http://www.abreslav.org/grammartic/2008/tests/parser" nsPrefix="parser_test">
+  <eClassifiers xsi:type="ecore:EClass" name="ParserTests">
+    <eGenericSuperTypes eClassifier="ecore:EClass test.ecore#//Tests">
+      <eTypeArguments eClassifier="#//ParserTest"/>
+      <eTypeArguments eClassifier="#//ParserTests"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ParserTest" eSuperTypes="test.ecore#//AbstractTest">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="query" lowerBound="1" containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.abreslav.grammatic.query/model/query.ecore#//QueryContainer">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+</ecore:EPackage>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="nasty"
+    nsURI="http:///nasty" nsPrefix="nasty">
+  <eClassifiers xsi:type="ecore:EClass" name="A">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="X">
+    <eGenericSuperTypes eClassifier="#//A">
+      <eTypeArguments>
+        <eUpperBound eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      </eTypeArguments>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="B">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="f" containment="true">
+      <eGenericType eClassifier="#//A">
+        <eTypeArguments eTypeParameter="#//B/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ff" containment="true">
+      <eGenericType eClassifier="#//A">
+        <eTypeArguments>
+          <eUpperBound eClassifier="#//A">
+            <eTypeArguments eTypeParameter="#//B/T"/>
+          </eUpperBound>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fff" containment="true">
+      <eGenericType eClassifier="#//A">
+        <eTypeArguments>
+          <eLowerBound eClassifier="#//A">
+            <eTypeArguments eTypeParameter="#//B/T"/>
+          </eLowerBound>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="C">
+    <eGenericSuperTypes eClassifier="#//A">
+      <eTypeArguments>
+        <eLowerBound eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      </eTypeArguments>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="D">
+    <eGenericSuperTypes eClassifier="#//A">
+      <eTypeArguments eClassifier="#//C"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>

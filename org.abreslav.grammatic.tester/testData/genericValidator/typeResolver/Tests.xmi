@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="ASCII"?>
+<resolver-test:ResolverTests xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:grammatic-grammar-template="http://www.abreslav.org/Grammatic/2008/GrammarTemplate" xmlns:nasty="http:///nasty" xmlns:resolver-test="http://www.abreslav.org/grammartic/2008/tests/resolver" xmlns:template="http://www.abreslav.org/Grammatic/2008/Template" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/GrammarTemplate ../../../../org.abreslav.grammatic.grammar.template/model/grammar-template.ecore#/0 http:///nasty nasty.ecore http://www.abreslav.org/grammartic/2008/tests/resolver ../../../model/type_resolver_test.ecore http://www.abreslav.org/Grammatic/2008/Template ../../../../org.abreslav.grammatic.template/model/template.ecore">
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eClassifier xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+    </expectedType>
+    <data xsi:type="ecore:EAttribute"/>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments/>
+      <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.template/model/template.ecore#//Template"/>
+    </expectedType>
+    <data xsi:type="template:Template" name="x"/>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Grammar"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.template/model/template.ecore#//Template"/>
+    </expectedType>
+    <data xsi:type="template:Template" name="x">
+      <body xsi:type="grammatic-grammar-template:GrammarTemplate"/>
+    </data>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.template/model/template.ecore#//TemplateParameter"/>
+    </expectedType>
+    <data xsi:type="template:TemplateParameter" name="xxx">
+      <type href="../../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+    </data>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.template/model/template.ecore#//TemplateArgument"/>
+    </expectedType>
+    <data xsi:type="template:TemplateArgument" parameter="//@tests.3/@data"/>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eClassifier xsi:type="ecore:EClass" href="nasty.ecore#//X"/>
+    </expectedType>
+    <data xsi:type="nasty:X"/>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eUpperBound>
+          <eClassifier xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+        </eUpperBound>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="nasty.ecore#//B"/>
+    </expectedType>
+    <data xsi:type="nasty:B">
+      <f xsi:type="nasty:X"/>
+    </data>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eLowerBound>
+          <eClassifier xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+        </eLowerBound>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="nasty.ecore#//B"/>
+    </expectedType>
+    <data xsi:type="nasty:B">
+      <f xsi:type="nasty:C"/>
+    </data>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eLowerBound>
+          <eClassifier xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+        </eLowerBound>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="nasty.ecore#//B"/>
+    </expectedType>
+    <data xsi:type="nasty:B">
+      <ff xsi:type="nasty:D"/>
+    </data>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest">
+    <expectedType>
+      <eTypeArguments>
+        <eLowerBound>
+          <eClassifier xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+        </eLowerBound>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="nasty.ecore#//B"/>
+    </expectedType>
+    <data xsi:type="nasty:B">
+      <fff xsi:type="nasty:D"/>
+    </data>
+  </tests>
+  <tests xsi:type="resolver-test:ResolverTest" text="inconsistent collection">
+    <expectedType>
+      <eTypeArguments>
+        <eClassifier xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EDataType"/>
+      </eTypeArguments>
+      <eClassifier xsi:type="ecore:EClass" href="../../../../org.abreslav.grammatic.template/model/template.ecore#//TemplateArgument"/>
+    </expectedType>
+    <data xsi:type="template:TemplateArgument">
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="ecore:EEnum"/>
+      </values>
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="ecore:EDataType"/>
+      </values>
+      <values xsi:type="template:ObjectContainer">
+        <object xsi:type="grammatic-grammar-template:EmptyTemplate"/>
+      </values>
+    </data>
+  </tests>
+</resolver-test:ResolverTests>

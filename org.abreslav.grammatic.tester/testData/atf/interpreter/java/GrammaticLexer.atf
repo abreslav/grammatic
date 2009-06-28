@@ -1,0 +1,10 @@
+WS : #token(whitespace); 
+COMMENT : #token(whitespace);
+LETTER : #token(fragment);
+NAME : #token;
+CHAR_IN_QUOTES : #token(fragment);
+CHARACTER : #token;
+STRING : #token;
+HEX_DIGIT : #token(fragment);
+CODE : #token;
+INT : #token;

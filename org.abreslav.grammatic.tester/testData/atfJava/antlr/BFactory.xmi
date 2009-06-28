@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="ASCII"?>
+<atf-java-antlr-semantics:ModuleImplementationProvider xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:atf-java-antlr-semantics="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics" xsi:schemaLocation="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics ../../../../org.abreslav.grammatic.atf.java.antlr.generator/model/antlr.ecore#//semantics" package="xxx" providerInterfaceName="Some" poolsClassName="Some1"/>

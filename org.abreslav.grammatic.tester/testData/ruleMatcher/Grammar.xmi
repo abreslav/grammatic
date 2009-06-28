@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="ASCII"?>
+<grammatic-grammar:Grammar xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grammatic-grammar="http://www.abreslav.org/Grammatic/2008/Grammar" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/Grammar ../../../org.abreslav.grammatic.grammar/model/grammar.ecore">
+  <symbols name="NAME">
+    <productions>
+      <expression xsi:type="grammatic-grammar:LexicalExpression">
+        <expression xsi:type="grammatic-grammar:Sequence">
+          <expressions xsi:type="grammatic-grammar:Alternative">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="97" upperBound="122"/>
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="65" upperBound="90"/>
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="95" upperBound="95"/>
+          </expressions>
+          <expressions xsi:type="grammatic-grammar:Iteration" upperBound="-1">
+            <expression xsi:type="grammatic-grammar:Alternative">
+              <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="97" upperBound="122"/>
+              <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="65" upperBound="90"/>
+              <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="95" upperBound="95"/>
+              <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="48" upperBound="57"/>
+            </expression>
+          </expressions>
+        </expression>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="annotatedGrammar">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Iteration" upperBound="-1">
+        <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.2"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="rule">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.0"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="58" upperBound="58"/>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.3"/>
+        <expressions xsi:type="grammatic-grammar:Iteration" upperBound="-1">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:LexicalExpression">
+              <expression xsi:type="grammatic-grammar:Sequence">
+                <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="124" upperBound="124"/>
+                <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="124" upperBound="124"/>
+              </expression>
+            </expressions>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.3"/>
+          </expression>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="59" upperBound="59"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="production">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:Iteration">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="64" upperBound="64"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.13"/>
+          </expression>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.4"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="alternative">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.5"/>
+        <expressions xsi:type="grammatic-grammar:Iteration" upperBound="-1">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="124" upperBound="124"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.5"/>
+          </expression>
+        </expressions>
+      </expression>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:Empty"/>
+    </productions>
+  </symbols>
+  <symbols name="sequence">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Iteration" lowerBound="1" upperBound="-1">
+        <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.6"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="iteration">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.8"/>
+        <expressions xsi:type="grammatic-grammar:Iteration">
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.7"/>
+        </expressions>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="operation">
+    <productions>
+      <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="42" upperBound="42"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="43" upperBound="43"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="63" upperBound="63"/>
+    </productions>
+  </symbols>
+  <symbols name="atom">
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.0"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="40" upperBound="40"/>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.4"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="41" upperBound="41"/>
+      </expression>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.9"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.13"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="58" upperBound="58"/>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.8"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="lexicalAtom">
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.10"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:CharacterRange" lowerBound="46" upperBound="46"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.11"/>
+    </productions>
+  </symbols>
+  <symbols name="character">
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference"/>
+    </productions>
+  </symbols>
+  <symbols name="range">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="91" upperBound="91"/>
+        <expressions xsi:type="grammatic-grammar:Iteration" lowerBound="1" upperBound="-1">
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.12"/>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="93" upperBound="93"/>
+      </expression>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:LexicalExpression">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="91" upperBound="91"/>
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="94" upperBound="94"/>
+          </expression>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:Iteration" lowerBound="1" upperBound="-1">
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.12"/>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="93" upperBound="93"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="rangeItem">
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.10"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.10"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="45" upperBound="45"/>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.10"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="metadata">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="123" upperBound="123"/>
+        <expressions xsi:type="grammatic-grammar:Iteration" upperBound="-1">
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.14"/>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="125" upperBound="125"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="attribute">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:Iteration">
+          <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.15"/>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.0"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="61" upperBound="61"/>
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.16"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="59" upperBound="59"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="namespace">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.0"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="58" upperBound="58"/>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="attributeValue">
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.0"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.13"/>
+    </productions>
+    <productions>
+      <expression xsi:type="grammatic-grammar:Sequence">
+        <expressions xsi:type="grammatic-grammar:LexicalExpression">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="123" upperBound="123"/>
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="123" upperBound="123"/>
+          </expression>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:Iteration" upperBound="-1">
+          <expression xsi:type="grammatic-grammar:Alternative">
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.16"/>
+            <expressions xsi:type="grammatic-grammar:SymbolReference" symbol="//@symbols.17"/>
+          </expression>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:LexicalExpression">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="125" upperBound="125"/>
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="125" upperBound="125"/>
+          </expression>
+        </expressions>
+      </expression>
+    </productions>
+  </symbols>
+  <symbols name="punctuation">
+    <productions>
+      <expression xsi:type="grammatic-grammar:Alternative">
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="96" upperBound="96"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="126" upperBound="126"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="33" upperBound="33"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="64" upperBound="64"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="35" upperBound="35"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="36" upperBound="36"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="37" upperBound="37"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="94" upperBound="94"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="38" upperBound="38"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="42" upperBound="42"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="40" upperBound="40"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="41" upperBound="41"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="45" upperBound="45"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="43" upperBound="43"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="61" upperBound="61"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="124" upperBound="124"/>
+        <expressions xsi:type="grammatic-grammar:LexicalExpression">
+          <expression xsi:type="grammatic-grammar:Sequence">
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="92" upperBound="92"/>
+            <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="92" upperBound="92"/>
+          </expression>
+        </expressions>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="91" upperBound="91"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="93" upperBound="93"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="59" upperBound="59"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="58" upperBound="58"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="44" upperBound="44"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="46" upperBound="46"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="47" upperBound="47"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="63" upperBound="63"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="60" upperBound="60"/>
+        <expressions xsi:type="grammatic-grammar:CharacterRange" lowerBound="62" upperBound="62"/>
+      </expression>
+    </productions>
+  </symbols>
+</grammatic-grammar:Grammar>

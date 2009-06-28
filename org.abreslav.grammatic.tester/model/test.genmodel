@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.query.tester/generated"
+    modelPluginID="org.abreslav.grammatic.query.tester" modelName="Test" updateClasspath="false"
+    importerID="org.eclipse.emf.importer.ecore" bundleManifest="false" complianceLevel="6.0"
+    copyrightFields="false">
+  <foreignModel>test.ecore</foreignModel>
+  <genPackages prefix="Test" disposableProviderFactory="true" ecorePackage="test.ecore#/">
+    <genClasses ecoreClass="test.ecore#//Tests">
+      <genTypeParameters ecoreTypeParameter="test.ecore#//Tests/T"/>
+      <genTypeParameters ecoreTypeParameter="test.ecore#//Tests/S"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute test.ecore#//Tests/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference test.ecore#//Tests/subTests"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference test.ecore#//Tests/tests"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="test.ecore#//AbstractTest">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute test.ecore#//AbstractTest/text"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

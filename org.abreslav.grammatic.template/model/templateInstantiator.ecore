@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="instantiator"
+    nsURI="http://www.abreslav.org/Grammatic/2008/template/instantiator" nsPrefix="template-instantiator">
+  <eClassifiers xsi:type="ecore:EClass" name="InstantiatorModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="objectInstantiators" upperBound="-1"
+        eType="#//ObjectInstantiator" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Instantiator" abstract="true">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1">
+      <eGenericType eTypeParameter="#//Instantiator/T"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1">
+      <eGenericType eTypeParameter="#//Instantiator/T"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ObjectInstantiator">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="sourceMustBeTemplateBody"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributeInstantiators"
+        upperBound="-1" eType="#//AttributeInstantiator" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceInstantiators"
+        upperBound="-1" eType="#//ReferenceInstantiator" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//Instantiator">
+      <eTypeArguments eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceInstantiator">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="sourceMustReferToTemplateBody"/>
+    </eAnnotations>
+    <eGenericSuperTypes eClassifier="#//Instantiator">
+      <eTypeArguments eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeInstantiator">
+    <eGenericSuperTypes eClassifier="#//Instantiator">
+      <eTypeArguments eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>

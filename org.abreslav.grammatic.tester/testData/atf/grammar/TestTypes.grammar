@@ -1,0 +1,22 @@
+declaration
+	: #empty
+	;
+	
+type 
+	: 'int' 
+	| 'Object'
+	| 'String'
+	| 'char'
+	| 'TemplateBody<? extends Expression>'
+	| 'TemplateBody<CharacterRange>'
+	| 'SetComplementBuilder'
+	| 'EObject'
+	| 'TupleValue'
+	| 'Namespace'
+	| 'Annotated'
+	| 'Value'
+	| 'PunctuationType'
+	| 'RenamingManager'
+	| 'Grammar'
+	| 'NULL'
+	;

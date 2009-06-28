@@ -1,0 +1,24 @@
+#import 
+	'GrammaticLexer.grammar'{STRING}, 
+	'GrammaticCharacter.grammar'{character};
+
+basicLexicalAtom
+	:  STRING
+	:  character
+	:  '.'
+	:  range
+	;
+
+range
+	: '[' rangeItem+ ']'
+ 	: rangeComplement
+	;
+	
+rangeComplement
+	: '[^' rangeItem+ ']'
+	;
+	
+rangeItem
+	: character
+	: character '--' character
+	;

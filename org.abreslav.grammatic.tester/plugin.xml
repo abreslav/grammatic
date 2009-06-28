@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin
+      name="%pluginName"
+      id="org.abreslav.grammatic.query.tester"
+      version="1.0.0"
+      provider-name="%providerName">
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.emf.ecore" export="true"/>
+      <import plugin="org.abreslav.grammatic.grammar" export="true"/>
+      <import plugin="org.abreslav.grammatic.query.variables" export="true"/>
+   </requires>
+
+   <runtime>
+      <library name=".">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.abreslav.org/grammartic/2008/tests/matcher"
+            class="matcher_test.Matcher_testPackage"
+            genModel="model/matcher_test.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.abreslav.org/grammartic/2008/tests/test"
+            class="test.TestPackage"
+            genModel="model/matcher_test.genmodel"/>
+   </extension>
+
+</plugin>

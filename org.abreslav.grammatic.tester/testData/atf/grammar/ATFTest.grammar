@@ -1,0 +1,5 @@
+#import 
+	'ATF.templates'{ATF},
+	'TestTypes.grammar'{type, declaration};
+
+#grammar ATF<: declaration, : type>;

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ASCII"?>
+<template-instantiator:InstantiatorModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:template-instantiator="http://www.abreslav.org/Grammatic/2008/template/instantiator" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/template/instantiator ../../../org.abreslav.grammatic.template.generator/model/templateInstantiator.ecore">
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//GrammarTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Grammar"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//GrammarTemplate/symbols"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Grammar/symbols"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//SymbolTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../grammar-template.ecore#//SymbolTemplate/name"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol/name"/>
+    </attributeInstantiators>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//SymbolTemplate/productions"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol/productions"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//ProductionTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Production"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//ProductionTemplate/expression"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Production/expression"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//ExpressionTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Expression"/>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//EmptyTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Empty"/>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//SymbolReferenceTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//SymbolReference"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//SymbolReferenceTemplate/symbol"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//SymbolReference/symbol"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//CombinationTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Combination"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//CombinationTemplate/expressions"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Combination/expressions"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//SequenceTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Sequence"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//SequenceTemplate/expressions"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Combination/expressions"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//AlternativeTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Alternative"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//AlternativeTemplate/expressions"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Combination/expressions"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//IterationTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Iteration"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../grammar-template.ecore#//IterationTemplate/lowerBound"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Iteration/lowerBound"/>
+    </attributeInstantiators>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../grammar-template.ecore#//IterationTemplate/upperBound"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Iteration/upperBound"/>
+    </attributeInstantiators>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//IterationTemplate/expression"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Iteration/expression"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//LexicalDefinitionTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//LexicalDefinition"/>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//CharacterRangeTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//CharacterRange"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../grammar-template.ecore#//CharacterRangeTemplate/lowerBound"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//CharacterRange/lowerBound"/>
+    </attributeInstantiators>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../grammar-template.ecore#//CharacterRangeTemplate/upperBound"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//CharacterRange/upperBound"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//LexicalExpressionTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//LexicalExpression"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//LexicalExpressionTemplate/expression"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//LexicalExpression/expression"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//ExpressionValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//ExpressionValue"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../grammar-template.ecore#//ExpressionValueTemplate/expression"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//ExpressionValue/expression"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../grammar-template.ecore#//StringExpressionTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//StringExpression"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../grammar-template.ecore#//StringExpressionTemplate/value"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//StringExpression/value"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+</template-instantiator:InstantiatorModel>

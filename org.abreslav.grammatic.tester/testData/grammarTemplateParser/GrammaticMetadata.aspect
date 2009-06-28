@@ -1,0 +1,33 @@
+metadata 
+	: '{' (attribute (';' attribute?)*)? '}'
+	;
+	
+namespace
+	: NAME ':'
+	;
+	
+attribute 
+	: namespace? NAME ('=' attributeValue)?
+	;
+	
+attributeValue
+	: character
+	: INT
+	: STRING
+	: NAME
+	: metadata
+	: '{{' term* '}}'
+	: '[[' alternative ']]'
+	;
+	
+term 
+	:  attributeValue 
+	:  punctuation
+	;
+	
+punctuation
+	: '`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
+	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
+	| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
+	| '?' | '<' | '>'
+	;

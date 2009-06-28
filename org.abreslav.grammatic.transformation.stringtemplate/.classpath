@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/" kind="src" path="src"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="generated"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="ANTLR_RUNTIME" sourcepath="/ANTLR_RUNTIME_SRC"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query"/>
+	<classpathentry kind="var" path="ECORE_PLUGIN"/>
+	<classpathentry kind="var" path="EMF_COMMON_PLUGIN"/>
+	<classpathentry kind="var" path="ANTLR_277"/>
+	<classpathentry kind="var" path="STRING_TEMPLATE_BIN" sourcepath="/STRING_TEMPLATE_SRC"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,8 @@
+#import
+	'GrammaticLexer.grammar'{n = NAME, INT},
+	'Sample.grammar'{xxx = x, x};
+	
+aaa : n 
+	: INT 
+	: xxx x 
+	: x;

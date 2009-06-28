@@ -1,0 +1,2 @@
+#import 'TemplateParams.templates'{TemplateParams};
+#grammar TemplateParams<: 'a' , : 'b' : 'c', >

@@ -1,0 +1,20 @@
+basicLexicalAtom
+	:  STRING
+	:  character
+	:  '.'
+	:  range
+	;
+
+range
+	: '[' rangeItem+ ']'
+ 	: rangeComplement
+	;
+	
+rangeComplement
+	: '[^' rangeItem+ ']'
+	;
+	
+rangeItem
+	: character
+	: character '--' character
+	;

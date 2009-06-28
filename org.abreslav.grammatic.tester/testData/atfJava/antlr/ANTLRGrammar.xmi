@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ASCII"?>
+<atf-java-antlr:ANTLRGrammar xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:atf-java-antlr="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR" xmlns:atf-java-antlr-semantics="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics" xsi:schemaLocation="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR ../../../../org.abreslav.grammatic.atf.java.antlr.generator/model/antlr.ecore http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics ../../../../org.abreslav.grammatic.atf.java.antlr.generator/model/antlr.ecore#//semantics" name="test" package="org.abreslav.test">
+  <imports imported="java.util.Collection"/>
+  <options name="backtrack" value="true"/>
+  <rules xsi:type="atf-java-antlr:LexicalRule" name="LETTER" fragment="true">
+    <productions>
+      <expression xsi:type="atf-java-antlr:ANTLRAlternative">
+        <expressions xsi:type="atf-java-antlr:ANTLRCharacterRange" lowerBound="65" upperBound="90"/>
+        <expressions xsi:type="atf-java-antlr:ANTLRCharacterRange" lowerBound="97" upperBound="122"/>
+      </expression>
+    </productions>
+  </rules>
+  <rules xsi:type="atf-java-antlr:LexicalRule" name="WS" whitespace="true">
+    <productions>
+      <expression xsi:type="atf-java-antlr:ANTLRIteration" type="+">
+        <expression xsi:type="atf-java-antlr:ANTLRCharacterRange" lowerBound="0" upperBound="32"/>
+      </expression>
+    </productions>
+  </rules>
+  <rules xsi:type="atf-java-antlr:LexicalRule" name="ID">
+    <productions>
+      <expression xsi:type="atf-java-antlr:ANTLRSequence">
+        <expressions xsi:type="atf-java-antlr:RuleCall" rule="//@rules.0"/>
+        <expressions xsi:type="atf-java-antlr:ANTLRIteration" type="+">
+          <expression xsi:type="atf-java-antlr:ANTLRAlternative">
+            <expressions xsi:type="atf-java-antlr:RuleCall" rule="//@rules.0"/>
+            <expressions xsi:type="atf-java-antlr:ANTLRCharacterRange" lowerBound="48" upperBound="57"/>
+          </expression>
+        </expressions>
+      </expression>
+    </productions>
+  </rules>
+  <rules xsi:type="atf-java-antlr:SyntacticalRule" name="character">
+    <productions>
+      <expression xsi:type="atf-java-antlr:RuleCall" assignToVariable="CHARACTER_" rule="//@rules.0">
+        <after xsi:type="atf-java-antlr-semantics:JavaAssignment" variable="//@rules.3/@resultVariable">
+          <value xsi:type="atf-java-antlr-semantics:MethodCall" variable="builder">
+            <method href="AFactory.xmi#//@moduleImplementations.0/@methods.0"/>
+            <arguments xsi:type="atf-java-antlr-semantics:GrammarExpressionReference" expression="//@rules.3/@productions.0/@expression"/>
+          </value>
+        </after>
+      </expression>
+    </productions>
+    <productions>
+      <expression xsi:type="atf-java-antlr:ANTLRSequence">
+        <after xsi:type="atf-java-antlr-semantics:JavaAssignment" variable="//@rules.3/@resultVariable">
+          <value xsi:type="atf-java-antlr-semantics:MethodCall" variable="builder">
+            <method href="AFactory.xmi#//@moduleImplementations.0/@methods.1"/>
+            <arguments xsi:type="atf-java-antlr-semantics:GrammarExpressionReference" expression="//@rules.3/@productions.1/@expression/@expressions.0"/>
+          </value>
+        </after>
+        <expressions xsi:type="atf-java-antlr:RuleCall" assignToVariable="CODE_" rule="//@rules.0"/>
+        <expressions xsi:type="atf-java-antlr:RuleCall" rule="//@rules.0"/>
+      </expression>
+    </productions>
+    <before xsi:type="atf-java-antlr-semantics:VariableDefinition">
+      <variable type="ICharacterBuilder" name="builder"/>
+      <value xsi:type="atf-java-antlr-semantics:MethodCall" variable="myAFactory">
+        <method href="AFactory.xmi#//@getImplementationMethods.0"/>
+      </value>
+    </before>
+    <after xsi:type="atf-java-antlr-semantics:MethodCall" variable="myAFactory">
+      <method href="AFactory.xmi#//@releaseImplementationMethods.0"/>
+      <arguments xsi:type="atf-java-antlr-semantics:VariableReference" variable="//@rules.3/@before/@variable"/>
+    </after>
+    <resultVariable type="char" name="result"/>
+  </rules>
+  <poolVariables fieldName="myAFactory" constructorParameterName="af">
+    <provider href="AFactory.xmi#/"/>
+  </poolVariables>
+  <poolVariables fieldName="myBFactory" constructorParameterName="bf">
+    <provider href="BFactory.xmi#/"/>
+  </poolVariables>
+</atf-java-antlr:ANTLRGrammar>

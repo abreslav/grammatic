@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<metadata-provider-test:MetadataProviderTests xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:metadata-provider-test="http://www.abreslav.org/grammartic/2008/tests/metadata-provider" xsi:schemaLocation="http://www.abreslav.org/grammartic/2008/tests/metadata-provider ../../model/metadata_provider_test.ecore">
+  <tests xsi:type="metadata-provider-test:MetadataProviderTest">
+    <objects xsi:type="ecore:EClass" name="some"/>
+    <aspect>
+      <assignments subject="//@tests.0/@objects.0">
+        <attributes name="n"/>
+        <attributes name="a"/>
+      </assignments>
+    </aspect>
+  </tests>
+</metadata-provider-test:MetadataProviderTests>

@@ -1,0 +1,88 @@
+#import 
+  'null.module'{null};
+  
+metadata 
+	: '{' (attribute (';' attribute?)*)? '}'
+	;
+[[
+	metadata(EObject subject) {
+		attribute:: attribute(subject);	
+	}
+	
+	attributeList() --> (TupleValue result) {
+		#before : result = createTupleValue();
+		attribute:: attributeInList(result);
+	}
+]]
+
+namespace
+	: NAME ':'
+	;
+# --> (Namespace namespace) {
+	#after : namespace = createNamespace(NAME#);  
+}
+	
+attribute 
+	: namespace? NAME ('=' attributeValue)?
+	;
+[[
+	attribute(EObject subject) {
+		#before : {
+			namespace = null.null();
+			attributeValue = null.null();
+		}
+		namespace:: namespace = #();
+		attributeValue : attributeValue = attributeValue#;
+		#after : writeAttribute(subject, namespace, NAME#, attributeValue);
+	} 
+	attributeInList(Annotated subject) {
+		#before : {
+			namespace = null.null();
+			attributeValue = null.null();
+		}
+		attributeValue : attributeValue = attributeValue#;
+		namespace:: namespace = #();
+		#after : addAttribute(subject, namespace, NAME#, attributeValue);
+	}
+]]			
+	
+attributeValue
+	: character
+	: INT
+	: STRING
+	: NAME
+	: metadata
+	$t=|: '{{' term* '}}'
+//	: '<<' alternative '>>'
+	;
+# --> (Value result) {
+	character : result = createCharacterValue(character#);
+	INT : result = createIntValue(INT#);
+	STRING : result = createStringValue(STRING#);
+	NAME : result = createIdValue(NAME#);
+	metadata:: result = attributeList();
+	t.before : multi = createMultiValue();
+	term : addItem(multi, term#);
+	t.after : result = multi;
+	#before : result = null();
+//	alternative : result = createExpressionValue(alternative#);
+}
+	
+term 
+	:  attributeValue 
+	:  punctuation
+	;
+# --> (Value result) {
+	attributeValue:: result = #();
+	punctuation : result = createPunctuationValue(punctuation#); 
+}
+	
+punctuation
+	: $tokens=('`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
+	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
+	| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
+	| '?' | '<' | '>')
+	;
+# --> (PunctuationType result) {
+	tokens: result = punctuationType(#text(tokens));
+}

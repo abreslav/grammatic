@@ -1,0 +1,25 @@
+{
+	name = TestTypes;
+	package = 'org.abreslav.grammatic.atf.parser';
+}
+
+declaration
+[[
+	rules = {{
+		void declarations();
+	}};
+]]
+	|: ..
+	;
+	
+type 
+[[
+	rules = {{
+		Object testType();
+	}};
+]]
+	: $=('int' | ...)
+	[[
+		tokenSwitch;
+	]]	
+	;

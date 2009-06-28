@@ -1,0 +1,12 @@
+<project name="buildCommons">
+	<taskdef 
+		classpath="../org.abreslav.grammatic.antlr.plain.generator/deploy/grammatic-generator.jar"
+		classname="org.abreslav.grammatic.antlr.generator.frontend.GrammarGeneratorTask"
+		name="grammatic"
+	/>
+	<property name="queryParserProj" value="org.abreslav.grammatic.query.parser"/>
+	<property name="grammarParserProj" value="org.abreslav.grammatic.grammar.template.parser"/>
+	<property name="aspectDefinitionParserProj" value="org.abreslav.grammatic.metadata.aspects.parser"/>
+	<property name="atfProj" value="org.abreslav.grammatic.atf"/>
+	<property name="atfJavaProj" value="org.abreslav.grammatic.atf.java"/>
+</project>

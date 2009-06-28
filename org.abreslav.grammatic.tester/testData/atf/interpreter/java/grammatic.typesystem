@@ -1,0 +1,31 @@
+#import org.eclipse.emf.ecore.EObject;
+
+package org.eclipse.emf.ecore {
+	class EObject;
+}
+
+package org.abreslav.grammatic.template {
+	class TemplateBody<T> extends EObject;
+}
+
+package org.abreslav.grammatic.grammar.template.parser {
+	class SetComplementBuilder;
+}
+
+package org.abreslav.grammatic.metadata {
+	class TupleValue extends Value, Annotated;
+	class Value extends EObject;
+	class Annotated extends EObject;
+	class Namespace extends EObject;
+	class PunctuationType;
+}
+
+package org.abreslav.grammatic.grammar {
+	class Grammar extends EObject;
+	class Expression extends EObject;
+	class CharacterRange extends Expression;
+}
+
+package org.abreslav.grammatic {
+	class RenamingManager;
+}

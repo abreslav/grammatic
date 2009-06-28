@@ -1,0 +1,6 @@
+#import 'GrammaticLexer.grammar'{CHARACTER, CODE};
+
+character
+	: CHARACTER
+	: CODE
+	;

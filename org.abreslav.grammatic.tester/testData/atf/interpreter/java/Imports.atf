@@ -1,0 +1,30 @@
+#import 
+  'string.module'{string}, 	
+  'null.module'{null},
+  'grammatic.typesystem'{some};
+  
+#import org.abreslav.grammatic.RenamingManager;
+
+import
+	: '#import' importSpec (',' importSpec)* ';'
+	;	
+# (RenamingManager manager) {
+	importSpec:: #(manager);
+}
+	
+importSpec
+	: STRING '{' renaming (',' renaming)* '}'
+	;
+# (RenamingManager manager) {
+	STRING : moduleName = string.createString(STRING#);
+	renaming:: #(manager, moduleName);
+}
+	
+renaming
+	: ($old=NAME '=')? $new=NAME
+	;
+# (RenamingManager manager, String moduleName) {
+	#before : old = null();
+	old : old = old#;
+	new : addRenaming(manager, moduleName, old, new#);
+}

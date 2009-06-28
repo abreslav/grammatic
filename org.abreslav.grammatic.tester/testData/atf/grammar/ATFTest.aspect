@@ -1,0 +1,4 @@
+{
+	parserName = ATFTest;
+	parserPackage = 'org.abreslav.grammatic.atf.interpreter';
+}

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ASCII"?>
+<template-instantiator:InstantiatorModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:template-instantiator="http://www.abreslav.org/Grammatic/2008/template/instantiator" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/template/instantiator ../../../org.abreslav.grammatic.template.generator/model/templateInstantiator.ecore">
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//NamespaceTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Namespace"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../metadata-template.ecore#//NamespaceTemplate/uri"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Namespace/uri"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//AttributeTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../metadata-template.ecore#//AttributeTemplate/name"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute/name"/>
+    </attributeInstantiators>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../metadata-template.ecore#//AttributeTemplate/value"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute/value"/>
+    </referenceInstantiators>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../metadata-template.ecore#//AttributeTemplate/namespace"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Attribute/namespace"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//ValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Value"/>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//StringValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//StringValue"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../metadata-template.ecore#//StringValueTemplate/value"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//StringValue/value"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//IntegerValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//IntegerValue"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../metadata-template.ecore#//IntegerValueTemplate/value"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//IntegerValue/value"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//IdValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//IdValue"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../metadata-template.ecore#//IdValueTemplate/id"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//IdValue/id"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//PunctuationValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//PunctuationValue"/>
+    <attributeInstantiators>
+      <source xsi:type="ecore:EAttribute" href="../metadata-template.ecore#//PunctuationValueTemplate/type"/>
+      <target xsi:type="ecore:EAttribute" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//PunctuationValue/type"/>
+    </attributeInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//AnnotatedTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Annotated"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../metadata-template.ecore#//AnnotatedTemplate/attributes"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Annotated/attributes"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//TupleValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//TupleValue"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../metadata-template.ecore#//TupleValueTemplate/attributes"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//Annotated/attributes"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+  <objectInstantiators>
+    <source xsi:type="ecore:EClass" href="../metadata-template.ecore#//MultiValueTemplate"/>
+    <target xsi:type="ecore:EClass" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//MultiValue"/>
+    <referenceInstantiators>
+      <source xsi:type="ecore:EReference" href="../metadata-template.ecore#//MultiValueTemplate/values"/>
+      <target xsi:type="ecore:EReference" href="../../../org.abreslav.grammatic.grammar/model/metadata.ecore#//MultiValue/values"/>
+    </referenceInstantiators>
+  </objectInstantiators>
+</template-instantiator:InstantiatorModel>

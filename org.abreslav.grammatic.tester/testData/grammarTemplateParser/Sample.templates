@@ -1,0 +1,9 @@
+Grammar Sample<
+	Production* add
+>
+{
+	x 
+		: 'x' 
+		: <add>
+		;
+}

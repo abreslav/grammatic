@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ASCII"?>
+<template:Template xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:grammatic-grammar-template="http://www.abreslav.org/Grammatic/2008/GrammarTemplate" xmlns:template="http://www.abreslav.org/Grammatic/2008/Template" xsi:schemaLocation="http://www.abreslav.org/Grammatic/2008/GrammarTemplate ../../../org.abreslav.grammatic.template.generator/GrammarTemplate.ecore#/0 http://www.abreslav.org/Grammatic/2008/Template ../../../org.abreslav.grammatic.template/model/template.ecore" name="x">
+  <parameters name="xx">
+    <type href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Symbol"/>
+  </parameters>
+  <parameters name="yy">
+    <type href="http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry"/>
+  </parameters>
+  <parameters name="ee">
+    <type href="../../../org.abreslav.grammatic.grammar/model/grammar.ecore#//SymbolReference"/>
+  </parameters>
+  <body xsi:type="grammatic-grammar-template:GrammarTemplate">
+    <symbols xsi:type="grammatic-grammar-template:AlternativeTemplate">
+      <expressions xsi:type="grammatic-grammar-template:EmptyTemplate"/>
+      <expressions xsi:type="template:TemplateApplication" template="/">
+        <arguments parameter="//@parameters.2">
+          <value xsi:type="ecore:EFactory"/>
+        </arguments>
+      </expressions>
+    </symbols>
+    <symbols xsi:type="grammatic-grammar-template:SymbolTemplate"/>
+    <symbols xsi:type="template:TemplateApplication" template="/"/>
+    <symbols xsi:type="template:ParameterReference" parameter="//@parameters.0"/>
+    <symbols xsi:type="template:ParameterReference" parameter="//@parameters.1"/>
+  </body>
+</template:Template>

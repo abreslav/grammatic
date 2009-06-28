@@ -1,0 +1,71 @@
+NAME : [[ ['a'--'z' 'A'--'Z' '_'] ['a'--'z' 'A'--'Z' '_' '0'--'9']* ]];
+
+annotatedGrammar 
+	: 
+	@{
+		attributes = {{
+		a := 10 + 5;
+		b := a + 1; 
+		}};
+		rule = [[ rule* NAME+ | #empty | (operation ['a'--'z'])+]]
+	} rule*;
+rule
+	: NAME{xxx} ':' production ('||' production)* ';';
+production
+	: ('@' metadata )? alternative;
+alternative
+	: sequence ('|' sequence)*
+	|| #empty;
+sequence
+	: iteration+;
+iteration
+	: atom operation?;
+operation 
+	: '*'
+	|| '+'
+	|| '?'
+	;
+atom
+	: NAME
+	|| '(' alternative ')'
+	|| lexicalAtom
+	|| metadata ':' atom
+	;
+lexicalAtom
+	: STRING
+	|| character
+	|| '.'
+	|| range
+	;
+character
+	: CHARACTER
+	|| CODE
+	;
+range
+	: '[' rangeItem+ ']'
+	|| '[^' rangeItem+ ']'
+	;
+rangeItem
+	: character
+	|| character '-' character
+	;
+metadata
+	: '{' attribute* '}';
+attribute
+	: namespace? NAME '=' attributeValue ';';
+namespace
+	: NAME ':' ;
+attributeValue
+	: STRING
+	|| INT
+	|| NAME
+	|| metadata
+	|| '{{' (attributeValue | punctuation)* '}}'
+	;
+punctuation
+	: '`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
+	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
+	| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
+	| '?' | '<' | '>'
+	;
+X : X || X X;

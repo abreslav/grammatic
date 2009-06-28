@@ -1,0 +1,3 @@
+a {lexical} : 'asdas'{string};
+b : a{l}*; 
+bb : (a*){l}; 

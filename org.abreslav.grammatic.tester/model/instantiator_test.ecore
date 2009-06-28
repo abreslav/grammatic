@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="instantiator_test"
+    nsURI="http://www.abreslav.org/grammartic/2008/tests/instantiator" nsPrefix="instantiator-test">
+  <eClassifiers xsi:type="ecore:EClass" name="InstantiatorTests">
+    <eGenericSuperTypes eClassifier="ecore:EClass test.ecore#//Tests">
+      <eTypeArguments eClassifier="#//InstantiatorTest"/>
+      <eTypeArguments eClassifier="#//InstantiatorTests"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InstantiatorTest" eSuperTypes="test.ecore#//AbstractTest">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="template" containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.abreslav.grammatic.template/model/template.ecore#//Template">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="templateApplication" containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.abreslav.grammatic.template/model/template.ecore#//TemplateApplication">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="data" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="_" abstract="true" eSuperTypes="../../org.abreslav.grammatic.grammar/model/grammar.ecore#//Grammar"/>
+</ecore:EPackage>

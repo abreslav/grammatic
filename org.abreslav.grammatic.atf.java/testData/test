@@ -1,0 +1,23 @@
+
+package m {
+	class M;
+}
+
+package org.abreslav.test {
+	
+	import m.M;
+	
+	class X<T>;
+	
+	class Z extends X<String>;
+	
+	class Y1<T extends Z> extends X<T>;
+
+	class Y<A> extends X<M>;
+	
+	class T;
+}
+
+package java.util {
+
+}

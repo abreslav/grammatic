@@ -1,0 +1,34 @@
+modeltype trace uses 'http:///www.eclipse.org/m2m/qvt/operational/trace.ecore';
+modeltype instantiator uses 'http://www.abreslav.org/Grammatic/2008/template/instantiator';
+modeltype ecore uses 'http://www.eclipse.org/emf/2002/Ecore';
+
+transformation TraceToInstantiatorModel(in Src : trace, out Dest : instantiator);
+
+mapping main() {
+	init {
+		var root := Src.objects()[trace::Trace];
+		object InstantiatorModel {
+			objectInstantiators += root.traceRecords.map toInstantiator();
+		}
+	}
+}
+
+mapping TraceRecord::toInstantiator() : ObjectInstantiator 
+	when {self.mappingOperation.name = 'toTemplateClass'}
+{
+	target := self._context._context.value.modelElement;
+	source := self._result._result->first().value.modelElement;
+	referenceInstantiators += result.source.oclAsType(EClass).eAllReferences.map toReferenceInstantiator(result.target.oclAsType(EClass)); 
+	attributeInstantiators += result.source.oclAsType(EClass).eAllAttributes.map toAttributeInstantiator(result.target.oclAsType(EClass)); 
+}
+
+mapping EReference::toReferenceInstantiator(in targetClass : EClass) : ReferenceInstantiator {
+	source := self;
+	target := targetClass.getEStructuralFeature(self.name);
+}
+
+
+mapping EAttribute::toAttributeInstantiator(in targetClass : EClass) : AttributeInstantiator {
+	source := self;
+	target := targetClass.getEStructuralFeature(self.name);
+}

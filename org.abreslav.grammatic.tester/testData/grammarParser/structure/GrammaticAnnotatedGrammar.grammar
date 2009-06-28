@@ -1,0 +1,219 @@
+{
+	name = GrammaticAnnotatedGrammar;
+	options = {
+		output = AST;
+	};
+	package = 'org.abreslav.grammatic.grammar.annotated.parser';
+	imports = {{
+		import org.abreslav.grammatic.grammar.CharacterRange;
+		import org.abreslav.grammatic.grammar.Expression;
+		import org.abreslav.grammatic.grammar.Grammar;
+		import org.abreslav.grammatic.grammar.Iteration;
+		import org.abreslav.grammatic.grammar.LexicalDefinition;
+		import org.abreslav.grammatic.grammar.Production;
+		import org.abreslav.grammatic.grammar.Symbol;
+		import org.abreslav.grammatic.grammar.antlr.parser.SetComplementBuilder;
+		import org.abreslav.grammatic.metadata.Namespace;
+		import org.abreslav.grammatic.metadata.PunctuationType;
+		import org.abreslav.grammatic.metadata.TupleValue;
+		import org.abreslav.grammatic.metadata.Value;
+		import org.eclipse.emf.ecore.EObject;
+	}};
+}
+
+
+#import GrammaticLexer, GrammaticMetadata;
+
+annotatedGrammar 
+	: @{ast = {{
+		imports? metadata? rule+ [
+			Grammar annotatedGrammar() [
+				metadata -> metadata[#result];
+			]
+		]
+	}} } imports? metadata? rule*
+	;
+	
+imports
+	: @{ ast = {{ 
+		^(!IMPORT NAME+) [
+			void imports();
+		]
+	}} }
+	'#import' NAME (',' NAME)* ';'
+	;
+	
+	
+rule
+	: @{ ast = {{
+		^(!RULE NAME metadata? production+) [
+			Symbol rule() [
+				metadata -> metadata[#result];
+			]
+		]
+		}} }
+	  NAME metadata? ':' production ('||' production)* ';'
+	;
+production
+	: @{ ast = {{
+		^(!PRODUCTION metadata? alternative) [
+			Production production() [
+				metadata -> metadata[#result];
+				alternative -> alternative[false];
+			]
+		]		
+	}} }
+	  ('@' metadata)? alternative
+	;
+alternative
+	: @{ ast = {{
+			^(!ALT sequence+) [
+				Expression alternative(boolean inLexical) [
+					sequence -> sequence[inLexical];
+				]
+			]
+		}} }
+	sequence ('|' sequence){flag=flag}*
+	;
+
+expression
+	: @{ast = {{
+		alternative [
+			Expression expression() [
+				alternative -> alternative[false];
+			]
+		]		
+	}} }	  
+	  alternative ';'
+	;
+
+sequence
+	: 
+		@{ ast = {{
+			^(!SEQUENCE iteration+) [
+				Expression sequence(boolean inLexical) [
+					iteration -> iteration[inLexical];
+				]
+			]
+		}} }
+	  iteration (iteration){flag=flag}*
+	;
+iteration
+	: 
+		@{ ast = {{
+		  ^(operation atom metadata?) [
+		  	Expression iteration(boolean inLexical) [
+		  		metadata -> metadata[#result];
+		  		atom -> atom[inLexical];
+		  	]
+		  ]
+		}} }
+	  atom (metadata){flag=flag}? operation
+	;
+operation 
+	: @{tokenSwitch=Iteration} '*' | '+' | '?'
+	|| @{ ast = {{
+		!CLEAR_ATOM [
+			Iteration operation();
+		]			
+	}} } 
+		#empty
+	;
+atom
+	: NAME
+	|| @{ ast = {{
+		alternative [
+			Expression atom(boolean inLexical) [
+				alternative -> alternative[inLexical];
+			]
+		]	
+	}} }
+	  '(' alternative ')'
+	|| @{ ast = {{
+		lexicalAtom [
+			Expression atom(boolean inLexical) [
+				lexicalAtom -> lexicalAtom[inLexical];
+			]
+		]	
+	}} } lexicalAtom
+	|| @{ ast = {{
+		'#empty' [
+			Expression atom(boolean inLexical);
+		]	
+	}} } '#empty'
+	;
+lexicalAtom
+	: @{ ast = {{
+		STRING [
+			LexicalDefinition lexicalAtom(boolean inLexical);
+		]
+	}} } STRING
+	|| @{ ast = {{
+		character [
+			LexicalDefinition lexicalAtom(boolean inLexical);
+		]
+	}} } character
+	|| @{ ast = {{
+		'.' [
+			LexicalDefinition lexicalAtom(boolean inLexical);
+		]
+	}} } '.'
+	|| @{ ast = {{
+		range [
+			LexicalDefinition lexicalAtom(boolean inLexical) [
+				range -> range[inLexical];
+			]
+		]
+	}} } range
+	|| @{ ast = {{
+		^(!LEXICAL alternative) [
+			LexicalDefinition lexicalAtom(boolean inLexical) [
+				alternative -> alternative[true];
+			]
+		]
+	}} }
+	  '[[' alternative ']]'
+	;
+
+range
+	: @{ ast = {{
+		^(!CHARACTER_SET rangeItem+) [
+			Expression range(boolean inLexical);
+		]
+	}} }
+	  '[' rangeItem+ ']'
+ 	|| @{ ast = {{
+		rangeComplement [
+			Expression range(boolean inLexical) [
+				rangeComplement -> rangeComplement[inLexical];
+			]
+		]
+	}} }
+	  rangeComplement
+	;
+rangeComplement
+	:  @{ ast = {{
+		^(!CHARACTER_SET_COMPLEMENT rangeItem+) [
+			SetComplementBuilder rangeComplement(boolean inLexical) [
+				rangeItem -> rangeComplementItem[#result];
+			]
+		]
+	}} }
+	  '[^' rangeItem+ ']'
+	;
+rangeItem
+	: character
+	|| @{ ast = {{
+		^(!CHARACTER_RANGE $from $to) [
+			void rangeComplementItem(SetComplementBuilder builder);
+			CharacterRange rangeItem();
+		]
+		}} }
+      character{varName=from} '--' character{varName=to}
+	;
+//attributeValue
+//	: @{ ast = {{basicAttributeValue;}} }
+//	  basicAttributeValue
+//	|| @{ ast = {{alternative;}} }
+//	  '[[' alternative ']]'
+//	;

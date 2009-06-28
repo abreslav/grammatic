@@ -1,0 +1,48 @@
+#import 'string.module'{string};
+
+basicLexicalAtom
+	:  STRING
+	:  character
+	:  '.'
+	:  range
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	STRING : result = createString(string.createString(STRING#));
+	character : result = createCharacter(character#);
+	'.' : result = createFullRange();
+	range : result = range#;
+}
+
+range
+	: '[' rangeItem+ ']'
+ 	: rangeComplement
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	'['.before : result = createRangeBuilder();   
+	rangeItem:: item = rangeItem();
+	rangeItem : addRangeItem(result, item);
+	rangeComplement : result = createRangeTemplate(rangeComplement#);
+}
+
+rangeComplement
+	: '[^' rangeItem+ ']'
+	;
+# --> (SetComplementBuilder result) {
+	'[^'.before : result = createComplementBuilder();
+	rangeItem:: rangeComplementItem(result);
+}
+	
+rangeItem
+	: $only=character
+	: $from=character '--' $to=character
+	;
+[[
+	rangeComplementItem(SetComplementBuilder builder) {
+		only : removeSubrange(builder, only#, only#);
+		to : removeSubrange(builder, from#, to#);
+	}
+	rangeItem() --> (TemplateBody<CharacterRange> result) {
+		only : result = createCharacterRange(only#, only#);
+		to : result = createCharacterRange(from#, to#);
+	}
+]]

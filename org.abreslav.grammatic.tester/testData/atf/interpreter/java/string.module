@@ -1,0 +1,3 @@
+#module string {
+	createString (String token) --> (String result);
+}

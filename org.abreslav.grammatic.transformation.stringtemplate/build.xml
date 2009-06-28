@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	<import file="../org.abreslav.grammatic.grammar.annotated.parser/buildGrammar.xml"/>
+	<target name="default">
+		<property name="copyDest" value="grammar"/>
+		<copy todir="${copyDest}" failonerror="true" overwrite="true" verbose="true">
+			<fileset dir="../org.abreslav.grammatic.grammar.annotated.parser/grammar"></fileset>
+		</copy>
+		<property name="targetFolder" value="generated/org/abreslav/grammatic/transformation/stringtemplate/parser"/>
+		<antcall target="buildGrammar">
+			<param name="doclear" value="true"/>
+			<param name="project" value="org.abreslav.grammatic.transformation.stringtemplate"/>
+			<param name="grammarFile" value="GrammaticStringTemplate.g"/>
+			<param name="treeGrammarFile" value=""/>
+			<param name="lib" value="grammar"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+		</antcall>
+		
+		<delete file="${copyDest}/GrammaticLexer.g"/>
+		<delete file="${copyDest}/GrammaticMetadata.g"/>
+		<delete file="${copyDest}/GrammaticAnnotatedGrammar.g3"/>
+		<delete file="${copyDest}/GrammaticAnnotatedGrammarTree.g3"/>
+<!--		
+		<antcall target="injectPackage">
+			<param name="project" value="org.abreslav.grammatic.query.tester"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+	        <param name="lexerJava" value="${targetFolder}/GrammaticQueryLexer.java"/>
+	        <param name="package" value="org.abreslav.grammatic.query.parser"/>
+		</antcall>
+
+		<antcall target="injectPackage">
+			<param name="project" value="org.abreslav.grammatic.query.tester"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+	        <param name="lexerJava" value="${targetFolder}/GrammaticQuery_GrammaticLexer.java"/>
+	        <param name="package" value="org.abreslav.grammatic.query.parser"/>
+		</antcall>
+		-->
+    </target>
+</project>

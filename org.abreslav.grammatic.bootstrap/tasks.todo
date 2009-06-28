@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ASCII"?>
+<todo:Tasks xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:todo="http://www.abreslav.org/2009/ToDo">
+  <tasks description="Support customizing syntax for easier metadata assignment" hits="-1"/>
+  <tasks description="Support metadata templates"/>
+  <tasks description="Support error tracking"/>
+  <tasks description="Support grammar testing"/>
+  <tasks description="Generate MultiValue parsers"/>
+  <tasks description="Migrate to a scnnerless algorithm"/>
+  <tasks description="Aspects: Implement #symbol to refer to all references to the same symbol in current production" hits="3"/>
+  <tasks description="Improve reuse in Grammatic's own grammars (a lot of duplicates here and there)" hits="1"/>
+  <tasks description="Aspects: Make assignment rules like X[[lexical;]] match (without adding &quot;--> ..&quot;) and handle problems with --> {...}" hits="2"/>
+  <tasks description="Allow to refer to query variables inside attribute values (namely we need to refer to symbol references)" hits="1"/>
+  <tasks description="ANTLRGen: Implement type checks"/>
+  <tasks description="Implement &quot;default attributes&quot; in aspect definitions: typically we always set same attributes for the same types of objects" hits="1"/>
+  <tasks description="Allow to omit extra [[ ]] in aspect defs" hits="1"/>
+  <tasks description="ANTLRGen: Generate comments describing builder methods' purposes"/>
+  <tasks description="Make error handling in generated parsers tunable"/>
+  <tasks description="Do not generate builders which simply bypass their parameters, create a flag for it in metadata (do not even create builder objects in such productions)" hits="1"/>
+  <tasks description="Make a forceBuilderGeneration flag in metadata" hits="2"/>
+  <tasks description="MDL: Eliminate Namespace objects, use URIs for NS identification" hits="1"/>
+  <tasks description="ANTLRGen: Make MAX_POOL_SIZE tunable for individual grammars through grammar metadata" hits="1"/>
+  <tasks description="Allow to specify production names explicitly and use this info in ANTLRGen" hits="1"/>
+  <tasks description="AspectDef: Support query lower- and upperBounds in the concrete syntax" hits="1"/>
+  <tasks description="init() and release() occupy too much space in builder's code" hits="1"/>
+  <tasks description="ANTLRGen: escape ANTLR keywords" hits="1"/>
+  <tasks description="Builder factory must import everything imported by grammars which is used by it's prototype grammar" hits="1"/>
+  <tasks description="ANTLRGen: make it possible to pass token value as a parameter when calling another rule" hits="2"/>
+  <tasks description="ANTLRGen: now I have to assign .variable attribute to pass some call's result to another call. It's awful" hits="2"/>
+  <tasks description="Generate Template Instantiators: this will speed up the system" hits="3"/>
+  <tasks description="GAsp: Semantics of working with Combinations is not strictly fixed: what if we insert a sequence into a sequence?" hits="2"/>
+  <tasks description="ExpressionMatcher, known bug: {&quot;('b' 'a') | 'a'&quot;, &quot;('b' $a) | $a:..&quot;, true},"/>
+  <tasks description="Queries: many values not supported for $v:... (alternative wildcards), see ExpressionMatcher.embedParts() method -- it embed variable values and makes it impossible to find out what exactly was matched to a variable"/>
+  <tasks description="ExpressionMatcher: Known bug (see embedParts): &quot;(('a' 'a') | ('b' 'b') | 'm') ('a' | ('b' 'b') | 'm')&quot;, &quot;(('a' 'a') | $alt:...) ('a' | $b:$alt )&quot;,"/>
+  <tasks description="Automatically apply transformations like left factoring (with aspect-ruled syntex and workflow)" hits="1"/>
+  <tasks description="Introduce #EOF eyword in grammar language" hits="2"/>
+</todo:Tasks>

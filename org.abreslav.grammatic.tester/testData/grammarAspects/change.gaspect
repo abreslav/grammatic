@@ -1,0 +1,487 @@
+#import 'more.grammar'{a, b, c};
+
+// Many
+
+manySingle 
+	: $a='a' $a .. $a 'b' $a
+[[
+	a.after = <<'x'>>;
+	a.before = <<'y'>>;
+	a.instead = <<'z'>>;
+]]
+;
+
+manySingleRemove 
+	: $a='a' $a .. $a 'b' $a
+[[
+	a.remove;
+]]
+;
+
+manySeqencePart 
+	: 'a' 'a' $seq=.. 'a' $seq 'a'
+[[
+	seq.before = <<'('>>;
+	seq.after = << ')' >>;
+	seq.instead = <<'x'>>;
+]]	
+;
+
+manySeqencePartRemove 
+	: 'a' 'a' $seq=.. 'a' $seq 'a'
+[[
+	seq.remove;
+]]
+;
+
+// External ref
+
+addExternalReferenceTest
+	: $=..
+[[
+	after = <<a>>;
+]];
+
+/// Expression
+
+// After
+
+afterSequenceTest
+	: $=..
+[[
+	after = <<'x'>>;
+]]
+	;
+	
+intoSequenceAfterTest
+	: 'a' $='b' 'c'
+[[
+	after = <<'x'>>;
+]]
+	;
+	
+intoAlternativeAfterTest
+	: 'a' | $='b'
+[[
+	after = <<'x'>>;
+]]
+	;
+	
+intoAlternativeSequenceAfterNonSequenceTest
+	: 'a' | $='b'
+[[
+	after = <<'x' 'y'>>;
+]]
+	;
+	
+intoIterationAfterTest
+	: ($='a')*
+[[
+	after = <<'x'>>;
+]]	
+	;
+	
+intoIterationSequenceAfterNonSequenceTest
+	: ($='a')*
+[[
+	after = <<'x' 'y'>>;
+]]	
+	;
+	
+// Before
+
+beforeSequenceTest
+	: $=..
+[[
+	before = <<'x'>>;
+]]
+	;
+	
+intoSequenceBeforeTest
+	: 'a' $='b' 'c'
+[[
+	before = <<'x'>>;
+]]
+	;
+	
+intoAlternativeBeforeTest
+	: 'a' | $='b'
+[[
+	before = <<'x'>>;
+]]
+	;
+	
+intoAlternativeSequenceBeforeNonSequenceTest
+	: 'a' | $='b'
+[[
+	before = <<'x' 'y'>>;
+]]
+	;
+	
+intoIterationBeforeTest
+	: ($='a')*
+[[
+	before = <<'x'>>;
+]]	
+	;
+	
+intoIterationSequenceBeforeNonSequenceTest
+	: ($='a')*
+[[
+	before = <<'x' 'y'>>;
+]]	
+	;
+
+// Remove
+
+removeProductionContents
+	: $='a'
+[[
+	remove;
+]];
+	
+removeIterationContents
+	: 'a' ($='b')*
+[[
+	remove;
+]]
+	;
+	
+removeAllSequenceContents
+	: 'a' | ($b='b' $c='c') | 'd'
+[[
+	b.remove;
+	c.remove;
+]]
+	;
+	
+removeAlmostAllSequenceContents
+	: 'a' | $='b' 'c' | 'd'
+[[
+	remove;
+]]
+	;
+	
+removeSequenceItem
+	: 'a' $='b' 'c'
+[[
+	remove;
+]]
+	;
+	
+removeAllAlterativeContents
+	: 'a' ($b='b' | $c='c') 'd'
+[[
+	b.remove;
+	c.remove;
+]]
+	;
+	
+removeAlmostAllAlterativeContents
+	: 'a' ($='b' | 'c') 'd'
+[[
+	remove;
+]]
+	;
+	
+removeAlternativeItem
+	: 'a' | $='b' | 'c'
+[[
+	remove;
+]]
+	;
+	
+// Instead
+
+insteadSequenceIntoSequence
+	: 'a' $='b' 'c'
+[[
+	instead = <<'x' 'y'>>;
+]]
+;
+	
+insteadSomethingIntoSequence
+	: 'a' $='b' 'c'
+[[
+	instead = <<'x' | 'y'>>;
+]]
+;
+	
+insteadAlterantiveIntoAlternative
+	: 'a' | $='b' | 'c'
+[[
+	instead = <<'x' | 'y'>>;
+]]
+;
+
+	
+insteadSomethingIntoAlternative
+	: 'a' | $='b' | 'c'
+[[
+	instead = <<'y'*>>;
+]]
+;
+
+	
+insteadIntoIteration
+	: $='a'*
+[[
+	instead = <<'x' 'y'>>;
+]]
+;
+
+	
+insteadIntoProduction
+	: $='a'
+[[
+	instead = <<'x'>>;
+]]
+;
+
+/// Production
+
+productionTest
+	$=: 'a'
+[[
+	before = <<'x'>>;
+]] 
+	$=: 'b' 
+[[
+	after = <<'y'>>;
+]] 
+	$=: 'c' 
+[[
+	instead = <<'z'>>;
+]] 
+	$=: 'd' 
+[[
+	remove;
+]] 
+	;
+
+rulePartBeforeTest
+	: 'a'
+	: $x={...}
+[[
+	x.before = <<'x'>>;
+]]
+	;
+
+rulePartAfterTest
+	: 'a'
+	: $={...}
+[[
+	after = <<'x'>>;
+]]
+	;
+
+rulePartInsteadTest
+	: 'a'
+	: $={...}
+[[
+	instead = <<'x'>>;
+]]
+	;
+
+rulePartRemoveTest
+	: 'a'
+	: $={...}
+[[
+	remove;
+]]
+	;
+
+alternativePartAfterTest
+	: 'a' | $=...
+[[
+	after = <<'x'>>;
+]]
+	;
+
+alternativePartAlternativeAfterTest
+	: 'a' | $=...
+[[
+	after = <<'x' | 'y'>>;
+]]
+	;
+
+alternativePartBeforeTest
+	: 'a' | $=...
+[[
+	before = <<'x'>>;
+]]
+	;
+
+alternativePartAlternativeBeforeTest
+	: 'a' | $=...
+[[
+	before = <<'x' | 'y'>>;
+]]
+	;
+
+alternativePartIsteadTest
+	: 'a' | $=...
+[[
+	instead = <<'x'>>;
+]]
+	;
+
+alternativePartIsteadAlternativeTest
+	: 'a' | $=...
+[[
+	instead = <<'x' | 'y'>>;
+]]
+	;
+
+alternativePartIsteadAllTest
+	: $a='a' | $=...
+[[
+	a.remove;
+	instead = <<'x' 'y'>>;
+]]
+	;
+
+alternativePartRemoveTest
+	: 'a' | 'b' | $=...
+[[
+	remove;
+]]
+	;
+
+alternativePartRemoveAlmostAllTest
+	: 'a' | $=...
+[[
+	remove;
+]]
+	;
+
+alternativePartRemoveAllTest
+	: $a='a' | $=...
+[[
+	a.remove;
+	remove;
+]]
+	;
+	
+sequencePartBeforeTest 
+	: 'a' $=.. 'd'
+[[
+	before = <<'x'>>;
+]]
+	;
+
+sequencePartSequenceBeforeTest
+	: 'a' $=.. 'd'
+[[
+	before = <<'x' 'y'>>;
+]]
+	;
+
+sequencePartAfterTest
+	: 'a' $=.. 'd'
+[[
+	after = <<'x'>>;
+]]
+	;
+
+sequencePartSequenceAfterTest
+	: 'a' $=.. 'd'
+[[
+	after = <<'x' 'y'>>;
+]]
+	;
+
+sequencePartInsteadTest
+	: 'a' $=.. 'd'
+[[
+	instead = <<'x'>>;
+]]
+	;
+
+sequencePartSequenceInsteadTest
+	: 'a' $=.. 'd'
+[[
+	instead = <<'x' 'y'>>;
+]]
+	;
+
+sequencePartInsteadAllTest
+	: $a='a' $=..
+[[
+	a.remove;
+	instead = <<'x'>>;
+]]
+	;
+
+sequencePartRemoveTest
+	: 'a' $=.. 'd'
+[[
+	remove;
+]]
+	;
+
+sequencePartRemoveAlmostAllTest
+	: 'a' $=..
+[[
+	remove;
+]]
+	;
+
+sequencePartRemoveAllTest
+	: $a='a' $=..
+[[
+	a.remove;
+	remove;
+]]
+	;
+
+aspect
+    : $all=..
+    [[
+    	all.after = <<'foo'>>;
+    ]]
+    ;
+    
+symbolMetadataAssignment
+	: $x='[[' (attribute ';')* $y=']]'
+	[[
+		x.remove;
+		y.remove;
+		attribute.before = <<'@'>>;
+	]]
+	;
+	
+assignments 
+	: $x='[[' assignment* $y=']]'
+	[[
+		x.remove;
+		y.remove;
+	]]
+	;		
+	
+assignment
+	: NAME metadataDefinition ';'
+	[[
+	    NAME.before = <<'@'>>;
+	]]
+	: $prefix=((NAME '.')?) attribute ';'
+	[[
+	    prefix.before = <<'@'>>;
+	]]
+	;	
+	
+metadataDefinition
+	: '{' (attribute (';' attribute?)*)? '}'
+	[[
+	
+	]]
+	;
+	
+attribute 
+	: .. $eq='=' $rest=..
+	[[
+		eq.instead = <<'('>>;
+		rest.after = <<')'>>;
+	]]
+	;
+	

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ASCII"?>
+<atf-java-antlr-semantics:ModuleImplementationProvider xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:atf-java-antlr-semantics="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics" xsi:schemaLocation="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics ../../../../org.abreslav.grammatic.atf.java.antlr.generator/model/antlr.ecore#//semantics" package="org.domr.sdfa" providerInterfaceName="IAasdfasdfsadf" poolsClassName="asdfasdf">
+  <moduleImplementations name="ICharacterBuilder">
+    <methods type="char" name="getCharacter">
+      <parameters type="char" name="c"/>
+    </methods>
+    <methods type="char" name="getCharByCode">
+      <parameters type="int" name="c"/>
+    </methods>
+  </moduleImplementations>
+  <getImplementationMethods type="ICharacterBuilder" name="getCharacterBuilder"/>
+  <releaseImplementationMethods type="void" name="releaseCharacterBuilder"/>
+</atf-java-antlr-semantics:ModuleImplementationProvider>

@@ -1,0 +1,47 @@
+character returns [char c]
+@init {
+	ICharacterBuilder builder = myGrammaticCharacterBuilders.getCharacterBuilder();
+}
+@after {
+	myGrammaticCharacterBuilders.releaseCharacterBuilder(builder);
+}
+	: CHARACTER_=CHARACTER {c = builder.getCharacter(CHARACTER_);}
+	| CODE_=CODE {c = builder.getCharByCode(CODE_);}
+	;
+	
+/////////////
+
+basicLexicalAtom returns [TemplateBody<? extends Expression> result]
+	:  STRING {result = createString(string.createString(STRING#));}
+	:  character {result = createCharacter(character#);}
+	:  '.' {result = createFullRange();}
+	:  range {result = range#;}
+	;
+
+range
+	: {result = createRangeBuilder();} '[' (item=rangeItem {addRangeItem(result, item);})+ ']'
+ 	| rangeComplement {result = createRangeTemplate(rangeComplement#);}
+	;
+
+rangeComplement
+	: '[^' rangeItem+ ']'
+	;
+# --> (SetComplementBuilder result) {
+	'[^'.before : result = createComplementBuilder();
+	rangeItem:: rangeComplementItem(result);
+}
+	
+rangeItem
+	: $only=character
+	: $from=character '--' $to=character
+	;
+[[
+	rangeComplementItem(SetComplementBuilder builder) {
+		only : removeSubrange(builder, only#, only#);
+		to : removeSubrange(builder, from#, to#);
+	}
+	rangeItem() --> (TemplateBody<CharacterRange> result) {
+		only : result = createCharacterRange(only#, only#);
+		to : result = createCharacterRange(from#, to#);
+	}
+]]

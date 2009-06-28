@@ -1,0 +1,41 @@
+aspect
+	: grammarAssignment? assignmentRule*
+	;
+	
+grammarAssignment
+	: metadataDefinition
+	;
+	
+assignmentRule
+	: createQueryContainer createRuleQuery 
+	  symbolQueryWithVar symbolMetadataAssignment? productionAssignment* ';'	
+	; 
+	 
+createQueryContainer
+	: #empty 
+	;
+	 
+createRuleQuery
+	: #empty
+	;
+
+symbolMetadataAssignment
+	: '[[' (attribute ';')* ']]'
+	;
+	
+productionAssignment
+	: productionQuery assignments?
+	;
+
+assignments 
+	: '[[' assignment* ']]'
+	;		
+	
+assignment
+	: NAME metadataDefinition ';'
+	: (NAME '.')? attribute ';'
+	;	
+	
+metadataDefinition
+	: '{' (attribute (';' attribute?)*)? '}'
+	;		

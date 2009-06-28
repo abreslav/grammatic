@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="ASCII"?>
+<parser_test:ParserTests xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:grammatic-query="http://www.abreslav.org/Grammatic/2008/Query" xmlns:parser_test="http://www.abreslav.org/grammartic/2008/tests/parser">
+  <tests xsi:type="parser_test:ParserTest" text="#">
+    <query>
+      <query xsi:type="grammatic-query:SymbolReferenceQuery">
+        <symbol/>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="# #">
+    <query>
+      <query xsi:type="grammatic-query:SequenceQuery">
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="# # ..">
+    <query>
+      <query xsi:type="grammatic-query:SequenceQuery">
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SequenceWildcard"/>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="# .. #">
+    <query>
+      <query xsi:type="grammatic-query:SequenceQuery">
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SequenceWildcard"/>
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="# | #">
+    <query>
+      <query xsi:type="grammatic-query:AlternativeQuery">
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="# | # | ...">
+    <query>
+      <query xsi:type="grammatic-query:AlternativeQuery" open="true">
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="# | # #">
+    <query>
+      <query xsi:type="grammatic-query:AlternativeQuery">
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SequenceQuery">
+          <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+            <symbol/>
+          </definitions>
+          <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+            <symbol/>
+          </definitions>
+        </definitions>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="(# | #) #">
+    <query>
+      <query xsi:type="grammatic-query:SequenceQuery">
+        <definitions xsi:type="grammatic-query:AlternativeQuery">
+          <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+            <symbol/>
+          </definitions>
+          <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+            <symbol/>
+          </definitions>
+        </definitions>
+        <definitions xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </definitions>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="#{!a}">
+    <query>
+      <query xsi:type="grammatic-query:SymbolReferenceQuery">
+        <attributes attributeName="a">
+          <attributeValue xsi:type="grammatic-query:AttributePresence" present="false"/>
+        </attributes>
+        <symbol/>
+      </query>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="a:(#{!a})">
+    <query>
+      <query xsi:type="grammatic-query:VariableReference" variable="//@tests.9/@query/@variableDefinitions.0"/>
+      <variableDefinitions name="a">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <attributes attributeName="a">
+            <attributeValue xsi:type="grammatic-query:AttributePresence" present="false"/>
+          </attributes>
+          <symbol/>
+        </value>
+      </variableDefinitions>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="a:#{!a}">
+    <query>
+      <query xsi:type="grammatic-query:VariableReference" variable="//@tests.10/@query/@variableDefinitions.0">
+        <attributes attributeName="a">
+          <attributeValue xsi:type="grammatic-query:AttributePresence" present="false"/>
+        </attributes>
+      </query>
+      <variableDefinitions name="a">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </value>
+      </variableDefinitions>
+    </query>
+  </tests>
+  <tests xsi:type="parser_test:ParserTest" text="a:# a">
+    <query>
+      <query xsi:type="grammatic-query:SequenceQuery">
+        <definitions xsi:type="grammatic-query:VariableReference" variable="//@tests.11/@query/@variableDefinitions.0"/>
+        <definitions xsi:type="grammatic-query:VariableReference" variable="//@tests.11/@query/@variableDefinitions.0"/>
+      </query>
+      <variableDefinitions name="a">
+        <value xsi:type="grammatic-query:SymbolReferenceQuery">
+          <symbol/>
+        </value>
+      </variableDefinitions>
+    </query>
+  </tests>
+</parser_test:ParserTests>
