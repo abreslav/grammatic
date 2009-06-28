@@ -79,7 +79,7 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 	private final Map<String, Map<ClassifierKey, EClass>> myModules = new HashMap<String, Map<ClassifierKey,EClass>>();
 	
 	private ResolvingDomain<ClassifierKey, EClass> myResolvingDomain;
-	private IOptions myOptions;
+	private IOptions myOptions; 
 	private final Map<String, ClassifierKey> myRenamings = new HashMap<String, ClassifierKey>();	
 	private final Map<ClassifierKey, EClass> myLocalDeclarations = new LinkedHashMap<ClassifierKey, EClass>();
 	private final List<EPackage> myEPackages = new ArrayList<EPackage>();
