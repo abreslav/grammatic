@@ -78,8 +78,8 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 	private final Set<EGenericType> myNewTypes = new HashSet<EGenericType>();
 	private final Map<String, Map<ClassifierKey, EClass>> myModules = new HashMap<String, Map<ClassifierKey,EClass>>();
 	
-	private ResolvingDomain<ClassifierKey, EClass> myResolvingDomain;
-	private IOptions myOptions; 
+	private Stack<ResolvingDomain<ClassifierKey, EClass>> myResolvingDomain = new Stack<ResolvingDomain<ClassifierKey,EClass>>();
+	private Stack<IOptions> myOptions = new Stack<IOptions>(); 
 	private final Map<String, ClassifierKey> myRenamings = new HashMap<String, ClassifierKey>();	
 	private final Map<ClassifierKey, EClass> myLocalDeclarations = new LinkedHashMap<ClassifierKey, EClass>();
 	private final List<EPackage> myEPackages = new ArrayList<EPackage>();
@@ -106,8 +106,8 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 	
 	@Override
 	public void openModule(String moduleName, IOptions options) {
-		myResolvingDomain = ResolvingDomain.create(STUB_FACTORY);
-		myOptions = options;
+		myResolvingDomain.push(ResolvingDomain.create(STUB_FACTORY));
+		myOptions.push(options);
 	}
 	
 	@Override
@@ -119,7 +119,7 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 		for (Entry<ClassifierKey, EClass> entry : module.entrySet()) {
 			ClassifierKey key = entry.getKey();
 			EClass classifier = entry.getValue();
-			myResolvingDomain.markKeyResolved(key, classifier);
+			myResolvingDomain.peek().markKeyResolved(key, classifier);
 		}
 	}
 
@@ -141,8 +141,8 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 		myNewTypes.clear();
 		
 		myLocalDeclarations.clear();
-		myResolvingDomain = null;
-		myOptions = null;
+		myResolvingDomain.pop();
+		myOptions.pop();
 	}
 	
 	@Override
@@ -174,14 +174,14 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 	public void registerClassifier(String pack, EClass classifierDeclaration) {
 		String name = classifierDeclaration.getName();
 		ClassifierKey key = registerRenaming(pack, name);
-		myResolvingDomain.markKeyResolved(key, classifierDeclaration);
+		myResolvingDomain.peek().markKeyResolved(key, classifierDeclaration);
 		myLocalDeclarations.put(key, classifierDeclaration);
 	}
 
 	public EClass lookupClassifier(String pack, String name) {
 		if (pack != null && pack.length() > 0) {
 			ClassifierKey key = new ClassifierKey(pack, name);
-			return myResolvingDomain.getSubjectStub(key);
+			return myResolvingDomain.peek().getSubjectStub(key);
 		}
 		
 		ClassifierKey key = myRenamings.get(name);
@@ -192,19 +192,19 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 			}
 		}
 		
-		return myResolvingDomain.getSubjectStub(key);
+		return myResolvingDomain.peek().getSubjectStub(key);
 	}
 	
 	public void addJavaOption(String name, String value) {
-		myOptions.addOption(name, value);
+		myOptions.peek().addOption(name, value);
 	}
 	
 	private void processUresolvedKeys() {
-		Set<ClassifierKey> unresolvedKeys = myResolvingDomain.getUnresolvedKeys();
+		Set<ClassifierKey> unresolvedKeys = myResolvingDomain.peek().getUnresolvedKeys();
 		for (ClassifierKey classifierKey : unresolvedKeys) {
 			EClass javaLangClassifier = JavaLangPackage.getClass(classifierKey);
 			if (javaLangClassifier != null) {
-				myResolvingDomain.markKeyResolved(classifierKey, javaLangClassifier);
+				myResolvingDomain.peek().markKeyResolved(classifierKey, javaLangClassifier);
 			} else {
 				reportError("Classifier not found: %s.%s", classifierKey.getPackage(), classifierKey.getName());
 			}
