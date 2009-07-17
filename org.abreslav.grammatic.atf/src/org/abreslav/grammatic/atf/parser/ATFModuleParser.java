@@ -82,7 +82,8 @@ public class ATFModuleParser implements IATFParser {
 			SemanticModule semanticModuleDeclaration = parser.semanticModule();
 			myTypeSystemBuilder.closeModule(moduleName);
 			mySemanticModules.put(moduleName, semanticModuleDeclaration);
-			SemanticModuleDescriptor descriptor = new SemanticModuleDescriptor(moduleName, semanticModuleDeclaration, options.getOptions());
+			SemanticModuleDescriptor descriptor = new SemanticModuleDescriptor(
+					moduleName, semanticModuleDeclaration, options.getOptions());
 			mySemanticModuleDescriptors.put(semanticModuleDeclaration, descriptor);
 			return semanticModuleDeclaration;
 		} catch (IOException e) {

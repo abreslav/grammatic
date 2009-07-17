@@ -1,0 +1,17 @@
+group ModuleImplemetation;
+
+main(package, imports, module) ::= <<
+
+package <package>;
+
+<imports:{import <it.imported>;<\n>}>
+public interface <module.name> {
+
+    <module.methods:methodDeclaration(method=it)>
+}	
+>>
+
+methodDeclaration(method) ::= <<
+<method.type> <method.name>(<method.parameters:{<it.type> <it.name>}; separator=", ">); 
+
+>>
