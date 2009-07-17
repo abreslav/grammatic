@@ -79,7 +79,7 @@ public class ATFBuilders implements IATFBuilders {
 	private AssignmentRule myCurrentAssignment;
 	private Namespace myCurrentNamespace;
 	
-	public ATFBuilders(IATFParser parser, ITypeSystemBuilder<?> typeSystemBuilder, IErrorHandler<RuntimeException> errorHandler) {
+	public ATFBuilders(IATFModuleLoader parser, ITypeSystemBuilder<?> typeSystemBuilder, IErrorHandler<RuntimeException> errorHandler) {
 		myErrorHandler = errorHandler;
 		myImportsBuilders = new ATFImportsBuilders(errorHandler, parser, mySemanticResolver);
 		myTypeSystemBuilder = typeSystemBuilder;

@@ -6,12 +6,12 @@ import org.abreslav.grammatic.utils.IErrorHandler;
 
 public class ATFImportsBuilders extends AbstractImportsBuilders {
 
-	private final IATFParser myParser;
+	private final IATFModuleLoader myParser;
 	private final ISemanticModuleHandler mySemanticModuleHandler;
 
 	public ATFImportsBuilders(
 			IErrorHandler<? extends RuntimeException> errorHandler,
-			IATFParser parser, ISemanticModuleHandler semanticModuleHandler) {
+			IATFModuleLoader parser, ISemanticModuleHandler semanticModuleHandler) {
 		super(errorHandler);
 		myParser = parser;
 		mySemanticModuleHandler = semanticModuleHandler;

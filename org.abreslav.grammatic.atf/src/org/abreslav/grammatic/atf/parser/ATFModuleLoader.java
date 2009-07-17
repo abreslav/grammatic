@@ -2,6 +2,9 @@ package org.abreslav.grammatic.atf.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,7 +23,7 @@ import org.abreslav.grammatic.utils.FileLocator;
 import org.abreslav.grammatic.utils.IErrorHandler;
 import org.antlr.runtime.RecognitionException;
 
-public class ATFModuleParser implements IATFParser {
+public class ATFModuleLoader implements IATFModuleLoader {
 
 	private final FileLocator myFileLocator;
 	private final ITypeSystemBuilder<?> myTypeSystemBuilder;
@@ -28,9 +31,9 @@ public class ATFModuleParser implements IATFParser {
 	private final IErrorHandler<RuntimeException> myErrorHandler = IErrorHandler.EXCEPTION;
 	private final Map<String, SemanticModule> mySemanticModules = new HashMap<String, SemanticModule>();
 	private final Set<String> myTypeSystemModules = new HashSet<String>();
-	private final Map<SemanticModule, SemanticModuleDescriptor> mySemanticModuleDescriptors = new HashMap<SemanticModule, SemanticModuleDescriptor>();
+	private final Collection<SemanticModuleDescriptor> mySemanticModuleDescriptors = new ArrayList<SemanticModuleDescriptor>();
 	
-	public ATFModuleParser(ITypeSystemBuilder<?> typeSystemBuilder,
+	public ATFModuleLoader(ITypeSystemBuilder<?> typeSystemBuilder,
 			IATFParserImplementationFactory parserImplementationFactory,
 			FileLocator fileLocator) {
 		myTypeSystemBuilder = typeSystemBuilder;
@@ -62,7 +65,12 @@ public class ATFModuleParser implements IATFParser {
 		} catch (RecognitionException e) {
 			myErrorHandler.reportError("Parsing ATF module %s: %s", moduleName, e.getMessage());
 		} catch (RuntimeException e) {
-			String position = parser.getPositionString();
+			String position;
+			if (parser != null) {
+				position = parser.getPositionString();
+			} else {
+				position = "?:?";
+			}
 			throw new IllegalArgumentException(String.format("%s: %s", position, e.getMessage()), e);
 		}
 		throw new IllegalStateException();
@@ -84,7 +92,7 @@ public class ATFModuleParser implements IATFParser {
 			mySemanticModules.put(moduleName, semanticModuleDeclaration);
 			SemanticModuleDescriptor descriptor = new SemanticModuleDescriptor(
 					moduleName, semanticModuleDeclaration, options.getOptions());
-			mySemanticModuleDescriptors.put(semanticModuleDeclaration, descriptor);
+			mySemanticModuleDescriptors.add(descriptor);
 			return semanticModuleDeclaration;
 		} catch (IOException e) {
 			myErrorHandler.reportError("Loading Semantic module %s: %s", moduleName, e.getMessage());
@@ -120,6 +128,11 @@ public class ATFModuleParser implements IATFParser {
 			String position = parser.getPositionString();
 			throw new IllegalArgumentException(String.format("%s: %s", position, e.getMessage()), e);
 		}
+	}
+	
+	@Override
+	public Collection<SemanticModuleDescriptor> getSemanticModuleDescriptors() {
+		return Collections.unmodifiableCollection(mySemanticModuleDescriptors);
 	}
 	
 	private void addOptions(AspectDefinition atfModule, Map<String, String> options) {

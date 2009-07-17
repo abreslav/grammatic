@@ -10,7 +10,7 @@ import org.abreslav.grammatic.utils.FileLocator;
 import org.abreslav.grammatic.utils.IErrorHandler;
 
 public interface IATFParserImplementationFactory {
-	IATFParserImplementation createParserImplementation(IATFParser parserFrontEnd, 
+	IATFParserImplementation createParserImplementation(IATFModuleLoader parserFrontEnd, 
 			File file, 
 			ITypeSystemBuilder<?> typeSystemBuilder, 
 			FileLocator fileLocator, 

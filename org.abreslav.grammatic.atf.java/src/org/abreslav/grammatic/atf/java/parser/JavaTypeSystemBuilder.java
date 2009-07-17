@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.Map.Entry;
 
 import org.abreslav.grammatic.atf.parser.IOptions;
@@ -21,7 +20,6 @@ import org.abreslav.grammatic.emfutils.ProxyRemover;
 import org.abreslav.grammatic.parsingutils.resolve.IProxy;
 import org.abreslav.grammatic.parsingutils.resolve.ResolvingDomain;
 import org.abreslav.grammatic.parsingutils.resolve.ResolvingDomain.ISubjectStubFactory;
-import org.abreslav.grammatic.template.util.GenericTypeRenderer;
 import org.abreslav.grammatic.utils.CustomHashSet;
 import org.abreslav.grammatic.utils.IHashingStrategy;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -56,20 +54,7 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 		}
 		
 	};
-	private final IStringRepresentationProvider<EGenericType> myGenericTypeRenderer = new IStringRepresentationProvider<EGenericType>() {
-
-		private final Map<EGenericType, String> myCache = new WeakHashMap<EGenericType, String>();
-		
-		@Override
-		public String getStringRepresentation(EGenericType type) {
-			String result = myCache.get(type);
-			if (result == null) {
-				result = GenericTypeRenderer.render(type).intern();
-				myCache.put(type, result);
-			}
-			return result;
-		}
-	};
+	private final IStringRepresentationProvider<EGenericType> myGenericTypeRenderer = new JavaTypeStringRepresentationProvider();
 	
 	private final ISubtypingRelation<EGenericType> mySubtypingRelation = JavaSubtypingRelation.INSTANCE;
 	

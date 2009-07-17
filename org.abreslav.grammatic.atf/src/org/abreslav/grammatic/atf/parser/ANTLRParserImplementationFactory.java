@@ -48,7 +48,7 @@ public abstract class ANTLRParserImplementationFactory<P extends Parser> impleme
 	
 	@Override
 	public IATFParserImplementation createParserImplementation(
-			IATFParser parserFrontEnd, 
+			IATFModuleLoader parserFrontEnd, 
 			File file, 
 			ITypeSystemBuilder<?> typeSystemBuilder, 
 			FileLocator fileLocator, IErrorHandler<RuntimeException> errorHandler) throws IOException {

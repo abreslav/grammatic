@@ -8,5 +8,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar"/>
 	<classpathentry kind="var" path="STRING_TEMPLATE"/>
 	<classpathentry kind="var" path="ANTLR_277"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf.java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.metadata.aspects.parser"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

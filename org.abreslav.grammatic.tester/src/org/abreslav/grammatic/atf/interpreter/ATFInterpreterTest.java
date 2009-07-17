@@ -20,7 +20,7 @@ import org.abreslav.grammatic.atf.dataflow.IControlFlowVertexHandler;
 import org.abreslav.grammatic.atf.java.parser.ATFJavaParserImplementationFactory;
 import org.abreslav.grammatic.atf.java.parser.JavaLangPackage;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeSystemBuilder;
-import org.abreslav.grammatic.atf.parser.ATFModuleParser;
+import org.abreslav.grammatic.atf.parser.ATFModuleLoader;
 import org.abreslav.grammatic.atf.parser.IATFParserImplementationFactory;
 import org.abreslav.grammatic.atf.parser.ITypeSystemBuilder;
 import org.abreslav.grammatic.atf.types.ITypeSystem;
@@ -103,7 +103,7 @@ public class ATFInterpreterTest {
 		FileLocator fileLocator = new FileLocator(dataDir);
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
 		ParsingContext parsingContext = new ParsingContext(fileLocator, writableAspect, IGrammarLoadHandler.NONE);
-		ATFModuleParser moduleParser = new ATFModuleParser(typeSystemBuilder, parserImplementationFactory, fileLocator);
+		ATFModuleLoader moduleParser = new ATFModuleLoader(typeSystemBuilder, parserImplementationFactory, fileLocator);
 		Map<Grammar, AspectDefinition> grammarToATF = new LinkedHashMap<Grammar, AspectDefinition>();
 		
 		File[] listFiles = dataDir.listFiles();
