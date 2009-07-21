@@ -245,15 +245,13 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 				Expression last = beforeExpressions.get(beforeExpressions.size() - 1);
 				if (last instanceof SymbolReference) {
 					IMetadataStorage metadata = MetadataStorage.getMetadataStorage(last, metadataProvider);
-					@SuppressWarnings("unchecked")
-					Collection<ATFExpression> args = (Collection<ATFExpression>) metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
+					Collection<ATFExpression> args = metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
 					if (args != null) {
 						for (ATFExpression expression : args) {
 							readWriteAttributes(expression, operations);
 						}
 					}
-					@SuppressWarnings("unchecked")
-					Collection<ATFAttributeReference> assignedTo = (Collection<ATFAttributeReference>) metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
+					Collection<ATFAttributeReference> assignedTo = metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
 					if (assignedTo != null) {
 						for (ATFAttributeReference attributeReference : assignedTo) {
 //							myReadWrites.write(attributeReference.getAttribute(), written);

@@ -147,11 +147,9 @@ public class ATFTypeChecker<T> implements ISyntacticFunctionHandler<Symbol> {
 			if (metadata.isPresent(ATFMetadata.ASSOCIATED_WITH_TOKEN)) {
 				return null; // fall through
 			}
-			@SuppressWarnings("unchecked")
-			List<ATFAttributeReference> leftSide = (List<ATFAttributeReference>) metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
+			List<ATFAttributeReference> leftSide = metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
 			FunctionSignature function = (FunctionSignature) metadata.readEObject(ATFMetadata.ASSOCIATED_FUNCTION);
-			@SuppressWarnings("unchecked")
-			List<ATFExpression> arguments = (List<ATFExpression>) metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
+			List<ATFExpression> arguments = metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
 			
 			FunctionCall call = AtfFactory.eINSTANCE.createFunctionCall();
 			if (arguments != null) {

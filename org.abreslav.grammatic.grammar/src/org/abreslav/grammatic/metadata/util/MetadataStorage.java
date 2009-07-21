@@ -103,18 +103,21 @@ public class MetadataStorage implements IMetadataStorage {
 	}
 
 	@Override
-	public EObject readEObject(String name) {
+	@SuppressWarnings("unchecked")
+	public <T extends EObject> T readEObject(String name) {
 		List<? extends EObject> list = getList(readValue(name));
-		return list == null ? null : list.get(0);
+		return list == null ? null : (T) list.get(0);
 	}
 
 	@Override
-	public List<? extends EObject> readEObjects(String name) {
+	public <T extends EObject> List<T> readEObjects(String name) {
 		Value value = readValue(name);
 		if (value == null) {
 			return null;
 		}
-		return Collections.unmodifiableList(getList(value));
+		@SuppressWarnings("unchecked")
+		List<T> list = (List<T>) getList(value);
+		return Collections.unmodifiableList(list);
 	}
 
 	private List<? extends EObject> getList(Value value) {
@@ -126,15 +129,18 @@ public class MetadataStorage implements IMetadataStorage {
 	}
 
 	@Override
-	public Object readObject(String name) {
-		Value value = readValue(name);
-		return value == null ? null : ((AttributeValue) value).getValues().get(0);
+	@SuppressWarnings("unchecked")
+	public <T> T readObject(String name) {
+		AttributeValue value = (AttributeValue) readValue(name);
+		return value == null ? null : (T) value.getValues().get(0);
 	}
 
 	@Override
-	public List<?> readObjects(String name) {
-		Value value = readValue(name);
-		return value == null ? null : Collections.unmodifiableList(((AttributeValue) value).getValues());
+	public <T> List<T> readObjects(String name) {
+		AttributeValue value = (AttributeValue) readValue(name);
+		@SuppressWarnings("unchecked")
+		List<T> values = (List<T>) value.getValues();
+		return value == null ? null : Collections.unmodifiableList(values);
 	}
 
 }

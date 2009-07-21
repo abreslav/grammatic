@@ -16,10 +16,10 @@ public interface IMetadataStorage {
 	PunctuationType readPunctuation(String name);
 	List<Value> readMulti(String name);
 	IMetadataStorage readTuple(String name);
-	EObject readEObject(String name);
-	List<? extends EObject> readEObjects(String name);
-	Object readObject(String name);
-	List<?> readObjects(String name);
+	<T extends EObject> T readEObject(String name);
+	<T extends EObject> List<T> readEObjects(String name);
+	<T> T readObject(String name);
+	<T> List<T> readObjects(String name);
 	boolean isPresent(String name);
 	Set<String> getAttributeNames();
 }
