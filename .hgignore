@@ -10,3 +10,4 @@
 ^wikisyntax
 ^org.abreslav.grammatic.tester/testData/atf/.*?\.dot
 ^org.abreslav.grammatic.tester/testData/atf/.*?\.png
+^org.abreslav.grammatic.tester/testData/templateInstantiator/Results.xmi$

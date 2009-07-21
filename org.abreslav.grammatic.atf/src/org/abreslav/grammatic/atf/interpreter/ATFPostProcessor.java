@@ -1,5 +1,6 @@
 package org.abreslav.grammatic.atf.interpreter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import org.abreslav.grammatic.grammar.LexicalExpression;
 import org.abreslav.grammatic.grammar.Production;
 import org.abreslav.grammatic.grammar.Symbol;
 import org.abreslav.grammatic.grammar.SymbolReference;
+import org.abreslav.grammatic.metadata.AttributeValue;
 import org.abreslav.grammatic.metadata.CrossReferenceValue;
 import org.abreslav.grammatic.metadata.MetadataFactory;
 import org.abreslav.grammatic.metadata.Namespace;
@@ -78,18 +80,39 @@ public class ATFPostProcessor<E extends RuntimeException> {
 	private void processSyntacticalRule(Symbol symbol) {
 		assertAbsence(symbol, "when no '" + ATFMetadata.TOKEN + "' present", ATFMetadata.TOKEN_CLASSES);
 		IMetadataStorage metadata = getSymbolMetadataStorage(symbol);
+		String symbolName = symbol.getName();
 		if (metadata.isPresent(ATFMetadata.DEFAULT_SYNTACTIC_FUNCTION)) {
-			processSyntacticFunction(symbol, getDefaultNamespace(symbol), symbol.getName());
+			Namespace defaultNamespace = getDefaultNamespace(symbol);
+			processSyntacticFunction(symbol, defaultNamespace, symbolName);
+			
+			// Convenient to process default and ordinary functions uniformly
+			Map<String, Namespace> functionNameToNamespace = getOrCreateMap(symbol, metadata, ATFMetadata.FUNCTION_NAME_TO_NAMESPACE);
+			functionNameToNamespace.put(symbolName, defaultNamespace);
+			Map<String, FunctionSignature> functionNameToFunction = getOrCreateMap(symbol, metadata, ATFMetadata.FUNCTION_NAME_TO_FUNCTION);
+			functionNameToFunction.put(symbolName, (FunctionSignature) metadata.readEObject(ATFMetadata.DEFAULT_SYNTACTIC_FUNCTION));
 		} else {
 			assertAbsence(symbol, "when no '" + ATFMetadata.DEFAULT_SYNTACTIC_FUNCTION + "' present", ATFMetadata.DEFAULT_NAMESPACE);
 			if (!metadata.isPresent(ATFMetadata.FUNCTION_NAME_TO_NAMESPACE)) {
-				myErrorHandler.reportError("No ATF data for symbol '%s'", symbol.getName());
+				myErrorHandler.reportError("No ATF data for symbol '%s'", symbolName);
 			}
 			Map<String, Namespace> functionNameToNamespace = getFunctionNameToNamespace(metadata);
 			for (Namespace namespace : functionNameToNamespace.values()) {
 				processSyntacticFunction(symbol, namespace, null);
 			}
 		}
+	}
+
+	private <T> Map<String, T> getOrCreateMap(Symbol symbol,
+			IMetadataStorage metadata, String attributeName) {
+		@SuppressWarnings("unchecked")
+		Map<String, T> map = (Map<String, T>) metadata.readObject(attributeName);
+		if (map == null) {
+			map = new HashMap<String, T>();
+			AttributeValue value = MetadataFactory.eINSTANCE.createAttributeValue();
+			value.getValues().add(map);
+			myWritableAspect.setAttribute(symbol, ATFMetadata.ATF_NAMESPACE, attributeName, value);
+		}
+		return map;
 	}
 
 	private void processSyntacticFunction(Symbol symbol, final Namespace namespace, String newFunctionName) {

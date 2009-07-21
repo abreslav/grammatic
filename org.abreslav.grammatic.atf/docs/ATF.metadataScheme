@@ -24,10 +24,11 @@ namespaces atf {
 				// Is renamed by post-processor
 				defaultSyntacticFunction : FunctionSignature;
 				defaultNamespace : Namespace defines [SF];
-			} or {
-				functionNameToNamespace : {String -> Namespace defines [SF]};
-				functionNameToFunction : {String -> FunctionSignature};
-			}
+				
+				// Both are registered in maps below by post-processor
+			}?
+			functionNameToNamespace : {String -> Namespace defines [SF]};
+			functionNameToFunction : {String -> FunctionSignature};
 		}
 	}
 }
