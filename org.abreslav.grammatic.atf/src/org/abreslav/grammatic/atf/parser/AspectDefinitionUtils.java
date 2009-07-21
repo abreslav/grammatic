@@ -2,6 +2,7 @@ package org.abreslav.grammatic.atf.parser;
 
 import static org.abreslav.grammatic.atf.ATFMetadata.ATF_NAMESPACE;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,12 +83,18 @@ public class AspectDefinitionUtils {
 
 	/*package*/ static void addCrossReferencedValue(Attribute targetAttribute,
 			EObject object) {
+		CrossReferenceValue value = getCrossReferenceValue(targetAttribute);
+		value.getValues().add(object);
+	}
+
+	private static CrossReferenceValue getCrossReferenceValue(
+			Attribute targetAttribute) {
 		CrossReferenceValue value = (CrossReferenceValue) targetAttribute.getValue();
 		if (value == null) {
 			value = MetadataFactory.eINSTANCE.createCrossReferenceValue();
 			targetAttribute.setValue(value);
 		}
-		value.getValues().add(object);
+		return value;
 	}
 
 	/*package*/ static void addAttributeValue(Attribute targetAttribute,
@@ -127,6 +134,15 @@ public class AspectDefinitionUtils {
 		Attribute attribute = getSymbolAttribute(assignmentRule, namespace,
 				attributeName);
 		addCrossReferencedValue(attribute, object);
+	}
+	
+	/*package*/ static void addContainedValuesToSymbolAttribute(
+			AssignmentRule assignmentRule, Namespace namespace, String attributeName,
+			Collection<? extends EObject> objects) {
+		Attribute attribute = getSymbolAttribute(assignmentRule, namespace,
+				attributeName);
+		CrossReferenceValue crossReferenceValue = getCrossReferenceValue(attribute);
+		crossReferenceValue.getValues().addAll(objects);
 	}
 
 	/*package*/ static void addAttributeValueToSymbolAttribute(

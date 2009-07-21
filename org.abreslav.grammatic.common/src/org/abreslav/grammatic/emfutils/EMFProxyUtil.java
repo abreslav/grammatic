@@ -8,6 +8,7 @@ import org.abreslav.grammatic.parsingutils.resolve.IProxy;
 import org.abreslav.grammatic.utils.CustomHashMap;
 import org.abreslav.grammatic.utils.CustomHashSet;
 import org.abreslav.grammatic.utils.CustomLinkedHashMap;
+import org.abreslav.grammatic.utils.CustomLinkedHashSet;
 import org.abreslav.grammatic.utils.IHashingStrategy;
 import org.eclipse.emf.ecore.EObject;
 
@@ -79,5 +80,9 @@ public class EMFProxyUtil {
 	
 	public static <K, V> CustomLinkedHashMap<K, V> customLinkedHashMap() {
 		return new CustomLinkedHashMap<K, V>(IProxy.HASHING_STRATEGY);
+	}
+	
+	public static <K> CustomLinkedHashSet<K> customLinkedHashSet() {
+		return new CustomLinkedHashSet<K>(IProxy.HASHING_STRATEGY);
 	}
 }

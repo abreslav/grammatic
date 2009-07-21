@@ -336,6 +336,8 @@ public class GrammaticToANTLR {
 		public ANTLRExpression caseSymbolReference(SymbolReference object) {
 			return myRuleProductionMaker.caseSymbolReference(object);
 		}
+		
+		//TODO: Looks like defaultCase is needed here.  
 	};
 	private final RuleProductionMaker myRuleProductionMaker = new RuleProductionMaker();
 	private final Map<Rule, BuilderFactory> myRuleOrigins = new HashMap<Rule, BuilderFactory>();

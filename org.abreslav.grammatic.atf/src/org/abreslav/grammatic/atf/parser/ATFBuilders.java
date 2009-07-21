@@ -14,6 +14,7 @@ import static org.abreslav.grammatic.atf.ATFMetadata.TOKEN_CLASSES;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addAttributeValue;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addAttributeValueToSymbolAttribute;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addContainedValueToSymbolAttribute;
+import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addContainedValuesToSymbolAttribute;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addCrossReferencedValue;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addMapEnty;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.createCrossReferencesValue;
@@ -507,6 +508,9 @@ public class ATFBuilders implements IATFBuilders {
 			
 			@Override
 			public void release() {
+				addContainedValuesToSymbolAttribute(myCurrentAssignment, 
+						myCurrentNamespace, SEMANTIC_FUNCTIONS, 
+						mySemanticResolver.getAllStubFunctions());
 				myNamespace = null;
 				myCurrentNamespace = null;
 				mySemanticResolver.leaveFunctionScope();
@@ -1444,6 +1448,10 @@ public class ATFBuilders implements IATFBuilders {
 			return functionSignature;
 		}
 		
+		public Set<FunctionSignature> getAllStubFunctions() {
+			return myStubs;
+		}
+
 		public FunctionSignature getFunctionFromModule(String moduleName, String name) {
 			Map<String, FunctionSignature> module = myModules.get(moduleName);
 			if (module == null) {
