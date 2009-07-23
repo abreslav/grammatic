@@ -67,6 +67,7 @@ public class GrammaticToANTLR {
 
 	private class RuleProductionMaker extends
 			GrammarSwitch<ANTLRExpression> {
+		// TODO: Looks like this field is no longer in use
 		private boolean myInLexical = true;
 
 		@Override

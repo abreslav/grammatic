@@ -31,6 +31,13 @@ namespaces atf {
 			functionNameToFunction : {String -> FunctionSignature};
 		}
 	}
+	
+	class SymbolReference {
+		// Filled by post-processor
+		// only for reference from token-definition rules
+		associatedWithAToken : #presence;	
+	}
+	
 }
 
 namespace variable [SF] {

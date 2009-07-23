@@ -20,13 +20,15 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="poolVariables" upperBound="-1"
         eType="#//semantics/ImplementationPoolVariable" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Rule" abstract="true" eSuperTypes="#//Named">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="productions" upperBound="-1"
-        eType="#//ANTLRProduction" containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BeforeAfter" abstract="true" interface="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="before" eType="#//semantics/JavaStatement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="after" eType="#//semantics/JavaStatement"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Rule" abstract="true" eSuperTypes="#//Named #//BeforeAfter">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="productions" upperBound="-1"
+        eType="#//ANTLRProduction" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LexicalRule" eSuperTypes="#//Rule">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fragment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -38,21 +40,14 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//semantics/Variable" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ANTLRProduction">
+  <eClassifiers xsi:type="ecore:EClass" name="ANTLRProduction" eSuperTypes="#//BeforeAfter">
     <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//ANTLRExpression"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="before" eType="#//semantics/JavaStatement"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="after" eType="#//semantics/JavaStatement"
-        containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ANTLRExpression" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="ANTLRExpression" abstract="true" eSuperTypes="#//BeforeAfter">
     <eStructuralFeatures xsi:type="ecore:EReference" name="options" upperBound="-1"
         eType="#//Option" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="before" eType="#//semantics/JavaStatement"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="assignToVariable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="after" eType="#//semantics/JavaStatement"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="assignToVariable" eType="#//semantics/Variable"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ANTLREmpty" eSuperTypes="#//ANTLRExpression"/>
@@ -118,13 +113,15 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ModuleImplementation" eSuperTypes="#//Named">
       <eStructuralFeatures xsi:type="ecore:EReference" name="methods" upperBound="-1"
-          eType="#//semantics/Method" containment="true"/>
+          eType="#//semantics/Method" containment="true" eOpposite="#//semantics/Method/module"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Method">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
           eType="#//semantics/Variable" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="module" eType="#//semantics/ModuleImplementation"
+          eOpposite="#//semantics/ModuleImplementation/methods"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CodeBlock" eSuperTypes="#//semantics/JavaStatement">
       <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
