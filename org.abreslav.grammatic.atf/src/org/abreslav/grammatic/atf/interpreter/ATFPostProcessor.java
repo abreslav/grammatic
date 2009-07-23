@@ -7,6 +7,7 @@ import java.util.Map;
 import org.abreslav.grammatic.atf.ATFAttributeReference;
 import org.abreslav.grammatic.atf.ATFMetadata;
 import org.abreslav.grammatic.atf.FunctionSignature;
+import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Combination;
 import org.abreslav.grammatic.grammar.Expression;
@@ -119,8 +120,12 @@ public class ATFPostProcessor<E extends RuntimeException> {
 		final IMetadataProvider projection = myRootMetadataProvider.getProjection(namespace);
 		if (newFunctionName != null) {
 			IMetadataStorage metadata = MetadataStorage.getMetadataStorage(symbol, projection);
-			FunctionSignature defaultFunction = (FunctionSignature) metadata.readEObject(ATFMetadata.SYNTACTIC_FUNCTION);
+			FunctionSignature defaultFunction = metadata.readEObject(ATFMetadata.SYNTACTIC_FUNCTION);
 			defaultFunction.setName(newFunctionName);
+			SemanticModule module = metadata.readEObject(ATFMetadata.SEMANTIC_MODULE);
+			if (module != null) {
+				module.setName(newFunctionName);
+			}
 		}
 		for (Production production : symbol.getProductions()) {
 			new ExpressionTraverser() {

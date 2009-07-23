@@ -128,7 +128,8 @@
           eType="#//semantics/JavaStatement" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="MethodCall" eSuperTypes="#//semantics/JavaStatement #//semantics/JavaExpression">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="variable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="variable" lowerBound="1"
+          eType="#//semantics/Variable"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="method" lowerBound="1"
           eType="#//semantics/Method"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"

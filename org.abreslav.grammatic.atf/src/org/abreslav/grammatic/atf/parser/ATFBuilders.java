@@ -124,7 +124,6 @@ public class ATFBuilders implements IATFBuilders {
 		return new IAtfModuleBuilder() {
 
 			private AspectDefinition myAspectDefinition;
-			private SemanticModule mySemanticModule;
 
 			@Override
 			public void init() {
@@ -133,15 +132,12 @@ public class ATFBuilders implements IATFBuilders {
 			@Override
 			public void release() {
 				GrammarAssignment grammarAssignment = getGrammarAssignment(myAspectDefinition);
-				Attribute attribute = getAttribute(grammarAssignment, ATF_NAMESPACE, ATFMetadata.USED_SEMANTIC_MODULES);
-				List<SemanticModule> usedModules = new ArrayList<SemanticModule>(myImportsBuilders.getImportedModules());
-				if (mySemanticModule != null) {
-					usedModules.add(mySemanticModule);
-				}
-				addAttributeValue(attribute, usedModules);
+				Attribute attribute = getAttribute(grammarAssignment, 
+						ATF_NAMESPACE, ATFMetadata.USED_SEMANTIC_MODULES);
+				addAttributeValue(attribute, new ArrayList<SemanticModule>(
+						myImportsBuilders.getImportedModules()));
 				
 				myAspectDefinition = null;
-				mySemanticModule = null;
 			}
 			
 			@Override
@@ -153,8 +149,6 @@ public class ATFBuilders implements IATFBuilders {
 			@Override
 			public void semanticModuleDeclaration(
 					SemanticModule semanticModuleDeclaration) {
-				mySemanticModule = semanticModuleDeclaration;
-				
 				GrammarAssignment grammarAssignment = getGrammarAssignment(myAspectDefinition);
 				Attribute targetAttribute = getAttribute(grammarAssignment, ATF_NAMESPACE, SEMANTIC_MODULE); 
 				addCrossReferencedValue(targetAttribute, semanticModuleDeclaration);

@@ -264,7 +264,7 @@ public class ANTLRGrammarPrinter {
 		}
 
 		private void printVariablePreamble(ANTLRExpression object) {
-			String varName = object.getAssignToVariable();
+			String varName = object.getAssignToVariable().getName();
 			if (varName != null) {
 				myPrinter.print(varName).print("=");
 			}
@@ -339,7 +339,7 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseGrammarExpressionReference(
 				GrammarExpressionReference object) {
-			String variableName = object.getExpression().getAssignToVariable();
+			String variableName = object.getExpression().getAssignToVariable().getName();
 			if (isLexicalReference(object)) {
 //				myPrinter.print("($", variableName, " == null ? null : $", variableName, ".getText())");
 				myPrinter.print("$", variableName, ".getText()");
@@ -371,7 +371,7 @@ public class ANTLRGrammarPrinter {
 		
 		@Override
 		public INull caseMethodCall(MethodCall methodCall) {
-			String variable = methodCall.getVariable();
+			String variable = methodCall.getVariable().getName();
 			if (variable != null) {
 				myPrinter.print(variable, ".");
 			}

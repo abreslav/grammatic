@@ -1,7 +1,6 @@
 package org.abreslav.grammatic.atf.java.antlr.generator;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.abreslav.grammatic.atf.ATFAttributeAssignment;
 import org.abreslav.grammatic.atf.ATFAttributeReference;
 import org.abreslav.grammatic.atf.ATFExpression;
 import org.abreslav.grammatic.atf.ATFMetadata;
-import org.abreslav.grammatic.atf.AtfFactory;
 import org.abreslav.grammatic.atf.Block;
 import org.abreslav.grammatic.atf.CollectionAppending;
 import org.abreslav.grammatic.atf.FunctionCall;
@@ -47,6 +45,7 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
+import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeStringRepresentationProvider;
 import org.abreslav.grammatic.atf.util.AtfSwitch;
@@ -110,8 +109,12 @@ public class ATFToANTLR {
 	private final Map<FunctionSignature, SyntacticalRule> myFunctionToRule = new HashMap<FunctionSignature, SyntacticalRule>();
 	private final Map<FunctionSignature, Namespace> myFunctionToNamespace = new HashMap<FunctionSignature, Namespace>();
 	private final Map<Symbol, LexicalRule> myTokenToRule = new HashMap<Symbol, LexicalRule>();
+	private final Map<Symbol, ModuleImplementation> mySymbolToModuleImpl = new HashMap<Symbol, ModuleImplementation>();
+	private final Map<FunctionSignature, ModuleImplementation> myFunctionToModuleImpl = new HashMap<FunctionSignature, ModuleImplementation>();
 	private final Map<SyntacticalRule, Symbol> mySyntacticalRuleToSymbol = new HashMap<SyntacticalRule, Symbol>();
 	private final Map<FunctionSignature, Method> myFunctionToMethod = new HashMap<FunctionSignature, Method>();
+	private final Map<Grammar, ModuleImplementationProvider> myModuleImplementationProviders = new HashMap<Grammar, ModuleImplementationProvider>();
+	private final Map<ModuleImplementationProvider, Variable> myPoolVariables = new HashMap<ModuleImplementationProvider, Variable>();
 	private final IMetadataProvider myMetadataProvider;
 	
 	private ATFToANTLR(IMetadataProvider metadataProvider) {
@@ -127,28 +130,17 @@ public class ATFToANTLR {
 		
 		ANTLRGrammar resultGrammar = AntlrFactory.eINSTANCE.createANTLRGrammar();
 		
-		new GrammarGraphTraverser().process(frontGrammar, usedGrammars, inclusionStrategy);
-		
-		HashSet<Grammar> allGrammars = new HashSet<Grammar>(usedGrammars);
-		allGrammars.add(frontGrammar);
+		Set<Grammar> allGrammars = new GrammarGraphTraverser().process(frontGrammar, usedGrammars, inclusionStrategy);
 		
 		Map<ModuleImplementation, Variable> moduleVariables = new HashMap<ModuleImplementation, Variable>();
 		for (Grammar grammar : allGrammars) {
-			IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
-			List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
-			for (SemanticModule semanticModule : modules) {
-				if (moduleVariables.containsKey(semanticModule)) {
-					continue;
-				}
-				// TODO Interface name & package!
-				ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
-				moduleImplementations.add(implementation);
-				String name = semanticModule.getName();
-				Variable variable = SemanticsFactory.eINSTANCE.createVariable();
-				variable.setName(name);
-				variable.setType(implementation.getName());
-				moduleVariables.put(implementation, variable); // TODO field name, scope
-			}
+			processGlobalModules(grammar, moduleImplementations,
+					moduleVariables);
+			
+			// TODO Build a ModuleImplProvider
+			// TODO Create a variable for ModuleImplProvider
+			
+			// TODO Build and create a variable for local SemanticModule
 		}
 		
 		for (Map.Entry<Symbol, LexicalRule> tokenToRule : myTokenToRule.entrySet()) {
@@ -164,8 +156,36 @@ public class ATFToANTLR {
 		return resultGrammar;
 	}
 
+	private void processGlobalModules(Grammar grammar,
+			Collection<ModuleImplementation> moduleImplementations,
+			Map<ModuleImplementation, Variable> moduleVariables) {
+		// TODO add variables for modules to ANTLRGrammar object
+		
+		IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
+		List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
+		for (SemanticModule semanticModule : modules) {
+			if (moduleVariables.containsKey(semanticModule)) {
+				continue;
+			}
+			// TODO Interface name & package!
+			ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
+			moduleImplementations.add(implementation);
+			String name = semanticModule.getName();
+			Variable variable = createImplVariable(name, implementation);
+			moduleVariables.put(implementation, variable); // TODO field name, scope
+		}
+	}
+
+	private Variable createImplVariable(String name,
+			ModuleImplementation implementation) {
+		Variable variable = SemanticsFactory.eINSTANCE.createVariable();
+		variable.setName(name);
+		variable.setType(implementation.getName());
+		return variable;
+	}
+
 	private void fillInLexicalRule(LexicalRule rule, Symbol symbol) {
-		fillProductions(rule, symbol, null, myMetadataProvider, null);
+		fillProductions(rule, symbol, null, myMetadataProvider, null, null);
 		
 		IMetadataStorage symbolMetadata = getSymbolMetadata(symbol);
 		List<String> classes = symbolMetadata.readObjects(ATFMetadata.TOKEN_CLASSES);
@@ -194,16 +214,13 @@ public class ATFToANTLR {
 		}
 		
 		IMetadataProvider projection = myMetadataProvider.getProjection(myFunctionToNamespace.get(function));
-		Map<ModuleImplementation, Variable> allModuleVariables = new HashMap<ModuleImplementation, Variable>(moduleVariables);
-		mySymbol
-		
-		fillProductions(rule, symbol, map, projection, allModuleVariables);
+		fillProductions(rule, symbol, map, projection, moduleVariables, function);
 	}
 	
 	private void fillProductions(Rule rule, Symbol symbol,
-			Map<ATFAttribute, Variable> parameters, IMetadataProvider metadataProvider, Map<ModuleImplementation, Variable> moduleVariables) {
+			Map<ATFAttribute, Variable> parameters, IMetadataProvider metadataProvider, Map<ModuleImplementation, Variable> moduleVariables, FunctionSignature function) {
 		RuleContentBuilder ruleContentBuilder = new RuleContentBuilder(metadataProvider, parameters, moduleVariables);
-		ruleContentBuilder.fillProduction(rule, symbol);
+		ruleContentBuilder.fillProductions(rule, symbol, function);
 	}
 
 	private void processSymbol(Symbol symbol) {
@@ -214,16 +231,17 @@ public class ATFToANTLR {
 			return;
 		}
 		
-		// Create default semantic module (if not empty)
-		processSemanticFunctions(symbol.getName(), metadata);
-		// Obtain syntactical functions
+		ModuleImplementation symbolModuleImpl = createSemanticModuleImpl(metadata);
+		mySymbolToModuleImpl.put(symbol, symbolModuleImpl);
+
 		Map<String, Namespace> functionNamespaces = metadata.readObject(ATFMetadata.FUNCTION_NAME_TO_NAMESPACE);
 		for (Namespace namespace : functionNamespaces.values()) {
 			IMetadataProvider projection = myMetadataProvider.getProjection(namespace);
 			IMetadataStorage projectedMetadata = MetadataStorage.getMetadataStorage(symbol, projection);
 			FunctionSignature function = projectedMetadata.readEObject(ATFMetadata.SYNTACTIC_FUNCTION);
 
-			processSemanticFunctions(function.getName(), projectedMetadata);
+			ModuleImplementation functionModuleImpl = createSemanticModuleImpl(projectedMetadata);
+			myFunctionToModuleImpl.put(function, functionModuleImpl);
 			
 			createSyntacticalRuleStub(symbol, function);
 		}
@@ -249,21 +267,14 @@ public class ATFToANTLR {
 	}
 
 
-	private void processSemanticFunctions(String name,
+	private ModuleImplementation createSemanticModuleImpl(
 			IMetadataStorage metadata) {
-		List<FunctionSignature> semanticFunctions = metadata.readEObjects(ATFMetadata.SEMANTIC_FUNCTIONS);
-		if (!semanticFunctions.isEmpty()) {
-			SemanticModule module = createSemanticModule(name, semanticFunctions);
-			// TODO: put it somewhere
+		SemanticModule semanticModule = metadata.readEObject(ATFMetadata.SEMANTIC_MODULE);
+		if (semanticModule != null) {
+			// TODO : Interface name and package
+			return ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
 		}
-	}
-
-	private SemanticModule createSemanticModule(String name,
-			List<FunctionSignature> semanticFunctions) {
-		SemanticModule module = AtfFactory.eINSTANCE.createSemanticModule();
-		module.setName(name);
-		module.getFunctions().addAll(semanticFunctions);
-		return module;
+		return null;
 	}
 
 	private IMetadataStorage getSymbolMetadata(Symbol symbol) {
@@ -287,6 +298,55 @@ public class ATFToANTLR {
 		map.put(attribute, variable);
 		return variable;
 	}
+	
+	private Grammar getGrammar(Symbol symbol) {
+		return (Grammar) symbol.eContainer();
+	}
+	
+	private Variable getModuleImplementationProviderVariable(ModuleImplementationProvider moduleImplementationProvider) {
+		// TODO : How to connect this with the grammar?
+		Variable variable = myPoolVariables.get(moduleImplementationProvider);
+		if (variable == null) {
+			variable = SemanticsFactory.eINSTANCE.createVariable();
+			variable.getName(); // TODO : ?
+			variable.setType(moduleImplementationProvider.getProviderInterfaceName());
+			
+			myPoolVariables.put(moduleImplementationProvider, variable);
+		}
+		return variable;
+	}
+
+	private ModuleImplementationProvider getModuleImplementationProvider(
+			Symbol symbol) {
+		Grammar grammar = getGrammar(symbol);
+		ModuleImplementationProvider moduleImplementationProvider = myModuleImplementationProviders.get(grammar);
+		if (moduleImplementationProvider == null) {
+			moduleImplementationProvider = SemanticsFactory.eINSTANCE.createModuleImplementationProvider();
+			moduleImplementationProvider.getImports(); // TODO : ?
+			moduleImplementationProvider.getPackage(); // TODO : ?
+			moduleImplementationProvider.getPoolsClassName(); // TODO : ?
+			moduleImplementationProvider.getProviderInterfaceName(); // TODO : ?
+			
+			myModuleImplementationProviders.put(grammar, moduleImplementationProvider);
+		}
+		return moduleImplementationProvider;
+	}
+	
+	private Method createGetMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
+		Method method = SemanticsFactory.eINSTANCE.createMethod();
+		method.setName("get" + moduleImplementation.getName()); // TODO case etc
+		method.setType(moduleImplementation.getName()); // TODO Type name
+		moduleImplementationProvider.getGetImplementationMethods().add(method);
+		return method;
+	}
+	
+	private Method createReleaseMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
+		Method method = SemanticsFactory.eINSTANCE.createMethod();
+		method.setName("release" + moduleImplementation.getName()); // TODO case etc
+		method.setType("void");
+		moduleImplementationProvider.getReleaseImplementationMethods().add(method);
+		return method;
+	}
 
 	private void reportError(String string, Object... objects) {
 		throw new IllegalArgumentException(String.format(string, objects));
@@ -298,6 +358,7 @@ public class ATFToANTLR {
 
 	private class GrammarGraphTraverser {
 		private final Set<Symbol> myVisited = EMFProxyUtil.customHashSet();
+		private final Set<Grammar> myVisitedGrammars = new HashSet<Grammar>(); 
 		
 		private final GrammarSwitch<INull> mySymbolReferenceTraverser = new GrammarSwitch<INull>() {
 			
@@ -349,15 +410,16 @@ public class ATFToANTLR {
 			};
 		};
 
-		public Set<Symbol> process(Grammar frontGrammar, Collection<Grammar> usedGrammars, ISymbolInclusionStrategy inclusionStrategy) {
+		public Set<Grammar> process(Grammar frontGrammar, Collection<Grammar> usedGrammars, ISymbolInclusionStrategy inclusionStrategy) {
 			myVisited.clear();
+			myVisitedGrammars.clear();
 			processGramar(frontGrammar, true, inclusionStrategy);
 			for (Grammar grammar : usedGrammars) {
 				processGramar(grammar, false, inclusionStrategy);
 			}
-			return myVisited;
+			return new HashSet<Grammar>(myVisitedGrammars);
 		}
-
+		
 		private void processGramar(Grammar grammar,
 				boolean front, ISymbolInclusionStrategy inclusionStrategy) {
 			for (Symbol symbol : grammar.getSymbols()) {
@@ -374,6 +436,7 @@ public class ATFToANTLR {
 				return;
 			}
 			myVisited.add(symbol);
+			myVisitedGrammars.add(getGrammar(symbol));
 			
 			processSymbol(symbol);
 			
@@ -385,7 +448,7 @@ public class ATFToANTLR {
 	private final class RuleContentBuilder extends GrammarSwitch<ANTLRExpression> {
 		
 		private final Map<ATFAttribute, Variable> myVariables = new HashMap<ATFAttribute, Variable>();
-		private final Map<ModuleImplementation, Variable> myModuleVariableNames = new HashMap<ModuleImplementation, Variable>();
+		private final Map<ModuleImplementation, Variable> myModuleVariables = new HashMap<ModuleImplementation, Variable>();
 		private final ExpressionConvertor myExpressionConvertor = new ExpressionConvertor();
 		private final StatementConvertor myStatementConvertor = new StatementConvertor();
 		
@@ -397,14 +460,39 @@ public class ATFToANTLR {
 				myVariables.putAll(parameters);
 			}
 			if (moduleVariables != null) {
-				myModuleVariableNames.putAll(moduleVariables);
+				myModuleVariables.putAll(moduleVariables);
 			}
 		}
 
-		public void fillProduction(Rule rule, Symbol symbol) {
-			// TODO Prepend builder initialization
+		public void fillProductions(Rule rule, Symbol symbol, FunctionSignature function) {
+			CodeBlock before = SemanticsFactory.eINSTANCE.createCodeBlock();
+			CodeBlock after = SemanticsFactory.eINSTANCE.createCodeBlock();
+			
+			// Symbol-level semantic module
+			ModuleImplementation symbolModuleImplementation = mySymbolToModuleImpl.get(symbol);
+			if (symbolModuleImplementation != null) {
+				String name = symbol.getName();
+				Variable variable = generateProviderInitAndRelease(before,
+						after, name, symbolModuleImplementation,
+						symbol);
+
+				myModuleVariables.put(symbolModuleImplementation, variable);
+			}
+			
+			// Function-level semantic module
+			ModuleImplementation functionModuleImplementation = myFunctionToModuleImpl.get(function);
+			if (functionModuleImplementation != null) {
+				
+				Variable variable = generateProviderInitAndRelease(before,
+						after, function.getName(), functionModuleImplementation,
+						symbol);
+
+				myModuleVariables.put(functionModuleImplementation, variable);
+			}
+			
 			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, myMetadataProvider);
-			setBefore(rule, symbolMetadata);
+			before.getStatements().add(getBefore(symbolMetadata));
+			rule.setBefore(before);
 			for (Production production : symbol.getProductions()) {
 				IMetadataStorage metadata = MetadataStorage.getMetadataStorage(production, myMetadataProvider);
 
@@ -415,8 +503,31 @@ public class ATFToANTLR {
 
 				rule.getProductions().add(newProduction);
 			}
-			setAfter(rule, symbolMetadata);
-			// TODO append builder finalization
+			after.getStatements().add(0, getAfter(symbolMetadata));
+			rule.setAfter(after);
+		}
+
+		private Variable generateProviderInitAndRelease(CodeBlock before,
+				CodeBlock after, String variableName,
+				ModuleImplementation moduleImplementation,
+				Symbol symbol) {
+			Variable variable = createImplVariable(variableName, moduleImplementation);
+			VariableDefinition definition = SemanticsFactory.eINSTANCE.createVariableDefinition();
+			definition.setVariable(variable);
+			MethodCall createImplCall = SemanticsFactory.eINSTANCE.createMethodCall();
+			ModuleImplementationProvider moduleImplementationProvider = getModuleImplementationProvider(symbol);
+			Variable providerVariable = getModuleImplementationProviderVariable(moduleImplementationProvider );
+			createImplCall.setVariable(providerVariable);
+			createImplCall.setMethod(createGetMethod(moduleImplementationProvider, moduleImplementation));
+			definition.setValue(createImplCall);
+			before.getStatements().add(definition);
+			
+			MethodCall releaseImplCall = SemanticsFactory.eINSTANCE.createMethodCall();
+			releaseImplCall.setVariable(providerVariable);
+			releaseImplCall.setMethod(createReleaseMethod(moduleImplementationProvider, moduleImplementation));
+			definition.setValue(releaseImplCall);
+			after.getStatements().add(0, releaseImplCall);
+			return variable;
 		}
 
 		private void doSwitchAll(List<Expression> expressions,
@@ -579,7 +690,7 @@ public class ATFToANTLR {
 			MethodCall methodCall = SemanticsFactory.eINSTANCE.createMethodCall();
 			Method method = myFunctionToMethod.get(functionCall.getFunction());
 			methodCall.setMethod(method);
-			methodCall.setVariable(myModuleVariableNames.get(method.getModule()));
+			methodCall.setVariable(myModuleVariables.get(method.getModule()));
 			convertArguments(functionCall.getArguments(), methodCall.getArguments());
 			return methodCall;
 		}
@@ -590,24 +701,21 @@ public class ATFToANTLR {
 		}
 		
 		private void setBefore(BeforeAfter beforeAfter, IMetadataStorage metadata) {
-			setBeforeAfter(beforeAfter, metadata, ATFMetadata.BEFORE);
+			beforeAfter.setBefore(getBefore(metadata));
 		}
 
 		private void setAfter(BeforeAfter beforeAfter, IMetadataStorage metadata) {
-			setBeforeAfter(beforeAfter, metadata, ATFMetadata.AFTER);
+			beforeAfter.setAfter(getAfter(metadata));
 		}
 		
-		private void setBeforeAfter(BeforeAfter beforeAfter,
-				IMetadataStorage metadata, String attributeName) {
-			JavaStatement before = myStatementConvertor.doSwitch(metadata.readEObject(attributeName));
-			beforeAfter.setBefore(before);
-		}
-
 		private JavaStatement getBefore(IMetadataStorage metadata) {
-			JavaStatement before = myStatementConvertor.doSwitch(metadata.readEObject(ATFMetadata.BEFORE));
-			return before;
+			return myStatementConvertor.doSwitch(metadata.readEObject(ATFMetadata.BEFORE));
 		}
 
+		private JavaStatement getAfter(IMetadataStorage metadata) {
+			return myStatementConvertor.doSwitch(metadata.readEObject(ATFMetadata.AFTER));
+		}
+		
 		private final JavaExpression convertExpression(ATFExpression expression) {
 			return myExpressionConvertor.doSwitch(expression);
 		}
@@ -627,7 +735,7 @@ public class ATFToANTLR {
 				FunctionSignature function = object.getFunction();
 				Method method = myFunctionToMethod.get(function);
 				call.setMethod(method);
-				call.setVariable(myModuleVariableNames.get(method.getModule()));
+				call.setVariable(myModuleVariables.get(method.getModule()));
 				for (ATFExpression atfExpression : object.getArguments()) {
 					call.getArguments().add(convertExpression(atfExpression));
 				}
