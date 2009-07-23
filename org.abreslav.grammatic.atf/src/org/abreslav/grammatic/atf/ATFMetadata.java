@@ -18,8 +18,8 @@ public abstract class ATFMetadata {
 	public static final String DEFAULT_SYNTACTIC_FUNCTION = "defaultSyntacticFunction";
 	public static final String FUNCTION_NAME_TO_NAMESPACE = "functionNameToNamespace";
 	public static final String FUNCTION_NAME_TO_FUNCTION = "functionNameToFunction";
-	public static final String SEMANTIC_FUNCTIONS = "semanticFunctions";
-	public static final String SEMANTIC_MODULES = "semanticModules";
+	public static final String SEMANTIC_MODULE = "semanticModule";
+	public static final String USED_SEMANTIC_MODULES = "usedSemanticModules";
 	public static final String SYNTACTIC_FUNCTION = "syntacticFunction";
 	public static final String TOKEN = "token";
 	public static final String TOKEN_CLASSES = "tokenClasses";

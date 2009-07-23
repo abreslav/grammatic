@@ -6,15 +6,13 @@ import static org.abreslav.grammatic.atf.ATFMetadata.ASSOCIATED_FUNCTION_NAME;
 import static org.abreslav.grammatic.atf.ATFMetadata.ATF_NAMESPACE;
 import static org.abreslav.grammatic.atf.ATFMetadata.BEFORE;
 import static org.abreslav.grammatic.atf.ATFMetadata.DEFAULT_NAMESPACE;
-import static org.abreslav.grammatic.atf.ATFMetadata.SEMANTIC_FUNCTIONS;
-import static org.abreslav.grammatic.atf.ATFMetadata.SEMANTIC_MODULES;
+import static org.abreslav.grammatic.atf.ATFMetadata.SEMANTIC_MODULE;
 import static org.abreslav.grammatic.atf.ATFMetadata.SYNTACTIC_FUNCTION;
 import static org.abreslav.grammatic.atf.ATFMetadata.TOKEN;
 import static org.abreslav.grammatic.atf.ATFMetadata.TOKEN_CLASSES;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addAttributeValue;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addAttributeValueToSymbolAttribute;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addContainedValueToSymbolAttribute;
-import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addContainedValuesToSymbolAttribute;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addCrossReferencedValue;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addMapEnty;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.createCrossReferencesValue;
@@ -73,7 +71,7 @@ public class ATFBuilders implements IATFBuilders {
 	
 	private final ITypeSystemBuilder<?> myTypeSystemBuilder;
 	private final IErrorHandler<RuntimeException> myErrorHandler;
-	private final IImportsBuilders myImportsBuilders;
+	private final ATFImportsBuilders myImportsBuilders;
 	
 	private final SemanticResolver mySemanticResolver = new SemanticResolver();
 	
@@ -126,6 +124,7 @@ public class ATFBuilders implements IATFBuilders {
 		return new IAtfModuleBuilder() {
 
 			private AspectDefinition myAspectDefinition;
+			private SemanticModule mySemanticModule;
 
 			@Override
 			public void init() {
@@ -133,7 +132,16 @@ public class ATFBuilders implements IATFBuilders {
 			
 			@Override
 			public void release() {
+				GrammarAssignment grammarAssignment = getGrammarAssignment(myAspectDefinition);
+				Attribute attribute = getAttribute(grammarAssignment, ATF_NAMESPACE, ATFMetadata.USED_SEMANTIC_MODULES);
+				List<SemanticModule> usedModules = new ArrayList<SemanticModule>(myImportsBuilders.getImportedModules());
+				if (mySemanticModule != null) {
+					usedModules.add(mySemanticModule);
+				}
+				addAttributeValue(attribute, usedModules);
+				
 				myAspectDefinition = null;
+				mySemanticModule = null;
 			}
 			
 			@Override
@@ -145,8 +153,10 @@ public class ATFBuilders implements IATFBuilders {
 			@Override
 			public void semanticModuleDeclaration(
 					SemanticModule semanticModuleDeclaration) {
+				mySemanticModule = semanticModuleDeclaration;
+				
 				GrammarAssignment grammarAssignment = getGrammarAssignment(myAspectDefinition);
-				Attribute targetAttribute = getAttribute(grammarAssignment, ATF_NAMESPACE, SEMANTIC_MODULES); 
+				Attribute targetAttribute = getAttribute(grammarAssignment, ATF_NAMESPACE, SEMANTIC_MODULE); 
 				addCrossReferencedValue(targetAttribute, semanticModuleDeclaration);
 				
 				mySemanticResolver.registerModule(semanticModuleDeclaration);
@@ -406,12 +416,15 @@ public class ATFBuilders implements IATFBuilders {
 	public IAssociatedFunctionsBuilder getAssociatedFunctionsBuilder() {
 		return new IAssociatedFunctionsBuilder() {
 			
+			private SemanticModule mySemanticModule;
+			
 			@Override
 			public void init(AssignmentRule ar) {
 			}
 			
 			@Override
 			public void release() {
+				mySemanticModule = null;
 			}
 
 			@Override
@@ -430,8 +443,12 @@ public class ATFBuilders implements IATFBuilders {
 
 			@Override
 			public void semanticFunction(FunctionSignature semanticFunction) {
-				addContainedValueToSymbolAttribute(myCurrentAssignment, 
-						ATF_NAMESPACE, SEMANTIC_FUNCTIONS, semanticFunction);
+				if (mySemanticModule == null) {
+					mySemanticModule = AtfFactory.eINSTANCE.createSemanticModule();
+					addContainedValueToSymbolAttribute(myCurrentAssignment, 
+							ATF_NAMESPACE, SEMANTIC_MODULE, mySemanticModule);
+				}
+				mySemanticModule.getFunctions().add(semanticFunction);
 				
 				mySemanticResolver.registerFunction(semanticFunction);
 			}
@@ -501,6 +518,7 @@ public class ATFBuilders implements IATFBuilders {
 		return new ISyntacticFunctionBuilder() {
 			
 			private Namespace myNamespace;
+			private String myName;
 
 			@Override
 			public void init() {
@@ -508,12 +526,19 @@ public class ATFBuilders implements IATFBuilders {
 			
 			@Override
 			public void release() {
-				addContainedValuesToSymbolAttribute(myCurrentAssignment, 
-						myCurrentNamespace, SEMANTIC_FUNCTIONS, 
-						mySemanticResolver.getAllStubFunctions());
+				Set<FunctionSignature> allLocalFunctions = mySemanticResolver.getAllLocalFunctions();
+				if (!allLocalFunctions.isEmpty()) {
+					SemanticModule semanticModule = AtfFactory.eINSTANCE.createSemanticModule();
+					semanticModule.setName(myName);
+					semanticModule.getFunctions().addAll(allLocalFunctions);
+					addContainedValueToSymbolAttribute(myCurrentAssignment, 
+							myCurrentNamespace, SEMANTIC_MODULE, 
+							semanticModule);
+				}
 				myNamespace = null;
 				myCurrentNamespace = null;
 				mySemanticResolver.leaveFunctionScope();
+				myName = null;
 			}
 
 			@Override
@@ -526,6 +551,7 @@ public class ATFBuilders implements IATFBuilders {
 			@Override
 			public void functionSignature(FunctionSignature functionSignature) {
 				String name = functionSignature.getName();
+				myName = name;
 				
 				mySemanticResolver.enterFunctionScope(name);
 				mySemanticResolver.registerAttributes(functionSignature.getInputAttributes());
@@ -565,8 +591,8 @@ public class ATFBuilders implements IATFBuilders {
 
 			@Override
 			public void semanticFunction(FunctionSignature semanticFunction) {
-				addContainedValueToSymbolAttribute(myCurrentAssignment, 
-						myCurrentNamespace, SEMANTIC_FUNCTIONS, semanticFunction);
+//				addContainedValueToSymbolAttribute(myCurrentAssignment, 
+//						myCurrentNamespace, SEMANTIC_FUNCTIONS, semanticFunction);
 				
 				mySemanticResolver.registerFunction(semanticFunction);
 			}
@@ -1448,7 +1474,7 @@ public class ATFBuilders implements IATFBuilders {
 			return functionSignature;
 		}
 		
-		public Set<FunctionSignature> getAllStubFunctions() {
+		public Set<FunctionSignature> getAllLocalFunctions() {
 			return myStubs;
 		}
 
@@ -1514,6 +1540,11 @@ public class ATFBuilders implements IATFBuilders {
 				todoAppend();
 			}
 			myCurrentScope.put(name, functionSignature);
+			
+			// If the function is defined locally, we add it to stubs
+			if (myCurrentScope == myFunctionScope) {
+				myStubs.add(functionSignature);
+			}
 		}
 		
 		public boolean isStub(FunctionSignature functionSignature) {

@@ -5,7 +5,8 @@ define variable [SF : Namespace];
 namespaces atf {
 
 	class Grammar {
-		semanticModules : SemanticModule*;
+		semanticModule : SemanticModule?;
+		usedSemanticModules : SemanticModule*;
 		typeSystemOptions : {*};
 		moduleOptions : {
 			moduleName : String;
@@ -19,7 +20,8 @@ namespaces atf {
 			token : #presence;
 			tokenClasses : String*;
 		} or {
-			semanticFunctions : FunctionSignature*;
+			// Named filled in by post-processor
+			semanticModule : SemanticModule?;
 			{ 
 				// Is renamed by post-processor
 				defaultSyntacticFunction : FunctionSignature;
@@ -42,7 +44,7 @@ namespaces atf {
 
 namespace variable [SF] {
 	class Symbol {
-		semanticFunctions : FunctionSignature*;
+		semanticModule : SemanticModule?;
 		syntacticFunction : FunctionSignature;
 		before : Statement?;
 		after : Statement?;

@@ -211,7 +211,7 @@ public class ATFPostProcessor<E extends RuntimeException> {
 
 	private void processLexicalRule(Symbol symbol) throws E {
 		String togetherWithToken = "together with '" + ATFMetadata.TOKEN + "'";
-		assertAbsence(symbol, togetherWithToken, ATFMetadata.SEMANTIC_FUNCTIONS);
+		assertAbsence(symbol, togetherWithToken, ATFMetadata.SEMANTIC_MODULE);
 		assertAbsence(symbol, togetherWithToken, ATFMetadata.DEFAULT_SYNTACTIC_FUNCTION);
 		assertAbsence(symbol, togetherWithToken, ATFMetadata.DEFAULT_NAMESPACE);
 		assertAbsence(symbol, togetherWithToken, ATFMetadata.FUNCTION_NAME_TO_NAMESPACE);

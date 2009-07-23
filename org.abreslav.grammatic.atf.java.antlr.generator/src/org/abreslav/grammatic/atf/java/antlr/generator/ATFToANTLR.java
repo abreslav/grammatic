@@ -101,8 +101,9 @@ public class ATFToANTLR {
 			Collection<Grammar> usedGrammars, 
 			ISymbolInclusionStrategy inclusionStrategy,
 			IMetadataProvider metadataProvider,
-			Collection<ModuleImplementationProvider> moduleImplementationProviders) {
-		return new ATFToANTLR(metadataProvider).doGenerate(frontGrammar, usedGrammars, inclusionStrategy, moduleImplementationProviders);
+			Collection<ModuleImplementationProvider> moduleImplementationProviders,
+			Collection<ModuleImplementation> moduleImplementations) {
+		return new ATFToANTLR(metadataProvider).doGenerate(frontGrammar, usedGrammars, inclusionStrategy, moduleImplementationProviders, moduleImplementations);
 	}
 	
 	private final Map<Symbol, IMetadataStorage> mySymbolsMetadata = EMFProxyUtil.customHashMap();
@@ -121,7 +122,8 @@ public class ATFToANTLR {
 			Grammar frontGrammar, 
 			Collection<Grammar> usedGrammars, 
 			ISymbolInclusionStrategy inclusionStrategy,
-			Collection<ModuleImplementationProvider> moduleImplementationProviders) {
+			Collection<ModuleImplementationProvider> moduleImplementationProviders,
+			Collection<ModuleImplementation> moduleImplementations) {
 		
 		ANTLRGrammar resultGrammar = AntlrFactory.eINSTANCE.createANTLRGrammar();
 		
@@ -130,7 +132,24 @@ public class ATFToANTLR {
 		HashSet<Grammar> allGrammars = new HashSet<Grammar>(usedGrammars);
 		allGrammars.add(frontGrammar);
 		
-//		createAllModuleImplementationProviders(allGrammars, symbols, moduleImplementationProviders);
+		Map<ModuleImplementation, Variable> moduleVariables = new HashMap<ModuleImplementation, Variable>();
+		for (Grammar grammar : allGrammars) {
+			IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
+			List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
+			for (SemanticModule semanticModule : modules) {
+				if (moduleVariables.containsKey(semanticModule)) {
+					continue;
+				}
+				// TODO Interface name & package!
+				ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
+				moduleImplementations.add(implementation);
+				String name = semanticModule.getName();
+				Variable variable = SemanticsFactory.eINSTANCE.createVariable();
+				variable.setName(name);
+				variable.setType(implementation.getName());
+				moduleVariables.put(implementation, variable); // TODO field name, scope
+			}
+		}
 		
 		for (Map.Entry<Symbol, LexicalRule> tokenToRule : myTokenToRule.entrySet()) {
 			fillInLexicalRule(tokenToRule.getValue(), tokenToRule.getKey());
@@ -139,14 +158,14 @@ public class ATFToANTLR {
 		for (Entry<FunctionSignature, SyntacticalRule> functionToRule : myFunctionToRule.entrySet()) {
 			SyntacticalRule rule = functionToRule.getValue();
 			Symbol symbol = mySyntacticalRuleToSymbol.get(rule);
-			fillInSyntacticalRule(rule, symbol, functionToRule.getKey());
+			fillInSyntacticalRule(rule, symbol, functionToRule.getKey(), moduleVariables);
 		}
 		
 		return resultGrammar;
 	}
 
 	private void fillInLexicalRule(LexicalRule rule, Symbol symbol) {
-		fillProductions(rule, symbol, Collections.<ATFAttribute, Variable>emptyMap(), myMetadataProvider);
+		fillProductions(rule, symbol, null, myMetadataProvider, null);
 		
 		IMetadataStorage symbolMetadata = getSymbolMetadata(symbol);
 		List<String> classes = symbolMetadata.readObjects(ATFMetadata.TOKEN_CLASSES);
@@ -156,7 +175,7 @@ public class ATFToANTLR {
 		}
 	}
 	
-	private void fillInSyntacticalRule(SyntacticalRule rule, Symbol symbol, FunctionSignature function) {
+	private void fillInSyntacticalRule(SyntacticalRule rule, Symbol symbol, FunctionSignature function, Map<ModuleImplementation, Variable> moduleVariables) {
 		List<ATFAttribute> inputAttributes = function.getInputAttributes();
 		Map<ATFAttribute, Variable> map = new HashMap<ATFAttribute, Variable>();
 		for (ATFAttribute atfAttribute : inputAttributes) {
@@ -175,12 +194,15 @@ public class ATFToANTLR {
 		}
 		
 		IMetadataProvider projection = myMetadataProvider.getProjection(myFunctionToNamespace.get(function));
-		fillProductions(rule, symbol, map, projection);
+		Map<ModuleImplementation, Variable> allModuleVariables = new HashMap<ModuleImplementation, Variable>(moduleVariables);
+		mySymbol
+		
+		fillProductions(rule, symbol, map, projection, allModuleVariables);
 	}
 	
 	private void fillProductions(Rule rule, Symbol symbol,
-			Map<ATFAttribute, Variable> parameters, IMetadataProvider metadataProvider) {
-		RuleContentBuilder ruleContentBuilder = new RuleContentBuilder(metadataProvider, parameters);
+			Map<ATFAttribute, Variable> parameters, IMetadataProvider metadataProvider, Map<ModuleImplementation, Variable> moduleVariables) {
+		RuleContentBuilder ruleContentBuilder = new RuleContentBuilder(metadataProvider, parameters, moduleVariables);
 		ruleContentBuilder.fillProduction(rule, symbol);
 	}
 
@@ -363,16 +385,20 @@ public class ATFToANTLR {
 	private final class RuleContentBuilder extends GrammarSwitch<ANTLRExpression> {
 		
 		private final Map<ATFAttribute, Variable> myVariables = new HashMap<ATFAttribute, Variable>();
-		// TODO : Fill this in somehow (a variable for each module)
-		private final Map<ModuleImplementation, String> myModuleVariableNames = new HashMap<ModuleImplementation, String>();
+		private final Map<ModuleImplementation, Variable> myModuleVariableNames = new HashMap<ModuleImplementation, Variable>();
 		private final ExpressionConvertor myExpressionConvertor = new ExpressionConvertor();
 		private final StatementConvertor myStatementConvertor = new StatementConvertor();
 		
 		private final IMetadataProvider myMetadataProvider;
 		
-		private RuleContentBuilder(IMetadataProvider metadataProvider, Map<ATFAttribute, Variable> parameters) {
+		private RuleContentBuilder(IMetadataProvider metadataProvider, Map<ATFAttribute, Variable> parameters, Map<ModuleImplementation, Variable> moduleVariables) {
 			myMetadataProvider = metadataProvider;
-			myVariables.putAll(parameters);
+			if (parameters != null) {
+				myVariables.putAll(parameters);
+			}
+			if (moduleVariables != null) {
+				myModuleVariableNames.putAll(moduleVariables);
+			}
 		}
 
 		public void fillProduction(Rule rule, Symbol symbol) {

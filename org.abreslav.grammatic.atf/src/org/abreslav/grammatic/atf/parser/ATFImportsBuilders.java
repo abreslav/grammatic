@@ -1,5 +1,8 @@
 package org.abreslav.grammatic.atf.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.grammar.template.parser.AbstractImportsBuilders;
 import org.abreslav.grammatic.utils.IErrorHandler;
@@ -8,7 +11,8 @@ public class ATFImportsBuilders extends AbstractImportsBuilders {
 
 	private final IATFModuleLoader myParser;
 	private final ISemanticModuleHandler mySemanticModuleHandler;
-
+	private final List<SemanticModule> myImportedModules = new ArrayList<SemanticModule>();
+	
 	public ATFImportsBuilders(
 			IErrorHandler<? extends RuntimeException> errorHandler,
 			IATFModuleLoader parser, ISemanticModuleHandler semanticModuleHandler) {
@@ -17,6 +21,10 @@ public class ATFImportsBuilders extends AbstractImportsBuilders {
 		mySemanticModuleHandler = semanticModuleHandler;
 	}
 
+	public List<SemanticModule> getImportedModules() {
+		return myImportedModules;
+	}
+	
 	@Override
 	public IImportSpecBuilder getImportSpecBuilder() {
 		return new IImportSpecBuilder() {
@@ -34,6 +42,7 @@ public class ATFImportsBuilders extends AbstractImportsBuilders {
 			public void moduleName(String moduleName) {
 				if (moduleName.endsWith(".module")) {
 					SemanticModule module = myParser.loadSemanticModule(moduleName);
+					myImportedModules.add(module);
 					mySemanticModuleHandler.registerModule(module);
 				} else if (moduleName.endsWith(".typesystem")) {
 					myParser.loadTypeSystemModule(moduleName);
