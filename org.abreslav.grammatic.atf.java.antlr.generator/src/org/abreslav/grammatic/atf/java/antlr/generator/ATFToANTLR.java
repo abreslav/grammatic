@@ -36,12 +36,14 @@ import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
+import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Method;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
+import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
@@ -114,7 +116,8 @@ public class ATFToANTLR {
 	private final Map<SyntacticalRule, Symbol> mySyntacticalRuleToSymbol = new HashMap<SyntacticalRule, Symbol>();
 	private final Map<FunctionSignature, Method> myFunctionToMethod = new HashMap<FunctionSignature, Method>();
 	private final Map<Grammar, ModuleImplementationProvider> myModuleImplementationProviders = new HashMap<Grammar, ModuleImplementationProvider>();
-	private final Map<ModuleImplementationProvider, Variable> myPoolVariables = new HashMap<ModuleImplementationProvider, Variable>();
+	private final Map<ModuleImplementationProvider, ImplementationPoolField> myPoolFields = new HashMap<ModuleImplementationProvider, ImplementationPoolField>();
+	private final ANTLRGrammar myResultGrammar = AntlrFactory.eINSTANCE.createANTLRGrammar();
 	private final IMetadataProvider myMetadataProvider;
 	
 	private ATFToANTLR(IMetadataProvider metadataProvider) {
@@ -128,19 +131,17 @@ public class ATFToANTLR {
 			Collection<ModuleImplementationProvider> moduleImplementationProviders,
 			Collection<ModuleImplementation> moduleImplementations) {
 		
-		ANTLRGrammar resultGrammar = AntlrFactory.eINSTANCE.createANTLRGrammar();
 		
 		Set<Grammar> allGrammars = new GrammarGraphTraverser().process(frontGrammar, usedGrammars, inclusionStrategy);
 		
 		Map<ModuleImplementation, Variable> moduleVariables = new HashMap<ModuleImplementation, Variable>();
 		for (Grammar grammar : allGrammars) {
-			processGlobalModules(grammar, moduleImplementations,
-					moduleVariables);
+			processGlobalModules(grammar, moduleImplementations, moduleVariables);
 			
-			// TODO Build a ModuleImplProvider
-			// TODO Create a variable for ModuleImplProvider
-			
-			// TODO Build and create a variable for local SemanticModule
+			// TODO Build and create a variable for local SemanticModule: it is handled 
+			// by ModuleImplementationProvider rather than create manually
+			// it also is created once upon parser creation, so it's completely different
+
 		}
 		
 		for (Map.Entry<Symbol, LexicalRule> tokenToRule : myTokenToRule.entrySet()) {
@@ -153,13 +154,12 @@ public class ATFToANTLR {
 			fillInSyntacticalRule(rule, symbol, functionToRule.getKey(), moduleVariables);
 		}
 		
-		return resultGrammar;
+		return myResultGrammar;
 	}
 
 	private void processGlobalModules(Grammar grammar,
 			Collection<ModuleImplementation> moduleImplementations,
 			Map<ModuleImplementation, Variable> moduleVariables) {
-		// TODO add variables for modules to ANTLRGrammar object
 		
 		IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
 		List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
@@ -171,8 +171,15 @@ public class ATFToANTLR {
 			ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
 			moduleImplementations.add(implementation);
 			String name = semanticModule.getName();
-			Variable variable = createImplVariable(name, implementation);
-			moduleVariables.put(implementation, variable); // TODO field name, scope
+			
+			ModuleImplementationField field = SemanticsFactory.eINSTANCE.createModuleImplementationField();
+			field.setModule(implementation);
+			
+			field.setField(createImplVariable(name, implementation)); // TODO name, type
+			field.setConstructorParameter(createImplVariable(name, implementation)); // TODO name, type
+			moduleVariables.put(implementation, field.getField()); // TODO field name, scope
+			
+			myResultGrammar.getModuleFields().add(field);
 		}
 	}
 
@@ -304,16 +311,23 @@ public class ATFToANTLR {
 	}
 	
 	private Variable getModuleImplementationProviderVariable(ModuleImplementationProvider moduleImplementationProvider) {
-		// TODO : How to connect this with the grammar?
-		Variable variable = myPoolVariables.get(moduleImplementationProvider);
-		if (variable == null) {
-			variable = SemanticsFactory.eINSTANCE.createVariable();
+		ImplementationPoolField field = myPoolFields.get(moduleImplementationProvider);
+		if (field == null) {
+			field = SemanticsFactory.eINSTANCE.createImplementationPoolField();
+			field.setProvider(moduleImplementationProvider);
+			Variable variable = SemanticsFactory.eINSTANCE.createVariable();
 			variable.getName(); // TODO : ?
-			variable.setType(moduleImplementationProvider.getProviderInterfaceName());
+			variable.setType(moduleImplementationProvider.getProviderInterfaceName()); //TODO ?
+			field.setField(variable);
 			
-			myPoolVariables.put(moduleImplementationProvider, variable);
+			 // TODO this works only if we are going to set names afterwards
+			field.setConstructorParameter(EMFProxyUtil.copy(variable));
+			
+			myResultGrammar.getPoolFields().add(field);
+			
+			myPoolFields.put(moduleImplementationProvider, field);
 		}
-		return variable;
+		return field.getField();
 	}
 
 	private ModuleImplementationProvider getModuleImplementationProvider(

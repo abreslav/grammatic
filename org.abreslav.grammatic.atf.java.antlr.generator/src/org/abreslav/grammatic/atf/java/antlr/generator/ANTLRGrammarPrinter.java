@@ -23,7 +23,7 @@ import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
 import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
-import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolVariable;
+import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Import;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
@@ -50,11 +50,10 @@ public class ANTLRGrammarPrinter {
 		new ANTLRGrammarPrinter(out).printGrammar(grammar);
 	}
 	
-	private static final Comparator<ImplementationPoolVariable> INTERFACE_NAME_ORDER = new Comparator<ImplementationPoolVariable>() {
+	private static final Comparator<ImplementationPoolField> INTERFACE_NAME_ORDER = new Comparator<ImplementationPoolField>() {
 
 		@Override
-		public int compare(ImplementationPoolVariable o1,
-				ImplementationPoolVariable o2) {
+		public int compare(ImplementationPoolField o1, ImplementationPoolField o2) {
 			String interfaceName1 = o1.getProvider().getProviderInterfaceName();
 			String interfaceName2 = o2.getProvider().getProviderInterfaceName();
 			return interfaceName1.compareTo(interfaceName2);
@@ -98,7 +97,7 @@ public class ANTLRGrammarPrinter {
 			
 			StringTemplateGroup group = TemplateUtils.loadTemplateGroup("ParserMembers");
 			StringTemplate membersTemplate = group.getInstanceOf("main");
-			List<ImplementationPoolVariable> poolVariables = new ArrayList<ImplementationPoolVariable>(grammar.getPoolVariables());
+			List<ImplementationPoolField> poolVariables = new ArrayList<ImplementationPoolField>(grammar.getPoolFields());
 			Collections.sort(poolVariables, INTERFACE_NAME_ORDER);
 			membersTemplate.setAttribute("poolVars", poolVariables);
 			myPrinter.print(membersTemplate.toString());

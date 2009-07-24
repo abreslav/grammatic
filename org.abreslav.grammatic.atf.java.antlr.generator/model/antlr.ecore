@@ -17,8 +17,10 @@
         eType="#//Option" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="rules" upperBound="-1"
         eType="#//Rule" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="poolVariables" upperBound="-1"
-        eType="#//semantics/ImplementationPoolVariable" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="poolFields" upperBound="-1"
+        eType="#//semantics/ImplementationPoolField" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="moduleFields" upperBound="-1"
+        eType="#//semantics/ModuleImplementationField" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BeforeAfter" abstract="true" interface="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="before" eType="#//semantics/JavaStatement"
@@ -87,10 +89,16 @@
     <eClassifiers xsi:type="ecore:EClass" name="Typed" abstract="true" interface="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="ImplementationPoolVariable">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="fieldName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="constructorParameterName"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ParserField">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="field" eType="#//semantics/Variable"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="constructorParameter"
+          eType="#//semantics/Variable" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ModuleImplementationField" eSuperTypes="#//semantics/ParserField">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="module" eType="#//semantics/ModuleImplementation"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ImplementationPoolField" eSuperTypes="#//semantics/ParserField">
       <eStructuralFeatures xsi:type="ecore:EReference" name="provider" eType="#//semantics/ModuleImplementationProvider"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Import">
