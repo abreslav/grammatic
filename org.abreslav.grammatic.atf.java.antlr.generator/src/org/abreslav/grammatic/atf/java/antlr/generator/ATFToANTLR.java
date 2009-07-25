@@ -111,7 +111,7 @@ public class ATFToANTLR {
 	private final Map<FunctionSignature, SyntacticalRule> myFunctionToRule = new HashMap<FunctionSignature, SyntacticalRule>();
 	private final Map<FunctionSignature, Namespace> myFunctionToNamespace = new HashMap<FunctionSignature, Namespace>();
 	private final Map<Symbol, LexicalRule> myTokenToRule = new HashMap<Symbol, LexicalRule>();
-	private final Map<Symbol, ModuleImplementation> mySymbolToModuleImpl = new HashMap<Symbol, ModuleImplementation>();
+	private final Map<Symbol, ModuleImplementation> mySymbolToModuleImpl = EMFProxyUtil.customHashMap();
 	private final Map<FunctionSignature, ModuleImplementation> myFunctionToModuleImpl = new HashMap<FunctionSignature, ModuleImplementation>();
 	private final Map<SyntacticalRule, Symbol> mySyntacticalRuleToSymbol = new HashMap<SyntacticalRule, Symbol>();
 	private final Map<FunctionSignature, Method> myFunctionToMethod = new HashMap<FunctionSignature, Method>();
@@ -162,7 +162,7 @@ public class ATFToANTLR {
 			Map<ModuleImplementation, Variable> moduleVariables) {
 		
 		IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
-		List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
+		List<SemanticModule> modules = metadataStorage.readObjects(ATFMetadata.USED_SEMANTIC_MODULES);
 		for (SemanticModule semanticModule : modules) {
 			if (moduleVariables.containsKey(semanticModule)) {
 				continue;

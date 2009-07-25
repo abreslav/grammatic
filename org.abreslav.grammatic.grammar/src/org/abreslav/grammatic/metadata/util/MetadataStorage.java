@@ -138,6 +138,9 @@ public class MetadataStorage implements IMetadataStorage {
 	@Override
 	public <T> List<T> readObjects(String name) {
 		AttributeValue value = (AttributeValue) readValue(name);
+		if (value == null) {
+			return null;
+		}
 		@SuppressWarnings("unchecked")
 		List<T> values = (List<T>) value.getValues();
 		return value == null ? null : Collections.unmodifiableList(values);

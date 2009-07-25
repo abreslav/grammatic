@@ -16,5 +16,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.parser"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.template"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.cfgraph"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

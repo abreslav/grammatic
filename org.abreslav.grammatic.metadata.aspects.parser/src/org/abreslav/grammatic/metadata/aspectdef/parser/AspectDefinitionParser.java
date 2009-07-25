@@ -1,5 +1,6 @@
 package org.abreslav.grammatic.metadata.aspectdef.parser;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,6 +22,10 @@ import org.antlr.runtime.RecognitionException;
 
 public class AspectDefinitionParser {
 
+	public static AspectDefinition parseAspectDefinition(String moduleName, FileLocator fileLocator) throws IOException, RecognitionException {
+		return parseAspectDefinition(new FileInputStream(fileLocator.findFile(moduleName)), fileLocator);
+	}
+	
 	public static AspectDefinition parseAspectDefinition(InputStream input, FileLocator fileLocator) throws IOException, RecognitionException {
 		ANTLRInputStream in = new ANTLRInputStream(input);
 		GrammaticMetadataAspectsLexer lexer = new GrammaticMetadataAspectsLexer(in);

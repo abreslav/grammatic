@@ -1,2 +1,10 @@
 digraph typeGraph {
+v0 [label="<b>"];
+v1 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@1270107 (expression: EByte)]::9209226"];
+v2 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@1b48392 (expression: EShort)]::26426059"];
+v3 [label="<c>"];
+v4 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@29ea31 (expression: EChar)]::26252165"];
+v0 -> v1;
+v0 -> v2;
+v3 -> v4;
 }

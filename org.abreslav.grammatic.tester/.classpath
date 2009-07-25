@@ -24,5 +24,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.cfgraph"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf.java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf.java.antlr.generator"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

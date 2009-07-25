@@ -134,8 +134,8 @@ public class ParsingContext implements IParsingContext {
 	public Grammar loadGrammar(String fileName) throws IOException,
 			RecognitionException {
 		Grammar grammar = myLoadedGrammars.get(fileName);
+		// HACK: To avoid further tries of loading (on circular dependency case)
 		if (!myLoadedGrammars.containsKey(fileName)) {
-			// HACK: To avoid further tries of loading (on circular dependency case)
 			// We may use IProxy, but it's too heavy
 			myLoadedGrammars.put(fileName, null);
 			grammar = GrammarParser.parseGrammarWithGivenContext(fileName, 
