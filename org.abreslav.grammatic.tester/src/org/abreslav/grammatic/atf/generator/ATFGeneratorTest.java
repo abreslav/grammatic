@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.abreslav.grammatic.atf.interpreter.ATFInterpreter;
 import org.abreslav.grammatic.atf.interpreter.ATFInterpreterTest;
+import org.abreslav.grammatic.atf.java.antlr.ANTLRGrammar;
+import org.abreslav.grammatic.atf.java.antlr.generator.ANTLRGrammarPrinter;
 import org.abreslav.grammatic.atf.java.antlr.generator.ATFToANTLR;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
@@ -35,20 +37,22 @@ public class ATFGeneratorTest {
 				new ATFJavaParserImplementationFactory(typeSystemBuilder),
 				aspect);
 		
-		String frontGrammarName = "GrammaticLexicalGrammar.grammar";
+		String frontGrammarName = "GrammaticMetadata.grammar";
 		Grammar frontGrammar = grammars.get(frontGrammarName);
 		if (frontGrammar == null) {
 			Assert.fail("No front grammar found");
 		}
 		HashSet<Grammar> usedGrammars = new HashSet<Grammar>(grammars.values());
 		usedGrammars.remove(frontGrammar);
-		ATFToANTLR.generate(
+		ANTLRGrammar generate = ATFToANTLR.generate(
 				frontGrammar, 
 				usedGrammars, 
 				ATFToANTLR.USED_FORCED_FRONT_WHITESPACE, 
 				new MetadataProvider(aspect), 
 				new ArrayList<ModuleImplementationProvider>(), 
 				new ArrayList<ModuleImplementation>());
+		
+		ANTLRGrammarPrinter.printGrammar(generate, System.out);
 	}
 
 

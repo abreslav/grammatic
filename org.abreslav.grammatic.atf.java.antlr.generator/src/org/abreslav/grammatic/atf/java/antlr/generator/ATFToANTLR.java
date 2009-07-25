@@ -263,6 +263,7 @@ public class ATFToANTLR {
 		result.setName(symbol.getName().toUpperCase()); // TODO : Scope, To underscored upper case
 			
 		myTokenToRule.put(symbol, result);
+		myResultGrammar.getRules().add(result);
 		return result;
 	}
 
@@ -273,6 +274,7 @@ public class ATFToANTLR {
 		
 		myFunctionToRule.put(function, result);
 		mySyntacticalRuleToSymbol.put(result, symbol);
+		myResultGrammar.getRules().add(result);
 		return result;
 	}
 

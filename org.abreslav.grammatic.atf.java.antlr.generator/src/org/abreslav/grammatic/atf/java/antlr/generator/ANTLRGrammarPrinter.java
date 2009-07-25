@@ -26,6 +26,7 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReferenc
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Import;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
+import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
@@ -263,7 +264,11 @@ public class ANTLRGrammarPrinter {
 		}
 
 		private void printVariablePreamble(ANTLRExpression object) {
-			String varName = object.getAssignToVariable().getName();
+			Variable assignToVariable = object.getAssignToVariable();
+			if (assignToVariable == null) {
+				return;
+			}
+			String varName = assignToVariable.getName();
 			if (varName != null) {
 				myPrinter.print(varName).print("=");
 			}
@@ -356,7 +361,11 @@ public class ANTLRGrammarPrinter {
 		public INull caseVariableDefinition(VariableDefinition object) {
 			Variable variable = object.getVariable();
 			myPrinter.words(variable.getType(), variable.getName(), "=");
-			doSwitch(object.getValue());
+			JavaExpression value = object.getValue();
+			if (value != null) {
+				doSwitch(value);
+			}
+			myPrinter.separator(";").endl();
 			return INull.NULL;
 		}
 		
