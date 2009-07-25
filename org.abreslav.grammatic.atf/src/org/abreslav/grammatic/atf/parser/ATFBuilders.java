@@ -134,9 +134,9 @@ public class ATFBuilders implements IATFBuilders {
 				GrammarAssignment grammarAssignment = getGrammarAssignment(myAspectDefinition);
 				Attribute attribute = getAttribute(grammarAssignment, 
 						ATF_NAMESPACE, ATFMetadata.USED_SEMANTIC_MODULES);
-				addAttributeValue(attribute, new ArrayList<SemanticModule>(
-						myImportsBuilders.getImportedModules()));
-				
+				for (SemanticModule semanticModule : myImportsBuilders.getImportedModules()) {
+					addCrossReferencedValue(attribute, semanticModule);
+				}
 				myAspectDefinition = null;
 			}
 			

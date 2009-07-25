@@ -162,7 +162,10 @@ public class ATFToANTLR {
 			Map<ModuleImplementation, Variable> moduleVariables) {
 		
 		IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
-		List<SemanticModule> modules = metadataStorage.readObjects(ATFMetadata.USED_SEMANTIC_MODULES);
+		List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
+		if (modules == null) {
+			return;
+		}
 		for (SemanticModule semanticModule : modules) {
 			if (moduleVariables.containsKey(semanticModule)) {
 				continue;
@@ -505,7 +508,10 @@ public class ATFToANTLR {
 			}
 			
 			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, myMetadataProvider);
-			before.getStatements().add(getBefore(symbolMetadata));
+			JavaStatement beforeStatement = getBefore(symbolMetadata);
+			if (beforeStatement != null) {
+				before.getStatements().add(beforeStatement);
+			}
 			rule.setBefore(before);
 			for (Production production : symbol.getProductions()) {
 				IMetadataStorage metadata = MetadataStorage.getMetadataStorage(production, myMetadataProvider);
@@ -517,7 +523,10 @@ public class ATFToANTLR {
 
 				rule.getProductions().add(newProduction);
 			}
-			after.getStatements().add(0, getAfter(symbolMetadata));
+			JavaStatement afterStatement = getAfter(symbolMetadata);
+			if (afterStatement != null) {
+				after.getStatements().add(0, afterStatement);
+			}
 			rule.setAfter(after);
 		}
 
@@ -654,17 +663,21 @@ public class ATFToANTLR {
 			}
 
 			List<ATFAttributeReference> attributes = metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
-			if (attributes.size() > 1) {
-				multipleReturnValuesAreNotSupported();
-			}
-			if (!attributes.isEmpty()) {
-				ATFAttribute attribute = attributes.get(0).getAttribute();
-				Variable variable = getOrCreateVariable(attribute);
-				call.setAssignToVariable(variable);
+			if (attributes != null) {
+				if (attributes.size() > 1) {
+					multipleReturnValuesAreNotSupported();
+				}
+				if (!attributes.isEmpty()) {
+					ATFAttribute attribute = attributes.get(0).getAttribute();
+					Variable variable = getOrCreateVariable(attribute);
+					call.setAssignToVariable(variable);
+				}
 			}
 			
 			List<ATFExpression> arguments = metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
-			convertArguments(arguments, call.getArguments());
+			if (arguments != null) {
+				convertArguments(arguments, call.getArguments());
+			}
 			
 			return call;
 		}
@@ -723,11 +736,20 @@ public class ATFToANTLR {
 		}
 		
 		private JavaStatement getBefore(IMetadataStorage metadata) {
-			return myStatementConvertor.doSwitch(metadata.readEObject(ATFMetadata.BEFORE));
+			return readStatement(metadata, ATFMetadata.BEFORE);
+		}
+		
+		private JavaStatement getAfter(IMetadataStorage metadata) {
+			return readStatement(metadata, ATFMetadata.AFTER);
 		}
 
-		private JavaStatement getAfter(IMetadataStorage metadata) {
-			return myStatementConvertor.doSwitch(metadata.readEObject(ATFMetadata.AFTER));
+		private JavaStatement readStatement(IMetadataStorage metadata,
+				String name) {
+			EObject readEObject = metadata.readEObject(name);
+			if (readEObject == null) {
+				return null;
+			}
+			return myStatementConvertor.doSwitch(readEObject);
 		}
 		
 		private final JavaExpression convertExpression(ATFExpression expression) {

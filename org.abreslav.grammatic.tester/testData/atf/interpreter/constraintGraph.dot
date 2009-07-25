@@ -1,10 +1,14 @@
 digraph typeGraph {
-v0 [label="<b>"];
-v1 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@1270107 (expression: EByte)]::9209226"];
-v2 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@1b48392 (expression: EShort)]::26426059"];
-v3 [label="<c>"];
-v4 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@29ea31 (expression: EChar)]::26252165"];
+v0 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@ccc588 (expression: String)]::21928017"];
+v1 [label="<CHARACTER#>"];
+v2 [label="<c>"];
+v3 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@1961581 (expression: EChar)]::16501616"];
+v4 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@ccc588 (expression: String)]::9209226"];
+v5 [label="<CODE#>"];
+v6 [label="<c>"];
+v7 [label="[org.eclipse.emf.ecore.impl.EGenericTypeImpl@1961581 (expression: EChar)]::27041558"];
 v0 -> v1;
-v0 -> v2;
-v3 -> v4;
+v2 -> v3;
+v4 -> v5;
+v6 -> v7;
 }
