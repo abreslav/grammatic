@@ -21,9 +21,11 @@ public class MetadataProvider implements IMetadataProvider {
 	
 	private MetadataProvider(MetadataProvider parent, Set<Namespace> namespaces) {
 		for (Entry<EObject, Set<Attribute>> entry : parent.myAttributes.entrySet()) {
-			Set<Attribute> attributes = getOrCreateAttributes(entry.getKey());
-			for (Attribute attribute : entry.getValue()) {
+			EObject object = entry.getKey();
+			Set<Attribute> sourceAttributes = entry.getValue();
+			for (Attribute attribute : sourceAttributes) {
 				if (namespaces.contains(attribute.getNamespace())) {
+					Set<Attribute> attributes = getOrCreateAttributes(object);
 					attributes.add(attribute);
 				}
 			}
@@ -76,7 +78,7 @@ public class MetadataProvider implements IMetadataProvider {
 
 	@Override
 	public IMetadataProvider getProjection(Namespace namespace) {
-		return new MetadataProvider(this, Collections.singleton(namespace));
+		return getProjection(Collections.singleton(namespace));
 	}
 
 	@Override

@@ -131,7 +131,6 @@ public class ATFToANTLR {
 			Collection<ModuleImplementationProvider> moduleImplementationProviders,
 			Collection<ModuleImplementation> moduleImplementations) {
 		
-		
 		Set<Grammar> allGrammars = new GrammarGraphTraverser().process(frontGrammar, usedGrammars, inclusionStrategy);
 		
 		Map<ModuleImplementation, Variable> moduleVariables = new HashMap<ModuleImplementation, Variable>();
@@ -223,7 +222,9 @@ public class ATFToANTLR {
 			rule.setResultVariable(getOrCreateVariableInAMap(atfAttribute, map));
 		}
 		
-		IMetadataProvider projection = myMetadataProvider.getProjection(myFunctionToNamespace.get(function));
+		Namespace namespace = myFunctionToNamespace.get(function);
+		assertNotNull(namespace);
+		IMetadataProvider projection = myMetadataProvider.getProjection(namespace);
 		fillProductions(rule, symbol, map, projection, moduleVariables, function);
 	}
 	
@@ -253,6 +254,7 @@ public class ATFToANTLR {
 			ModuleImplementation functionModuleImpl = createSemanticModuleImpl(projectedMetadata);
 			myFunctionToModuleImpl.put(function, functionModuleImpl);
 			
+			myFunctionToNamespace.put(function, namespace);
 			createSyntacticalRuleStub(symbol, function);
 		}
 	}
@@ -273,6 +275,7 @@ public class ATFToANTLR {
 		result.setName(symbol.getName()); // TODO : Scope, To CamelCase
 		
 		myFunctionToRule.put(function, result);
+		System.out.println(function);
 		mySyntacticalRuleToSymbol.put(result, symbol);
 		myResultGrammar.getRules().add(result);
 		return result;
@@ -373,6 +376,12 @@ public class ATFToANTLR {
 
 	private void multipleReturnValuesAreNotSupported() {
 		reportError("Multiple return values are not supported");
+	}
+	
+	private void assertNotNull(Object x) {
+		if (x == null) {
+			throw new IllegalStateException();
+		}
 	}
 
 	private class GrammarGraphTraverser {
@@ -661,7 +670,10 @@ public class ATFToANTLR {
 				call.setRule(myTokenToRule.get(object.getSymbol()));
 			} else {
 				FunctionSignature function = metadata.readEObject(ATFMetadata.ASSOCIATED_FUNCTION);
-				call.setRule(myFunctionToRule.get(function));
+				assertNotNull(function);
+				SyntacticalRule rule = myFunctionToRule.get(function);
+				assertNotNull(rule);
+				call.setRule(rule);
 			}
 
 			List<ATFAttributeReference> attributes = metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
