@@ -2,12 +2,14 @@ package org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.abreslav.grammatic.atf.FunctionSignature;
 import org.abreslav.grammatic.atf.java.antlr.LexicalRule;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
+import org.abreslav.grammatic.atf.java.antlr.generator.IModuleImplementationBuilderTrace;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Method;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
@@ -17,13 +19,13 @@ import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.Symbol;
 import org.abreslav.grammatic.metadata.Namespace;
 
-/*package*/ class ATFToANTLRTrace {
+/*package*/ class ATFToANTLRTrace implements IModuleImplementationBuilderTrace {
 
-	private final Map<FunctionSignature, SyntacticalRule> myFunctionToRule = new HashMap<FunctionSignature, SyntacticalRule>();
+	private final Map<FunctionSignature, SyntacticalRule> myFunctionToRule = new LinkedHashMap<FunctionSignature, SyntacticalRule>();
 	private final Map<Symbol, ModuleImplementation> mySymbolToModuleImpl = EMFProxyUtil.customHashMap();
 	private final Map<FunctionSignature, ModuleImplementation> myFunctionToModuleImpl = new HashMap<FunctionSignature, ModuleImplementation>();
 	private final Map<FunctionSignature, Namespace> myFunctionToNamespace = new HashMap<FunctionSignature, Namespace>();
-	private final Map<Symbol, LexicalRule> myTokenToRule = new HashMap<Symbol, LexicalRule>();
+	private final Map<Symbol, LexicalRule> myTokenToRule = new LinkedHashMap<Symbol, LexicalRule>();
 	private final Map<SyntacticalRule, Symbol> mySyntacticalRuleToSymbol = new HashMap<SyntacticalRule, Symbol>();
 	private final Map<FunctionSignature, Method> myFunctionToMethod = new HashMap<FunctionSignature, Method>();
 	private final Map<Grammar, ModuleImplementationProvider> myModuleImplementationProviders = new HashMap<Grammar, ModuleImplementationProvider>();

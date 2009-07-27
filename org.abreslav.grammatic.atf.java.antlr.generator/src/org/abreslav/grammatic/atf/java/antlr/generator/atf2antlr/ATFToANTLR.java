@@ -91,7 +91,7 @@ public class ATFToANTLR {
 	
 	private ATFToANTLR(IMetadataProvider metadataProvider) {
 		myMetadataProvider = metadataProvider;
-		mySymbolMetadataProvider = new SymbolMetadataProvider(metadataProvider);
+		mySymbolMetadataProvider = new SymbolMetadataProvider(metadataProvider.getProjection(ATFMetadata.ATF_NAMESPACE));
 	}
 
 	private ANTLRGrammar doGenerate(
@@ -115,7 +115,8 @@ public class ATFToANTLR {
 		}
 		
 		for (Map.Entry<Symbol, LexicalRule> tokenToRule : myTrace.getAllTokenRulePairs()) {
-			fillInLexicalRule(tokenToRule.getValue(), tokenToRule.getKey());
+			Symbol symbol = tokenToRule.getKey();
+			fillInLexicalRule(tokenToRule.getValue(), symbol);
 		}
 		
 		for (Entry<FunctionSignature, SyntacticalRule> functionToRule : myTrace.getAllFunctionRulePairs()) {
@@ -141,7 +142,7 @@ public class ATFToANTLR {
 				continue;
 			}
 			// TODO Interface name & package!
-			ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
+			ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
 			moduleImplementations.add(implementation);
 			String name = semanticModule.getName();
 			
@@ -177,9 +178,9 @@ public class ATFToANTLR {
 	
 	private void fillInSyntacticalRule(SyntacticalRule rule, Symbol symbol, FunctionSignature function, Map<ModuleImplementation, Variable> moduleVariables) {
 		List<ATFAttribute> inputAttributes = function.getInputAttributes();
-		Map<ATFAttribute, Variable> map = new HashMap<ATFAttribute, Variable>();
+		Map<ATFAttribute, Variable> variableMap = new HashMap<ATFAttribute, Variable>();
 		for (ATFAttribute atfAttribute : inputAttributes) {
-			Variable variable = getOrCreateVariableInAMap(atfAttribute, map);
+			Variable variable = getOrCreateVariableInAMap(atfAttribute, variableMap);
 			rule.getParameters().add(variable);
 		}
 		
@@ -190,13 +191,18 @@ public class ATFToANTLR {
 		
 		if (!outputAttributes.isEmpty()) {
 			ATFAttribute atfAttribute = outputAttributes.get(0);
-			rule.setResultVariable(getOrCreateVariableInAMap(atfAttribute, map));
+			rule.setResultVariable(getOrCreateVariableInAMap(atfAttribute, variableMap));
+		} else {
+			Variable voidResult = SemanticsFactory.eINSTANCE.createVariable();
+			voidResult.setType("void");
+			voidResult.setName("<no result>");
+			rule.setResultVariable(voidResult);
 		}
 		
 		Namespace namespace = myTrace.getNamespaceByFunction(function);
 		assertNotNull(namespace);
 		IMetadataProvider projection = myMetadataProvider.getProjection(namespace);
-		fillProductions(rule, symbol, map, projection, moduleVariables, function);
+		fillProductions(rule, symbol, variableMap, projection, moduleVariables, function);
 	}
 	
 	private void fillProductions(Rule rule, Symbol symbol,
@@ -204,8 +210,6 @@ public class ATFToANTLR {
 		RuleContentBuilder ruleContentBuilder = new RuleContentBuilder(metadataProvider, parameters, moduleVariables);
 		ruleContentBuilder.fillProductions(rule, symbol, function);
 	}
-
-
 
 	private Variable getOrCreateVariableInAMap(ATFAttribute attribute,
 			Map<ATFAttribute, Variable> map) {
@@ -249,7 +253,7 @@ public class ATFToANTLR {
 			moduleImplementationProvider.getImports(); // TODO : ?
 			moduleImplementationProvider.getPackage(); // TODO : ?
 			moduleImplementationProvider.getPoolsClassName(); // TODO : ?
-			moduleImplementationProvider.getProviderInterfaceName(); // TODO : ?
+			moduleImplementationProvider.setProviderInterfaceName(""); // TODO : ?
 			
 			myTrace.putModuleImplementationProvider(grammar, moduleImplementationProvider);
 		}
@@ -627,7 +631,7 @@ public class ATFToANTLR {
 					multipleReturnValuesAreNotSupported();					
 				}
 				ATFAttributeReference attribute = attributes.get(0);
-				assignment.setVariable(getVariable(attribute.getAttribute()));
+				assignment.setVariable(getOrCreateVariable(attribute.getAttribute()));
 				assignment.setValue(convertExpression(object.getRightSide()));
 				return assignment;
 			}

@@ -8,6 +8,7 @@ import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRGrammar;
 import org.abreslav.grammatic.atf.java.antlr.AntlrPackage;
 import org.abreslav.grammatic.atf.java.antlr.generator.ANTLRGrammarPrinter;
+import org.abreslav.grammatic.atf.java.antlr.generator.IModuleImplementationBuilderTrace;
 import org.abreslav.grammatic.atf.java.antlr.generator.ModuleImplementationBuilder;
 import org.abreslav.grammatic.atf.java.antlr.generator.TemplateUtils;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Import;
@@ -52,7 +53,7 @@ public class Test {
 					templateImplGroup, 
 					(String) options.get("package"), 
 					Collections.<Import>emptySet(), 
-					ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(module));
+					ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(module, IModuleImplementationBuilderTrace.NONE));
 			System.out.println(code);
 		}
 		

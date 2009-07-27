@@ -21,15 +21,15 @@ public class ModuleImplementationBuilder {
 	
 	private ModuleImplementationBuilder() {}
 	
-	public ModuleImplementation buildModuleImplementation(SemanticModule semanticModule) {
+	public ModuleImplementation buildModuleImplementation(SemanticModule semanticModule, IModuleImplementationBuilderTrace trace) {
 		ModuleImplementation result = SemanticsFactory.eINSTANCE.createModuleImplementation();
 		result.setName(semanticModule.getName());
-		buildImplMethods(semanticModule.getFunctions(), result.getMethods());
+		buildImplMethods(semanticModule.getFunctions(), result.getMethods(), trace);
 		return result;
 	}
 
 	private void buildImplMethods(List<FunctionSignature> functions,
-			List<Method> methods) {
+			List<Method> methods, IModuleImplementationBuilderTrace trace) {
 		for (FunctionSignature function : functions) {
 			Method method = SemanticsFactory.eINSTANCE.createMethod();
 			method.setName(function.getName());
@@ -38,6 +38,7 @@ public class ModuleImplementationBuilder {
 			buildParameters(function.getInputAttributes(), method.getParameters());
 			
 			methods.add(method);
+			trace.putFunctionToMethod(function, method);
 		}
 	}
 

@@ -476,6 +476,7 @@ public class ATFBuilders implements IATFBuilders {
 
 			@Override
 			public void release() {
+				createLocalSemanticModule("<default: to be set by post-processor>");
 				myFunctionSignature = null;
 				
 				mySemanticResolver.leaveFunctionScope();
@@ -520,15 +521,7 @@ public class ATFBuilders implements IATFBuilders {
 			
 			@Override
 			public void release() {
-				Set<FunctionSignature> allLocalFunctions = mySemanticResolver.getAllLocalFunctions();
-				if (!allLocalFunctions.isEmpty()) {
-					SemanticModule semanticModule = AtfFactory.eINSTANCE.createSemanticModule();
-					semanticModule.setName(myName);
-					semanticModule.getFunctions().addAll(allLocalFunctions);
-					addContainedValueToSymbolAttribute(myCurrentAssignment, 
-							myCurrentNamespace, SEMANTIC_MODULE, 
-							semanticModule);
-				}
+				createLocalSemanticModule(myName);
 				myNamespace = null;
 				myCurrentNamespace = null;
 				mySemanticResolver.leaveFunctionScope();
@@ -1439,6 +1432,18 @@ public class ATFBuilders implements IATFBuilders {
 		}
 	}
 	
+	private void createLocalSemanticModule(String name) {
+		Set<FunctionSignature> allLocalFunctions = mySemanticResolver.getAllLocalFunctions();
+		if (!allLocalFunctions.isEmpty()) {
+			SemanticModule semanticModule = AtfFactory.eINSTANCE.createSemanticModule();
+			semanticModule.setName(name);
+			semanticModule.getFunctions().addAll(allLocalFunctions);
+			addContainedValueToSymbolAttribute(myCurrentAssignment, 
+					myCurrentNamespace, SEMANTIC_MODULE, 
+					semanticModule);
+		}
+	}
+
 	private static void todoAppend() {
 		throw new IllegalStateException("This method shuold be modified to support multi error reporting");
 	}
@@ -1469,6 +1474,9 @@ public class ATFBuilders implements IATFBuilders {
 		}
 		
 		public Set<FunctionSignature> getAllLocalFunctions() {
+			if (myCurrentScope != myFunctionScope) {
+				throw new IllegalStateException("Called outside function scope");
+			}
 			return myStubs;
 		}
 

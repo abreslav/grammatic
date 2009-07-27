@@ -49,8 +49,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="ANTLRExpression" abstract="true" eSuperTypes="#//BeforeAfter">
     <eStructuralFeatures xsi:type="ecore:EReference" name="options" upperBound="-1"
         eType="#//Option" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="assignToVariable" eType="#//semantics/Variable"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="assignToVariable" eType="#//semantics/Variable"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ANTLREmpty" eSuperTypes="#//ANTLRExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="ANTLRCombination" abstract="true" interface="true"

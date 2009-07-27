@@ -123,7 +123,7 @@ public class InitialObjectCreator {
 	private SyntacticalRule createSyntacticalRuleStub(Symbol symbol, FunctionSignature function) {
 		SyntacticalRule result = AntlrFactory.eINSTANCE.createSyntacticalRule();
 
-		result.setName(symbol.getName()); // TODO : Scope, To CamelCase
+		result.setName(function.getName()); // TODO : Scope, To CamelCase
 		
 		myTrace.putFunctionToRule(function, result);
 		myTrace.putSyntacticalRuleToSymbol(result, symbol);
@@ -136,7 +136,7 @@ public class InitialObjectCreator {
 		SemanticModule semanticModule = metadata.readEObject(ATFMetadata.SEMANTIC_MODULE);
 		if (semanticModule != null) {
 			// TODO : Interface name and package
-			return ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule);
+			return ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
 		}
 		return null;
 	}
