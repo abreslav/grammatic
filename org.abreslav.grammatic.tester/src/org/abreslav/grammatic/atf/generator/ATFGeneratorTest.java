@@ -9,7 +9,8 @@ import org.abreslav.grammatic.atf.interpreter.ATFInterpreter;
 import org.abreslav.grammatic.atf.interpreter.ATFInterpreterTest;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRGrammar;
 import org.abreslav.grammatic.atf.java.antlr.generator.ANTLRGrammarPrinter;
-import org.abreslav.grammatic.atf.java.antlr.generator.ATFToANTLR;
+import org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr.ANTLRMetadata;
+import org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr.ATFToANTLR;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
 import org.abreslav.grammatic.atf.java.parser.ATFJavaParserImplementationFactory;
@@ -47,7 +48,7 @@ public class ATFGeneratorTest {
 		ANTLRGrammar generate = ATFToANTLR.generate(
 				frontGrammar, 
 				usedGrammars, 
-				ATFToANTLR.USED_FORCED_FRONT_WHITESPACE, 
+				ANTLRMetadata.USED_FORCED_FRONT_WHITESPACE, 
 				new MetadataProvider(aspect), 
 				new ArrayList<ModuleImplementationProvider>(), 
 				new ArrayList<ModuleImplementation>());
