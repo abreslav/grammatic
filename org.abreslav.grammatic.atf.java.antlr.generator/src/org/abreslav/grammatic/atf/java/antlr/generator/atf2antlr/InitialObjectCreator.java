@@ -1,7 +1,10 @@
 package org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +14,7 @@ import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRGrammar;
 import org.abreslav.grammatic.atf.java.antlr.AntlrFactory;
 import org.abreslav.grammatic.atf.java.antlr.LexicalRule;
+import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.generator.ModuleImplementationBuilder;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
@@ -29,6 +33,7 @@ public class InitialObjectCreator {
 
 	// Private state
 	private final Set<Symbol> myVisited = EMFProxyUtil.customHashSet();
+	private final List<Rule> myTopologicalOrder = new LinkedList<Rule>();
 	private final Set<Grammar> myVisitedGrammars = new HashSet<Grammar>(); 
 	private final GrammarSwitch<INull> mySymbolReferenceTraverser = new SymbolReferenceTraverser() {
 		public INull caseSymbolReference(SymbolReference object) {
@@ -55,10 +60,13 @@ public class InitialObjectCreator {
 	public Set<Grammar> process(Grammar frontGrammar, Collection<Grammar> usedGrammars, ISymbolInclusionStrategy inclusionStrategy) {
 		myVisited.clear();
 		myVisitedGrammars.clear();
+		myTopologicalOrder.clear();
 		processGramar(frontGrammar, true, inclusionStrategy);
 		for (Grammar grammar : usedGrammars) {
 			processGramar(grammar, false, inclusionStrategy);
 		}
+		Collections.reverse(myTopologicalOrder);
+		myResultGrammar.getRules().addAll(myTopologicalOrder);
 		return new HashSet<Grammar>(myVisitedGrammars);
 	}
 	
@@ -80,9 +88,9 @@ public class InitialObjectCreator {
 		myVisited.add(symbol);
 		myVisitedGrammars.add(StructureUtils.getGrammar(symbol));
 		
-		processSymbol(symbol);
-		
 		mySymbolReferenceTraverser.doSwitch(symbol);
+
+		processSymbol(symbol);
 	}
 	
 	private void processSymbol(Symbol symbol) {
@@ -127,7 +135,7 @@ public class InitialObjectCreator {
 		
 		myTrace.putFunctionToRule(function, result);
 		myTrace.putSyntacticalRuleToSymbol(result, symbol);
-		myResultGrammar.getRules().add(result);
+		myTopologicalOrder.add(0, result);
 		return result;
 	}
 

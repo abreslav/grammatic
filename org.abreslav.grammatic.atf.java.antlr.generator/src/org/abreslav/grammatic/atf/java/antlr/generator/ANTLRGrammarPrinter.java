@@ -360,9 +360,10 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseVariableDefinition(VariableDefinition object) {
 			Variable variable = object.getVariable();
-			myPrinter.words(variable.getType(), variable.getName(), "=");
+			myPrinter.words(variable.getType(), variable.getName());
 			JavaExpression value = object.getValue();
 			if (value != null) {
+				myPrinter.word("=");
 				doSwitch(value);
 			}
 			myPrinter.separator(";").endl();

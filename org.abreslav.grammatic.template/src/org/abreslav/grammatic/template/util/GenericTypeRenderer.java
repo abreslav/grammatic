@@ -1,6 +1,7 @@
 package org.abreslav.grammatic.template.util;
 
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EcorePackage;
 
 public class GenericTypeRenderer {
 	
@@ -8,8 +9,27 @@ public class GenericTypeRenderer {
 		if (genericType == null) {
 			return "null";
 		}
-		String gts = genericType.toString();
-		return gts.substring(gts.indexOf(':') + 2, gts.indexOf(')'));
+		switch (genericType.getEClassifier().getClassifierID()) {
+		case EcorePackage.ECHAR:
+			return "char";
+		case EcorePackage.EBYTE:
+			return "byte";
+		case EcorePackage.EINT:
+			return "int";
+		case EcorePackage.ELONG:
+			return "long";
+		case EcorePackage.ESHORT:
+			return "short";
+		case EcorePackage.EBOOLEAN:
+			return "boolean";
+		case EcorePackage.EFLOAT:
+			return "float";
+		case EcorePackage.EDOUBLE:
+			return "double";
+		default:
+			String gts = genericType.toString();
+			return gts.substring(gts.indexOf(':') + 2, gts.indexOf(')'));
+		}
 	}
 	
 }

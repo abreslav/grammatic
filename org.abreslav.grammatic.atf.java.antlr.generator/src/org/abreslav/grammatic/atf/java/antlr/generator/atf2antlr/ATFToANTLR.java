@@ -69,6 +69,7 @@ import org.abreslav.grammatic.metadata.Namespace;
 import org.abreslav.grammatic.metadata.aspects.manager.IMetadataProvider;
 import org.abreslav.grammatic.metadata.util.IMetadataStorage;
 import org.abreslav.grammatic.metadata.util.MetadataStorage;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 
 // Takes as input: Grammatic grammars annotated with ATF specification (ATF.metadataScheme)
@@ -83,6 +84,8 @@ public class ATFToANTLR {
 			Collection<ModuleImplementation> moduleImplementations) {
 		return new ATFToANTLR(metadataProvider).doGenerate(frontGrammar, usedGrammars, inclusionStrategy, moduleImplementationProviders, moduleImplementations);
 	}
+	
+	private final JavaTypeStringRepresentationProvider myJavaTypeStringRepresentationProvider = new JavaTypeStringRepresentationProvider();
 	
 	private final ANTLRGrammar myResultGrammar = AntlrFactory.eINSTANCE.createANTLRGrammar();
 	private final ATFToANTLRTrace myTrace = new ATFToANTLRTrace();
@@ -219,7 +222,7 @@ public class ATFToANTLR {
 		}
 		variable = SemanticsFactory.eINSTANCE.createVariable();
 		variable.setName(attribute.getName()); // TODO : Scope
-		variable.setType(JavaTypeStringRepresentationProvider.DEFAULT.getStringRepresentation(attribute.getType()));
+		variable.setType(myJavaTypeStringRepresentationProvider.getStringRepresentation((EGenericType) attribute.getType()));
 		map.put(attribute, variable);
 		return variable;
 	}
@@ -230,7 +233,7 @@ public class ATFToANTLR {
 			field = SemanticsFactory.eINSTANCE.createImplementationPoolField();
 			field.setProvider(moduleImplementationProvider);
 			Variable variable = SemanticsFactory.eINSTANCE.createVariable();
-			variable.getName(); // TODO : ?
+			variable.setName(moduleImplementationProvider.getProviderInterfaceName()); // TODO : ?
 			variable.setType(moduleImplementationProvider.getProviderInterfaceName()); //TODO ?
 			field.setField(variable);
 			
@@ -252,8 +255,8 @@ public class ATFToANTLR {
 			moduleImplementationProvider = SemanticsFactory.eINSTANCE.createModuleImplementationProvider();
 			moduleImplementationProvider.getImports(); // TODO : ?
 			moduleImplementationProvider.getPackage(); // TODO : ?
-			moduleImplementationProvider.getPoolsClassName(); // TODO : ?
-			moduleImplementationProvider.setProviderInterfaceName(""); // TODO : ?
+			moduleImplementationProvider.setPoolsClassName(symbol.getName() + "Pools"); // TODO : ?
+			moduleImplementationProvider.setProviderInterfaceName("I" + symbol.getName()); // TODO : ?
 			
 			myTrace.putModuleImplementationProvider(grammar, moduleImplementationProvider);
 		}
@@ -340,7 +343,9 @@ public class ATFToANTLR {
 			if (beforeStatement != null) {
 				before.getStatements().add(beforeStatement);
 			}
-			rule.setBefore(before);
+			if (!before.getStatements().isEmpty()) {
+				rule.setBefore(before);
+			}
 			for (Production production : symbol.getProductions()) {
 				IMetadataStorage metadata = MetadataStorage.getMetadataStorage(production, myMetadataProvider);
 
@@ -355,7 +360,9 @@ public class ATFToANTLR {
 			if (afterStatement != null) {
 				after.getStatements().add(0, afterStatement);
 			}
-			rule.setAfter(after);
+			if (!after.getStatements().isEmpty()) {
+				rule.setAfter(after);
+			}
 		}
 
 		private Variable generateProviderInitAndRelease(CodeBlock before,
@@ -376,7 +383,6 @@ public class ATFToANTLR {
 			MethodCall releaseImplCall = SemanticsFactory.eINSTANCE.createMethodCall();
 			releaseImplCall.setVariable(providerVariable);
 			releaseImplCall.setMethod(createReleaseMethod(moduleImplementationProvider, moduleImplementation));
-			definition.setValue(releaseImplCall);
 			after.getStatements().add(0, releaseImplCall);
 			return variable;
 		}
