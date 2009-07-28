@@ -150,9 +150,10 @@ public class ANTLRGrammarPrinter {
 			if (!rule.getParameters().isEmpty()) {
 				printRuleParameters(rule);
 			}
-			String type = rule.getResultVariable().getType();
+			Variable resultVariable = rule.getResultVariable();
+			String type = resultVariable.getType();
 			if (!JavaUtils.isVoid(type)) {
-				myPrinter.word("returns").print("[").words(type, "result").separator("]");
+				myPrinter.word("returns").print("[").words(type, resultVariable.getName()).separator("]");
 			}
 			myPrinter.endl();
 			printRuleLevelBlock("@init", rule.getBefore());
@@ -328,7 +329,6 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull defaultCase(final EObject object) {
 			return myStatementPrinter.doSwitch(object);
-//			throw new IllegalArgumentException(object.toString());
 		}
 	}
 	
@@ -366,7 +366,6 @@ public class ANTLRGrammarPrinter {
 				myPrinter.word("=");
 				doSwitch(value);
 			}
-			myPrinter.separator(";").endl();
 			return INull.NULL;
 		}
 		
@@ -385,7 +384,7 @@ public class ANTLRGrammarPrinter {
 				myPrinter.print(variable, ".");
 			}
 			String name = methodCall.getMethod().getName();
-			myPrinter.print(name, "(").list(", ", wrap(methodCall.getArguments()), "").separator(");").endl();
+			myPrinter.print(name, "(").list(", ", wrap(methodCall.getArguments()), "").separator(")");
 			return INull.NULL;
 		}
 		
@@ -432,7 +431,7 @@ public class ANTLRGrammarPrinter {
 	private final AntlrSwitch<INull> myPrinterSwitch = new ANTLRGrammarPrinterSwitch();
 
 	private ANTLRGrammarPrinter(Appendable out) {
-		myPrinter = new Printer(out, "    ");;
+		myPrinter = new Printer(out, "    ");
 	}
 
 	private void printStatementBlock(JavaStatement statement) {
@@ -444,9 +443,13 @@ public class ANTLRGrammarPrinter {
 			CodeBlock block = (CodeBlock) statement;
 			for (JavaStatement st : block.getStatements()) {
 				myStatementPrinter.doSwitch(st);
+				if (false == st instanceof CodeBlock) {
+					myPrinter.separator(";").endl();
+				}
 			}
 		} else {
 			myStatementPrinter.doSwitch(statement);
+			myPrinter.separator(";").endl();
 		}
 		myPrinter.blockEnd("}").endl();
 	}
