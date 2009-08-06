@@ -129,6 +129,8 @@ public class ATFToANTLR {
 			fillInSyntacticalRule(rule, symbol, functionToRule.getKey(), moduleVariables);
 		}
 		
+		new NameBeautifier().beautifyNames(myResultGrammar);
+		
 		return myResultGrammar;
 	}
 
@@ -234,7 +236,8 @@ public class ATFToANTLR {
 			field = SemanticsFactory.eINSTANCE.createImplementationPoolField();
 			field.setProvider(moduleImplementationProvider);
 			Variable variable = SemanticsFactory.eINSTANCE.createVariable();
-			variable.setName(moduleImplementationProvider.getProviderInterfaceName()); // TODO : ?
+			// Strip the first "I"
+			variable.setName(moduleImplementationProvider.getProviderInterfaceName().substring(1)); // TODO : ?
 			variable.setType(moduleImplementationProvider.getProviderInterfaceName()); //TODO ?
 			field.setField(variable);
 			

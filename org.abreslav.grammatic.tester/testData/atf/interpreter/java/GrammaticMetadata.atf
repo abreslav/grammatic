@@ -78,7 +78,7 @@ attributeValue
 	t.before : multi = createMultiValue();
 	term : addItem(multi, term#);
 	t.after : result = multi;
-	#before : result = null();
+	#before : result = null.null();
 //	alternative : result = createExpressionValue(alternative#);
 }
 	

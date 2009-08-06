@@ -1,14 +1,15 @@
 group ParserMembers;
 
-main(poolVars) ::= <<
-<poolVars:{
-    private <it.provider.poolsClassName> <it.field.name>;}
+main(fields, poolVars, modules) ::= <<
+<fields:{
+    private <it.field.type> <it.field.name>;}
 >
 
     public void setModuleImplementations(
-    	<poolVars:{<it.provider.providerInterfaceName> <it.constructorParameter.name>}; separator=", \n">
+    	<fields:{<it.constructorParameter.type> <it.constructorParameter.name>}; separator=", \n">
 	) {
 		<poolVars:{this.<it.field.name> = new <it.provider.poolsClassName>(<it.constructorParameter.name>);}; separator="\n">
+		<modules:{this.<it.field.name> = <it.constructorParameter.name>;}; separator="\n">
     }
 
     public void displayRecognitionError(String[] tokenNames,

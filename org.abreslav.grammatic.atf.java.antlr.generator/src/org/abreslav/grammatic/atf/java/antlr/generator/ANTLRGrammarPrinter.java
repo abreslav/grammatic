@@ -23,12 +23,12 @@ import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
 import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
-import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Import;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
+import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
@@ -51,13 +51,13 @@ public class ANTLRGrammarPrinter {
 		new ANTLRGrammarPrinter(out).printGrammar(grammar);
 	}
 	
-	private static final Comparator<ImplementationPoolField> INTERFACE_NAME_ORDER = new Comparator<ImplementationPoolField>() {
+	private static final Comparator<ParserField> INTERFACE_NAME_ORDER = new Comparator<ParserField>() {
 
 		@Override
-		public int compare(ImplementationPoolField o1, ImplementationPoolField o2) {
-			String interfaceName1 = o1.getProvider().getProviderInterfaceName();
-			String interfaceName2 = o2.getProvider().getProviderInterfaceName();
-			return interfaceName1.compareTo(interfaceName2);
+		public int compare(ParserField o1, ParserField o2) {
+			String type1 = o1.getField().getType();
+			String type2 = o2.getField().getType();
+			return type1.compareTo(type2);
 		}
 		
 	};
@@ -96,13 +96,18 @@ public class ANTLRGrammarPrinter {
 		private void printMembers(ANTLRGrammar grammar) {
 			myPrinter.word("@members").blockStart("{").endl();
 			
+			List<ParserField> parserFields = new ArrayList<ParserField>(grammar.getPoolFields());
+			parserFields.addAll(grammar.getModuleFields());
+			Collections.sort(parserFields, INTERFACE_NAME_ORDER);
 			StringTemplateGroup group = TemplateUtils.loadTemplateGroup("ParserMembers");
 			StringTemplate membersTemplate = group.getInstanceOf("main");
-			List<ImplementationPoolField> poolVariables = new ArrayList<ImplementationPoolField>(grammar.getPoolFields());
-			Collections.sort(poolVariables, INTERFACE_NAME_ORDER);
-			membersTemplate.setAttribute("poolVars", poolVariables);
+			membersTemplate.setAttribute("fields", parserFields);
+			membersTemplate.setAttribute("poolVars", grammar.getPoolFields());
+			membersTemplate.setAttribute("modules", grammar.getModuleFields());
 			myPrinter.print(membersTemplate.toString());
 
+			
+			
 			myPrinter.blockEnd("}").endl();
 			myPrinter.endln();
 		}
