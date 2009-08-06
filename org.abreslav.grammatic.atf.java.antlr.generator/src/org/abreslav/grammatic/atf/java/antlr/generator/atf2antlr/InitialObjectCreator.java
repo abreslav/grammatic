@@ -146,12 +146,13 @@ public class InitialObjectCreator {
 		return result;
 	}
 
-	private ModuleImplementation createSemanticModuleImpl(
-			IMetadataStorage metadata) {
+	private ModuleImplementation createSemanticModuleImpl(IMetadataStorage metadata) {
 		SemanticModule semanticModule = metadata.readEObject(ATFMetadata.SEMANTIC_MODULE);
 		if (semanticModule != null) {
 			// TODO : Interface name and package
-			return ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
+			ModuleImplementation moduleImpl = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
+			moduleImpl.setName(moduleImpl.getName() + "Functions");
+			return moduleImpl;
 		}
 		return null;
 	}

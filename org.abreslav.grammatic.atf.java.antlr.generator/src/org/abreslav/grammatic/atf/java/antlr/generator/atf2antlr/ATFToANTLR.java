@@ -35,6 +35,7 @@ import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.generator.ModuleImplementationBuilder;
+import org.abreslav.grammatic.atf.java.antlr.generator.TypeUtils;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
@@ -167,7 +168,7 @@ public class ATFToANTLR {
 			ModuleImplementation implementation) {
 		Variable variable = SemanticsFactory.eINSTANCE.createVariable();
 		variable.setName(name);
-		variable.setType(implementation.getName());
+		variable.setType(implementation);
 		return variable;
 	}
 
@@ -200,7 +201,7 @@ public class ATFToANTLR {
 			rule.setResultVariable(getOrCreateVariableInAMap(atfAttribute, variableMap));
 		} else {
 			Variable voidResult = SemanticsFactory.eINSTANCE.createVariable();
-			voidResult.setType("void");
+			voidResult.setType(TypeUtils.getVoidType());
 			voidResult.setName("<no result>");
 			rule.setResultVariable(voidResult);
 		}
@@ -225,7 +226,7 @@ public class ATFToANTLR {
 		}
 		variable = SemanticsFactory.eINSTANCE.createVariable();
 		variable.setName(attribute.getName()); // TODO : Scope
-		variable.setType(myJavaTypeStringRepresentationProvider.getStringRepresentation((EGenericType) attribute.getType()));
+		variable.setType(TypeUtils.getType((EGenericType) attribute.getType(), myJavaTypeStringRepresentationProvider));
 		map.put(attribute, variable);
 		return variable;
 	}
@@ -237,8 +238,8 @@ public class ATFToANTLR {
 			field.setProvider(moduleImplementationProvider);
 			Variable variable = SemanticsFactory.eINSTANCE.createVariable();
 			// Strip the first "I"
-			variable.setName(moduleImplementationProvider.getProviderInterfaceName().substring(1)); // TODO : ?
-			variable.setType(moduleImplementationProvider.getProviderInterfaceName()); //TODO ?
+			variable.setName(moduleImplementationProvider.getProviderInterface().getName().substring(1));
+			variable.setType(moduleImplementationProvider.getProviderInterface());
 			field.setField(variable);
 			
 			 // TODO this works only if we are going to set names afterwards
@@ -259,10 +260,10 @@ public class ATFToANTLR {
 		if (moduleImplementationProvider == null) {
 			moduleImplementationProvider = SemanticsFactory.eINSTANCE.createModuleImplementationProvider();
 			moduleImplementationProvider.getImports(); // TODO : ?
-			moduleImplementationProvider.setPackage(grammarOptions.getPackage());
 			String name = JavaUtils.applyTypeNameConventions(grammarOptions.getName());
-			moduleImplementationProvider.setPoolsClassName(name + "Pools");
-			moduleImplementationProvider.setProviderInterfaceName("I" + name + "ModuleImplementationProvider"); // TODO : ?
+			String pack = grammarOptions.getPackage();
+			moduleImplementationProvider.setPoolsClass(TypeUtils.createJavaType(pack, name + "Pools"));
+			moduleImplementationProvider.setProviderInterface(TypeUtils.createJavaType(pack, "I" + name + "ModuleImplementationProvider"));
 			
 			myTrace.putModuleImplementationProvider(grammar, moduleImplementationProvider);
 		}
@@ -272,7 +273,7 @@ public class ATFToANTLR {
 	private Method createGetMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
 		Method method = SemanticsFactory.eINSTANCE.createMethod();
 		method.setName("get" + moduleImplementation.getName()); // TODO case etc
-		method.setType(moduleImplementation.getName()); // TODO Type name
+		method.setType(moduleImplementation); // TODO Type name
 		moduleImplementationProvider.getGetImplementationMethods().add(method);
 		return method;
 	}
@@ -280,7 +281,7 @@ public class ATFToANTLR {
 	private Method createReleaseMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
 		Method method = SemanticsFactory.eINSTANCE.createMethod();
 		method.setName("release" + moduleImplementation.getName()); // TODO case etc
-		method.setType("void");
+		method.setType(TypeUtils.getVoidType());
 		moduleImplementationProvider.getReleaseImplementationMethods().add(method);
 		return method;
 	}
@@ -325,9 +326,8 @@ public class ATFToANTLR {
 			// Symbol-level semantic module
 			ModuleImplementation symbolModuleImplementation = myTrace.getModuleImplBySymbol(symbol);
 			if (symbolModuleImplementation != null) {
-				String name = symbol.getName();
 				Variable variable = generateProviderInitAndRelease(before,
-						after, name, symbolModuleImplementation,
+						after, symbolModuleImplementation,
 						symbol);
 
 				myModuleVariables.put(symbolModuleImplementation, variable);
@@ -338,7 +338,7 @@ public class ATFToANTLR {
 			if (functionModuleImplementation != null) {
 				
 				Variable variable = generateProviderInitAndRelease(before,
-						after, function.getName(), functionModuleImplementation,
+						after, functionModuleImplementation,
 						symbol);
 
 				myModuleVariables.put(functionModuleImplementation, variable);
@@ -372,14 +372,14 @@ public class ATFToANTLR {
 		}
 
 		private Variable generateProviderInitAndRelease(CodeBlock before,
-				CodeBlock after, String variableName,
-				ModuleImplementation moduleImplementation,
+				CodeBlock after, ModuleImplementation moduleImplementation,
 				Symbol symbol) {
-			Variable variable = createImplVariable(variableName, moduleImplementation);
+			Variable variable = createImplVariable("functions__", moduleImplementation);
 			VariableDefinition definition = SemanticsFactory.eINSTANCE.createVariableDefinition();
 			definition.setVariable(variable);
 			MethodCall createImplCall = SemanticsFactory.eINSTANCE.createMethodCall();
 			ModuleImplementationProvider moduleImplementationProvider = getModuleImplementationProvider(symbol);
+			moduleImplementationProvider.getModuleImplementations().add(moduleImplementation);
 			Variable providerVariable = getModuleImplementationProviderVariable(moduleImplementationProvider );
 			createImplCall.setVariable(providerVariable);
 			createImplCall.setMethod(createGetMethod(moduleImplementationProvider, moduleImplementation));
@@ -389,6 +389,9 @@ public class ATFToANTLR {
 			MethodCall releaseImplCall = SemanticsFactory.eINSTANCE.createMethodCall();
 			releaseImplCall.setVariable(providerVariable);
 			releaseImplCall.setMethod(createReleaseMethod(moduleImplementationProvider, moduleImplementation));
+			VariableReference releaseArg = SemanticsFactory.eINSTANCE.createVariableReference();
+			releaseArg.setVariable(variable);
+			releaseImplCall.getArguments().add(releaseArg);
 			after.getStatements().add(0, releaseImplCall);
 			return variable;
 		}

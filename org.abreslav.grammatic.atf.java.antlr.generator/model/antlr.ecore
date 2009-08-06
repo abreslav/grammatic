@@ -127,9 +127,7 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="methods" upperBound="-1"
           eType="#//semantics/Method" containment="true" eOpposite="#//semantics/Method/module"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Method">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Method" eSuperTypes="#//semantics/Typed #//Named">
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
           eType="#//semantics/Variable" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="module" eType="#//semantics/ModuleImplementation"

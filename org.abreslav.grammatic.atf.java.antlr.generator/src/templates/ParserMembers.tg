@@ -2,13 +2,13 @@ group ParserMembers;
 
 main(fields, poolVars, modules) ::= <<
 <fields:{
-    private <it.field.type> <it.field.name>;}
+    private <it.field.type.name> <it.field.name>;}
 >
 
     public void setModuleImplementations(
-    	<fields:{<it.constructorParameter.type> <it.constructorParameter.name>}; separator=", \n">
+    	<fields:{<it.constructorParameter.type.name> <it.constructorParameter.name>}; separator=", \n">
 	) {
-		<poolVars:{this.<it.field.name> = new <it.provider.poolsClassName>(<it.constructorParameter.name>);}; separator="\n">
+		<poolVars:{this.<it.field.name> = new <it.provider.poolsClass.name>(<it.constructorParameter.name>);}; separator="\n">
 		<modules:{this.<it.field.name> = <it.constructorParameter.name>;}; separator="\n">
     }
 

@@ -55,8 +55,8 @@ public class ANTLRGrammarPrinter {
 
 		@Override
 		public int compare(ParserField o1, ParserField o2) {
-			String type1 = o1.getField().getType();
-			String type2 = o2.getField().getType();
+			String type1 = o1.getField().getType().getName();
+			String type2 = o2.getField().getType().getName();
 			return type1.compareTo(type2);
 		}
 		
@@ -105,8 +105,6 @@ public class ANTLRGrammarPrinter {
 			membersTemplate.setAttribute("poolVars", grammar.getPoolFields());
 			membersTemplate.setAttribute("modules", grammar.getModuleFields());
 			myPrinter.print(membersTemplate.toString());
-
-			
 			
 			myPrinter.blockEnd("}").endl();
 			myPrinter.endln();
@@ -156,7 +154,7 @@ public class ANTLRGrammarPrinter {
 				printRuleParameters(rule);
 			}
 			Variable resultVariable = rule.getResultVariable();
-			String type = resultVariable.getType();
+			String type = resultVariable.getType().getName();
 			if (!JavaUtils.isVoid(type)) {
 				myPrinter.word("returns").print("[").words(type, resultVariable.getName()).separator("]");
 			}
@@ -182,7 +180,7 @@ public class ANTLRGrammarPrinter {
 		private void printRuleParameters(SyntacticalRule rule) {
 			myPrinter.print("[").list(", ");
 			for (Variable parameter : rule.getParameters()) {
-				myPrinter.item().words(parameter.getType(), parameter.getName());
+				myPrinter.item().words(parameter.getType().getName(), parameter.getName());
 			}
 			myPrinter.endList().separator("]").softSpace();
 		}
@@ -365,7 +363,7 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseVariableDefinition(VariableDefinition object) {
 			Variable variable = object.getVariable();
-			myPrinter.words(variable.getType(), variable.getName());
+			myPrinter.words(variable.getType().getName(), variable.getName());
 			JavaExpression value = object.getValue();
 			if (value != null) {
 				myPrinter.word("=");

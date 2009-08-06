@@ -10,6 +10,6 @@ NAME : #token;
 CHAR_IN_QUOTES : #token(fragment);
 CHARACTER : #token;
 STRING : #token;
-HEX_DIGIT : #token(fragment);
+hexDigit : #token(fragment);
 CODE : #token;
 INT : #token;

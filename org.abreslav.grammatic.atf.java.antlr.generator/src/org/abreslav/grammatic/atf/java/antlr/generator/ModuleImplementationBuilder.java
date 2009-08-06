@@ -8,6 +8,7 @@ import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Method;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
+import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeStringRepresentationProvider;
 import org.abreslav.grammatic.atf.types.unification.IStringRepresentationProvider;
@@ -42,15 +43,15 @@ public class ModuleImplementationBuilder {
 		}
 	}
 
-	private String getMethodType(List<ATFAttribute> outputAttributes) {
-		String type;
+	private Type getMethodType(List<ATFAttribute> outputAttributes) {
+		Type type;
 		if (outputAttributes.isEmpty()) {
-			type = "void";
+			type = TypeUtils.getVoidType();
 		} else {
 			if (outputAttributes.size() > 1) {
 				throw new IllegalArgumentException("Multiple return values are not supported");
 			}
-			type = getTypeString(outputAttributes.get(0).getType());
+			type = TypeUtils.getType((EGenericType) outputAttributes.get(0).getType(), myStringRepresentationProvider);
 		}
 		return type;
 	}
@@ -60,12 +61,8 @@ public class ModuleImplementationBuilder {
 		for (ATFAttribute atfAttribute : inputAttributes) {
 			Variable parameter = SemanticsFactory.eINSTANCE.createVariable();
 			parameter.setName(atfAttribute.getName());
-			parameter.setType(getTypeString(atfAttribute.getType()));
+			parameter.setType(TypeUtils.getType((EGenericType) atfAttribute.getType(), myStringRepresentationProvider));
 			parameters.add(parameter);
 		}
-	}
-
-	private String getTypeString(Object typeObject) {
-		return myStringRepresentationProvider.getStringRepresentation((EGenericType) typeObject);
 	}
 }

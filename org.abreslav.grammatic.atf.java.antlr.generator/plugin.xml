@@ -27,15 +27,15 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.abreslav.org/grammatic/2009/ANTLR"
+            uri="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR"
             class="org.abreslav.grammatic.atf.java.antlr.AntlrPackage"
             genModel="model/antlr.genmodel"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.abreslav.org/grammatic/antlr/2008/ASTProductions/Builders"
-            class="org.abreslav.grammatic.atf.java.antlr.semantics.BuildersPackage"
+            uri="http://www.abreslav.org/grammatic/antlr/2009/ATF/Java/ANTLR/Semantics"
+            class="org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsPackage"
             genModel="model/antlr.genmodel"/>
    </extension>
 
