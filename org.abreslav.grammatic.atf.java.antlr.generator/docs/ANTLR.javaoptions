@@ -1,0 +1,10 @@
+class Grammar {
+	package : String;
+	grammarName : String;
+	providerInterfaceName : String;
+}
+
+class SemanticModule {
+	package : String;
+	baseName : String; // /used to generate things like method and interface names
+}

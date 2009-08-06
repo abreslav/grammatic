@@ -1,3 +1,8 @@
+#javaoptions {
+	grammarName = 'GrammaticLexer';
+	grammarPackage = 'org.abreslav.grammatic.grammar';
+}
+  
 WS : #token(whitespace); 
 COMMENT : #token(whitespace);
 LETTER : #token(fragment);

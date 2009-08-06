@@ -10,6 +10,8 @@ public class ANTLRMetadata {
 	public static final String FRAGMENT_TOKEN_CLASS = "fragment";
 	public static final String FORCE_RETAIN_ATTRIBUTE = "forceRetain";
 	public static final String WHITESPACE_TOKEN_CLASS = "whitespace";
+	public static final String GRAMMAR_NAME = "grammarName";
+	public static final String GRAMMAR_PACKAGE = "grammarPackage";
 	
 	public static final ISymbolInclusionStrategy USED_FORCED_FRONT_WHITESPACE = new ISymbolInclusionStrategy() {
 		

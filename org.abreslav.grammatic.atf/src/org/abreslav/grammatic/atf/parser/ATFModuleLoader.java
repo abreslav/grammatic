@@ -137,12 +137,14 @@ public class ATFModuleLoader implements IATFModuleLoader {
 	
 	private void addOptions(AspectDefinition atfModule, Map<String, String> options) {
 		GrammarAssignment grammarAssignment = AspectDefinitionUtils.getGrammarAssignment(atfModule);
-		Attribute attribute = AspectDefinitionUtils.getAttribute(grammarAssignment, ATFMetadata.ATF_NAMESPACE, "typeSystemOptions");
+		Attribute attribute = AspectDefinitionUtils.getAttribute(grammarAssignment, ATFMetadata.ATF_NAMESPACE, ATFMetadata.TYPE_SYSTEM_OPTIONS);
 		TupleValue value = (TupleValue) attribute.getValue();
 		if (value == null) {
 			value = MetadataFactory.eINSTANCE.createTupleValue();
+			attribute.setValue(value);
 		}
 		for (Entry<String, String> entry : options.entrySet()) {
+			// TODO ATF_NAMESPACE is strange here, maybe it has to be customized
 			Attribute option = AspectDefinitionUtils.getAttribute(value, ATFMetadata.ATF_NAMESPACE, entry.getKey());
 			StringValue string = MetadataFactory.eINSTANCE.createStringValue();
 			string.setValue(entry.getValue());

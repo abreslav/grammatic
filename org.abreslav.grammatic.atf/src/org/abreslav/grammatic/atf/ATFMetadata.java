@@ -29,5 +29,7 @@ public abstract class ATFMetadata {
 		ATF_NAMESPACE.setUri("http://www.abreslav.org/grammatic/namespaces/2009/ATF");		
 	}
 
+	public static final String TYPE_SYSTEM_OPTIONS = "typeSystemOptions";
+
 	private ATFMetadata() {}
 }

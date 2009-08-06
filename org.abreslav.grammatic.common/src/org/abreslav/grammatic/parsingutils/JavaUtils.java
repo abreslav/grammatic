@@ -131,16 +131,68 @@ public class JavaUtils {
 		return type == null
 			|| "void".equals(type.toLowerCase());
 	}
+	
+	private enum Convention { 
+		VAR {
+			@Override
+			public void processFragment(StringBuilder builder, String fragment) {
+				builder.append(fragment.substring(0, 1).toUpperCase());
+				builder.append(fragment.substring(1).toLowerCase());
+			}
+
+			@Override
+			public void processFirstFragment(StringBuilder builder, String fragment) {
+				builder.append(fragment.toLowerCase());
+			}
+		},
+		
+		TYPE {
+			@Override
+			public void processFragment(StringBuilder builder, String fragment) {
+				VAR.processFragment(builder, fragment);
+			}
+		},
+		
+		CONST {
+			@Override
+			public void processFirstFragment(StringBuilder builder,
+					String fragment) {
+				builder.append(fragment.toUpperCase());
+			}
+			
+			@Override
+			public void processFragment(StringBuilder builder, String fragment) {
+				builder.append("_").append(fragment.toUpperCase());
+			}
+		};
+		
+		public void processFirstFragment(StringBuilder builder, String fragment) {
+			processFragment(builder, fragment);
+		}
+		
+		public abstract void processFragment(StringBuilder builder, String fragment);
+	}
 
 	public static String applyVarNameConventions(String rawVariableName) {
-		
-		int length = rawVariableName.length();
+		return applyConvention(Convention.VAR, rawVariableName);
+	}
+
+	public static String applyTypeNameConventions(String rawVariableName) {
+		return applyConvention(Convention.TYPE, rawVariableName);
+	}
+	
+	public static String applyConstNameConventions(String rawVariableName) {
+		return applyConvention(Convention.CONST, rawVariableName);
+	}
+	
+	private static String applyConvention(Convention convention, String rawName) {
+		int length = rawName.length();
 		if (length == 0) {
 			return "v";
 		}
-		List<String> parsedName = parseName(rawVariableName);
+		List<String> parsedName = parseName(rawName);
 		if (parsedName.isEmpty()) {
-			return convertCharsToNames(rawVariableName);
+			return convertCharsToNames(rawName);
 		}
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
@@ -149,10 +201,9 @@ public class JavaUtils {
 				builder.append("n");
 			}
 			if (first) {
-				builder.append(fragment.toLowerCase());
+				convention.processFirstFragment(builder, fragment);
 			} else {
-				builder.append(fragment.substring(0, 1).toUpperCase());
-				builder.append(fragment.substring(1).toLowerCase());
+				convention.processFragment(builder, fragment);
 			}
 			first = false;
 		}

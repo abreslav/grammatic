@@ -10,6 +10,11 @@
 #import org.abreslav.grammatic.metadata.Namespace;
 #import org.abreslav.grammatic.metadata.PunctuationType;
   
+#javaoptions {
+	grammarName = 'GrammaticMetadata';
+	grammarPackage = 'org.abreslav.grammatic.grammar';
+}
+  
 metadata 
 	: $s='{' (attribute (';' attribute?)*)? '}'
 	;

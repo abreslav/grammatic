@@ -72,6 +72,13 @@ public class InitialObjectCreator {
 	
 	private void processGramar(Grammar grammar,
 			boolean front, ISymbolInclusionStrategy inclusionStrategy) {
+
+		if (front) {
+			GrammarOptions grammarOptions = getGrammarOptions(grammar, myMetadataProvider);
+			myResultGrammar.setName(grammarOptions.getName());
+			myResultGrammar.setPackage(grammarOptions.getPackage());
+		}
+		
 		for (Symbol symbol : grammar.getSymbols()) {
 			IMetadataStorage metadata = mySymbolMetadataProvider.getSymbolMetadata(symbol);
 			if (!myVisited.contains(symbol) 
@@ -121,7 +128,7 @@ public class InitialObjectCreator {
 	private LexicalRule createLexicalRuleStub(Symbol symbol, IMetadataStorage metadata) {
 		LexicalRule result = AntlrFactory.eINSTANCE.createLexicalRule();
 		
-		result.setName(symbol.getName().toUpperCase()); // TODO : Scope, To underscored upper case
+		result.setName(symbol.getName()); // TODO : Scope, To underscored upper case
 			
 		myTrace.putTokenToRule(symbol, result);
 		myResultGrammar.getRules().add(result);
@@ -147,6 +154,11 @@ public class InitialObjectCreator {
 			return ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
 		}
 		return null;
+	}
+
+	public static GrammarOptions getGrammarOptions(Grammar grammar, IMetadataProvider metadataProvider) {
+		IMetadataStorage metadata = MetadataStorage.getMetadataStorage(grammar, metadataProvider);
+		return new GrammarOptions(metadata.readTuple(ATFMetadata.TYPE_SYSTEM_OPTIONS));
 	}
 }
 

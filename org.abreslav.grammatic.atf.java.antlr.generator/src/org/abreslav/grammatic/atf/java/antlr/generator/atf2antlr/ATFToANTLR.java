@@ -69,6 +69,7 @@ import org.abreslav.grammatic.metadata.Namespace;
 import org.abreslav.grammatic.metadata.aspects.manager.IMetadataProvider;
 import org.abreslav.grammatic.metadata.util.IMetadataStorage;
 import org.abreslav.grammatic.metadata.util.MetadataStorage;
+import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 
@@ -250,13 +251,15 @@ public class ATFToANTLR {
 	private ModuleImplementationProvider getModuleImplementationProvider(
 			Symbol symbol) {
 		Grammar grammar = StructureUtils.getGrammar(symbol);
+		GrammarOptions grammarOptions = InitialObjectCreator.getGrammarOptions(grammar, myMetadataProvider);
 		ModuleImplementationProvider moduleImplementationProvider = myTrace.getModuleImplementationProvider(grammar);
 		if (moduleImplementationProvider == null) {
 			moduleImplementationProvider = SemanticsFactory.eINSTANCE.createModuleImplementationProvider();
 			moduleImplementationProvider.getImports(); // TODO : ?
-			moduleImplementationProvider.getPackage(); // TODO : ?
-			moduleImplementationProvider.setPoolsClassName(symbol.getName() + "Pools"); // TODO : ?
-			moduleImplementationProvider.setProviderInterfaceName("I" + symbol.getName()); // TODO : ?
+			moduleImplementationProvider.setPackage(grammarOptions.getPackage());
+			String name = JavaUtils.applyTypeNameConventions(grammarOptions.getName());
+			moduleImplementationProvider.setPoolsClassName(name + "Pools");
+			moduleImplementationProvider.setProviderInterfaceName("I" + name + "ModuleImplementationProvider"); // TODO : ?
 			
 			myTrace.putModuleImplementationProvider(grammar, moduleImplementationProvider);
 		}

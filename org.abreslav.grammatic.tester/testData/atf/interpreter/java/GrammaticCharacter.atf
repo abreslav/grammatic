@@ -1,3 +1,8 @@
+#javaoptions {
+	grammarName = 'GrammaticCharacter';
+	grammarPackage = 'org.abreslav.grammatic.grammar';
+}
+  
 character
 	: CHARACTER
 	: CODE
