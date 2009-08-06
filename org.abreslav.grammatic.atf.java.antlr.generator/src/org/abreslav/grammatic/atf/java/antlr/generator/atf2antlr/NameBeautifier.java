@@ -1,6 +1,8 @@
 package org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.abreslav.grammatic.atf.java.antlr.ANTLRCombination;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRExpression;
@@ -12,12 +14,14 @@ import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
+import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Method;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
+import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
 import org.abreslav.grammatic.atf.java.antlr.semantics.util.SemanticsSwitch;
@@ -30,9 +34,19 @@ import org.eclipse.emf.ecore.EObject;
 
 public class NameBeautifier {
 	
+	private interface ISemanticHandler {
+		void onAssignment(JavaAssignment assignment);
+		void onDefinition(VariableDefinition definition);
+		void onExpression(ANTLRExpression expression);
+	}
+
 	private static class VariableNameFixer extends SemanticsSwitch<INull> {
-		private final NameScope myScope;
+		private final ISemanticHandler mySemanticHandler;
 		
+		public VariableNameFixer(ISemanticHandler semanticHandler) {
+			mySemanticHandler = semanticHandler;
+		}
+
 		@Override
 		public INull doSwitch(EObject theEObject) {
 			if (theEObject == null) {
@@ -41,13 +55,15 @@ public class NameBeautifier {
 			return super.doSwitch(theEObject);
 		}
 
-		public VariableNameFixer(NameScope scope) {
-			myScope = scope;
-		}
-
 		@Override
 		public INull caseVariableDefinition(VariableDefinition object) {
-			fixVariableName(object.getVariable(), myScope);
+			mySemanticHandler.onDefinition(object);
+			return INull.NULL;
+		}
+		
+		@Override
+		public INull caseJavaAssignment(JavaAssignment object) {
+			mySemanticHandler.onAssignment(object);
 			return INull.NULL;
 		}
 		
@@ -62,14 +78,14 @@ public class NameBeautifier {
 	}
 	
 	private static class StatementTraverser extends AntlrSwitch<INull> {
+		private final ISemanticHandler mySemanticHandler;
 		private final VariableNameFixer myVariableNameFixer;
-		private final NameScope myScope;
-
-		public StatementTraverser(NameScope scope) {
-			myVariableNameFixer = new VariableNameFixer(scope);
-			myScope = scope;
-		}
 		
+		public StatementTraverser(ISemanticHandler semanticHandler) {
+			myVariableNameFixer = new VariableNameFixer(semanticHandler);
+			mySemanticHandler = semanticHandler;
+		}
+
 		@Override
 		public INull caseBeforeAfter(BeforeAfter object) {
 			myVariableNameFixer.doSwitch(object.getBefore());
@@ -79,7 +95,7 @@ public class NameBeautifier {
 		
 		@Override
 		public INull caseANTLRExpression(ANTLRExpression object) {
-			fixVariableName(object.getAssignToVariable(), myScope);
+			mySemanticHandler.onExpression(object);
 			return null; // fall through
 		}
 		
@@ -150,14 +166,16 @@ public class NameBeautifier {
 		
 		NameScope ruleNameScope = createKeywordSafeScope();
 		for (Rule rule : grammar.getRules()) {
-			NameScope ruleLevelScope = fieldScope.createChildScope();
+			final NameScope ruleLevelScope = fieldScope.createChildScope();
+			final Set<Variable> definedVars = new HashSet<Variable>();
 			if (rule instanceof SyntacticalRule) {
 				rule.setName(uniqueVariableName(rule.getName(), ruleNameScope));
 				
 				SyntacticalRule synRule = (SyntacticalRule) rule;
-				
-				fixVariableName(synRule.getResultVariable(), ruleLevelScope);
-				for (Variable variable : synRule.getParameters()) {
+
+				definedVars.add(synRule.getResultVariable());
+				definedVars.addAll(synRule.getParameters());
+				for (Variable variable : definedVars) {
 					fixVariableName(variable, ruleLevelScope);
 				}
 			} else {
@@ -165,9 +183,64 @@ public class NameBeautifier {
 			}
 
 			// -> local variables (including those defined by expressions)
-			StatementTraverser statementTraverser = new StatementTraverser(ruleLevelScope);
-			statementTraverser.doSwitch(rule);
+			addMissingDefinitions(rule,	definedVars);
+			
+			new StatementTraverser(new ISemanticHandler() {
+				
+				@Override
+				public void onExpression(ANTLRExpression expression) {
+					fixVariableName(expression.getAssignToVariable(), ruleLevelScope);
+				}
+				
+				@Override
+				public void onDefinition(VariableDefinition definition) {
+					fixVariableName(definition.getVariable(), ruleLevelScope);
+				}
+				
+				@Override
+				public void onAssignment(JavaAssignment assignment) {
+				}
+			}).doSwitch(rule);
 		}
+	}
+
+	private StatementTraverser addMissingDefinitions(Rule rule,
+			final Set<Variable> definedVars) {
+		final Set<Variable> usedVars = new HashSet<Variable>();
+		StatementTraverser statementTraverser = new StatementTraverser(new ISemanticHandler() {
+			
+			@Override
+			public void onExpression(ANTLRExpression expression) {
+				definedVars.add(expression.getAssignToVariable());
+			}
+			
+			@Override
+			public void onAssignment(JavaAssignment assignment) {
+				usedVars.add(assignment.getVariable());
+			}
+
+			@Override
+			public void onDefinition(VariableDefinition definition) {
+				definedVars.remove(definition.getVariable());
+			}
+		});
+		statementTraverser.doSwitch(rule);
+		usedVars.removeAll(definedVars);
+		
+		if (!usedVars.isEmpty()) {
+			CodeBlock definitionBlock = SemanticsFactory.eINSTANCE.createCodeBlock();
+			for (Variable variable : usedVars) {
+				VariableDefinition definition = SemanticsFactory.eINSTANCE.createVariableDefinition();
+				definition.setVariable(variable);
+				definitionBlock.getStatements().add(definition);
+			}
+			JavaStatement before = rule.getBefore();
+			if (before != null) {
+				definitionBlock.getStatements().add(before);
+			}
+			rule.setBefore(definitionBlock);
+		}
+		return statementTraverser;
 	}
 
 	private static void fixVariableName(Variable variable, NameScope scope) {
