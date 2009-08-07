@@ -432,7 +432,8 @@ public class ATFToANTLR {
 
 			ATFAttributeReference attributeRef = metadata.readEObject(ATFMetadata.ASSIGN_TEXT_TO_ATTRIBUTE);
 			if (attributeRef != null) {
-				result.setAssignToVariable(getOrCreateVariable(attributeRef.getAttribute()));
+				ATFAttribute attribute = attributeRef.getAttribute();
+				result.setAssignToVariable(getOrCreateVariable(attribute));
 			}
 			
 			setAfter(result, metadata);

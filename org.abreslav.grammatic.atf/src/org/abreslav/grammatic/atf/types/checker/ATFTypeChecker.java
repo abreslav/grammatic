@@ -30,8 +30,10 @@ import org.abreslav.grammatic.atf.types.unification.impl.ConstraintSystem;
 import org.abreslav.grammatic.atf.types.unification.impl.ConstraintSystemSolver;
 import org.abreslav.grammatic.atf.types.unification.impl.FiniteTypeSystemClosedConstraintSolver;
 import org.abreslav.grammatic.atf.util.AtfSwitch;
+import org.abreslav.grammatic.grammar.Combination;
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Grammar;
+import org.abreslav.grammatic.grammar.Iteration;
 import org.abreslav.grammatic.grammar.Production;
 import org.abreslav.grammatic.grammar.Symbol;
 import org.abreslav.grammatic.grammar.SymbolReference;
@@ -162,6 +164,18 @@ public class ATFTypeChecker<T> implements ISyntacticFunctionHandler<Symbol> {
 			}
 			return null; // fall through
 		}
+
+		@Override
+		public INull caseCombination(Combination object) {
+			super.caseCombination(object);
+			return null; // fall through
+		};
+		
+		@Override
+		public INull caseIteration(Iteration object) {
+			super.caseIteration(object);
+			return null; // fall through
+		};
 	};
 
 	public ATFTypeChecker(ITypeSystem<T> typeSystem, IErrorHandler<? extends RuntimeException> errorHandler) {

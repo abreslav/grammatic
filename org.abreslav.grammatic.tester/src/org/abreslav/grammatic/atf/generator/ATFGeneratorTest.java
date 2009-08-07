@@ -83,7 +83,12 @@ public class ATFGeneratorTest {
 			FileWriter fos = getWriterForType(targetDir, provider.getProviderInterface());
 			ImplementationClassGenerator.generateImplementationProviderCode(fos, provider);
 			fos.close();
+			
+			fos = getWriterForType(targetDir, provider.getPoolsClass());
+			ImplementationClassGenerator.generatePoolsImplementationCode(fos, provider);
+			fos.close();
 		}
+		
 	}
 
 	private FileWriter getWriterForType(String targetDir, Type type)
@@ -91,7 +96,6 @@ public class ATFGeneratorTest {
 		String dirName = targetDir + type.getPackage().replace('.', '/');
 		new File(dirName).mkdirs();
 		String fileName = dirName + "/" + type.getName() + ".java";
-		System.out.println(fileName);
 		FileWriter fos = new FileWriter(fileName);
 		return fos;
 	}

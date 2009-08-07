@@ -38,7 +38,6 @@ public class ModuleImplementationBuilder {
 			Method method = SemanticsFactory.eINSTANCE.createMethod();
 			method.setName(keywordSafeScope.getUniqueName(function.getName()));
 			method.setType(getMethodType(function.getOutputAttributes()));
-			
 			buildParameters(function.getInputAttributes(), method.getParameters());
 			
 			methods.add(method);

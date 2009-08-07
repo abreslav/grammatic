@@ -8,7 +8,7 @@ public class JavaHeaderPrinter {
 	public static void printHeader(Printer printer, String pack, List<String> imports) {
 		if (pack != null) {
 			printer.words("package", pack).separator(";").endl();
-			printer.endl();
+			printer.endln();
 		}
 		for (String imp : imports) {
 			printer.word("import").print(imp, ";").endl();

@@ -4,26 +4,26 @@ main(package, imports, module) ::= <<
 package <package>;
 
 <imports:{import <it.imported>;<\n>}>
+
 <moduleImplementation(module=module)>
 >>
 
 moduleImplementation(module, importMan) ::= <<
 public interface <module.name> {
-
-    <module.methods:methodDeclaration(method=it, importMan=importMan)>
+    <module.methods:methodDeclaration(method=it, importMan=importMan); separator="\n">
 }	
+
 >>
 
 methodDeclaration(method, importMan) ::= <<
 <importMan.(method.type)> <method.name>(<method.parameters:{<importMan.(it.type)> <it.name>}; separator=", ">); 
-
 >>
 
 moduleImplementationProvider(provider, importMan) ::= <<
 public interface <provider.providerInterface.name> {
-    <provider.moduleImplementations:moduleImplementation(module=it, importMan=importMan)>
+    <provider.moduleImplementations:moduleImplementation(module=it, importMan=importMan); separator="\n">    
+    <provider.getImplementationMethods:methodDeclaration(method=it, importMan=importMan); separator="\n">
     
-    <provider.getImplementationMethods:methodDeclaration(method=it, importMan=importMan)>
-    <provider.releaseImplementationMethods:methodDeclaration(method=it, importMan=importMan)>
+    <provider.releaseImplementationMethods:methodDeclaration(method=it, importMan=importMan); separator="\n">
 }
 >>

@@ -213,7 +213,6 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseANTLRCharacterRange(final ANTLRCharacterRange object) {
 			preExpression(object);
-			printVariablePreamble(object);
 			printCharacter(object.getLowerBound());
 			if (!ANTLRUtils.isSingleCharacter(object)) {
 				myPrinter.separator("..");
@@ -224,6 +223,7 @@ public class ANTLRGrammarPrinter {
 		}
 		
 		private void preExpression(ANTLRExpression expression) {
+			printVariablePreamble(expression);
 			if (expression.getAfter() != null) {
 //				myPrinter.print("(");
 			}
@@ -245,7 +245,6 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseLexicalLiteral(LexicalLiteral object) {
 			preExpression(object);
-			printVariablePreamble(object);
 			String value = object.getValue();
 			myPrinter.print("'");
 			for (int i = 0; i < value.length(); i++) {
@@ -259,7 +258,6 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseRuleCall(RuleCall object) {
 			preExpression(object);
-			printVariablePreamble(object);
 			Rule rule = object.getRule();
 			myPrinter.word(rule.getName());
 			if (!object.getArguments().isEmpty()) {
@@ -297,7 +295,6 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseANTLRSequence(final ANTLRSequence object) {
 			preExpression(object);
-			printVariablePreamble(object);
 			boolean hasVariable = object.getAssignToVariable() != null;
 			if (hasVariable) {
 				myPrinter.print("(");
@@ -316,20 +313,16 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseANTLRAlternative(final ANTLRAlternative object) {
 			preExpression(object);
-			printAlternativeCombination(object, null);
+			printAlternativeCombination(object);
 			postExpression(object);
 			return INull.NULL;
 		}
 
-		private void printAlternativeCombination(final ANTLRCombination object, String commonVarName) {
-			myPrinter.print("(").list(" | ");
+		private void printAlternativeCombination(final ANTLRCombination object) {
+			myPrinter.print("(").list("| ");
 			for (ANTLRExpression expression : object.getExpressions()) {
-				myPrinter.item().print("(");
-				if (commonVarName != null) {
-					myPrinter.print(commonVarName, "=");
-				}
+				myPrinter.item();
 				doSwitch(expression);
-				myPrinter.separator(")");
 			}
 			myPrinter.endList().separator(")").softSpace();
 		}
@@ -352,7 +345,7 @@ public class ANTLRGrammarPrinter {
 		public INull caseGrammarExpressionReference(
 				GrammarExpressionReference object) {
 			String variableName = object.getExpression().getAssignToVariable().getName();
-			if (isLexicalReference(object)) {
+			if (isNotSyntacticalReference(object)) {
 //				myPrinter.print("($", variableName, " == null ? null : $", variableName, ".getText())");
 				myPrinter.print("$", variableName, ".getText()");
 			} else {
@@ -361,7 +354,7 @@ public class ANTLRGrammarPrinter {
 			return INull.NULL;
 		}
 		
-		private boolean isLexicalReference(GrammarExpressionReference object) {
+		private boolean isNotSyntacticalReference(GrammarExpressionReference object) {
 			return ourLexicalReferenceExpert.doSwitch(object.getExpression());
 		}
 
@@ -414,25 +407,25 @@ public class ANTLRGrammarPrinter {
 			return object.getRule() instanceof LexicalRule;
 		}
 		
-		@Override
-		public Boolean caseLexicalLiteral(LexicalLiteral object) {
-			return true;
-		}
-		
-		@Override
-		public Boolean caseANTLRCharacterRange(
-				ANTLRCharacterRange object) {
-			return true;
-		}
-		
-		@Override
-		public Boolean caseANTLRSequence(ANTLRSequence object) {
-			return true;
-		}
-		
+//		@Override
+//		public Boolean caseLexicalLiteral(LexicalLiteral object) {
+//			return true;
+//		}
+//		
+//		@Override
+//		public Boolean caseANTLRCharacterRange(
+//				ANTLRCharacterRange object) {
+//			return true;
+//		}
+//		
+//		@Override
+//		public Boolean caseANTLRSequence(ANTLRSequence object) {
+//			return true;
+//		}
+//		
 		@Override
 		public Boolean defaultCase(EObject object) {
-			return false;
+			return true;
 		}
 	};
 	private final Printer myPrinter;
@@ -498,9 +491,14 @@ public class ANTLRGrammarPrinter {
 	}
 
 	public static String getTypeName(Type type, ImportManager importManager) {
+		String fqn = getQualifiedName(type);
+		return importManager.getTypeName(fqn);
+	}
+
+	public static String getQualifiedName(Type type) {
 		String pack = type.getPackage();
 		String name = type.getName();
 		String fqn = pack != null ? pack + "." + name : name;
-		return importManager.getTypeName(fqn);
+		return fqn;
 	}
 }

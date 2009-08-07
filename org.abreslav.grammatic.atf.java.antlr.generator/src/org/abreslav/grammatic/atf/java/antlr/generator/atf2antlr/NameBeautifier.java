@@ -10,7 +10,6 @@ import org.abreslav.grammatic.atf.java.antlr.ANTLRGrammar;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRIteration;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRProduction;
 import org.abreslav.grammatic.atf.java.antlr.BeforeAfter;
-import org.abreslav.grammatic.atf.java.antlr.LexicalRule;
 import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
@@ -248,7 +247,7 @@ public class NameBeautifier {
 				if (initiallyDefinedVars.contains(assignToVariable)) {
 					introduceIntermediateVariable(expression);
 					definedVars.add(assignToVariable);
-				} else if (isLexicalReferenceWithVariable(expression)) {
+				} else if (isNonSyntacticalReferenceWithVariable(expression)) {
 					introduceIntermediateVariable(expression);
 				} else {
 					definedVars.add(assignToVariable);
@@ -300,14 +299,14 @@ public class NameBeautifier {
 		expression.setAfter(StructureUtils.joinStatements(assignment, expression.getAfter()));
 	}
 	
-	private boolean isLexicalReferenceWithVariable(ANTLRExpression expression) {
+	private boolean isNonSyntacticalReferenceWithVariable(ANTLRExpression expression) {
 		if (expression.getAssignToVariable() == null) {
 			return false;
 		}
 		if (false == expression instanceof RuleCall) {
-			return false;
+			return true;
 		}
-		return ((RuleCall) expression).getRule() instanceof LexicalRule;
+		return false == ((RuleCall) expression).getRule() instanceof SyntacticalRule;
 	}
 
 	private static void fixVariableName(Variable variable, INameScope scope) {

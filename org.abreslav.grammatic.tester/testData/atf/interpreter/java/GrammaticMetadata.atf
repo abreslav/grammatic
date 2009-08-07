@@ -72,7 +72,7 @@ attributeValue
 # --> (Value result) {
 	character : result = createCharacterValue(character#);
 	INT : result = createIntValue(INT#);
-	STRING : result = createStringValue(STRING#);
+	STRING : result = createStringValue(string.createString(STRING#));
 	NAME : result = createIdValue(NAME#);
 	metadata:: result = attributeList();
 	t.before : multi = createMultiValue();
@@ -92,10 +92,7 @@ term
 }
 	
 punctuation
-	: $tokens=('`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
-	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'
-	| '[' | ']' | ';' | ':' | ',' | '.' | '/' 
-	| '?' | '<' | '>')
+	: $tokens=..
 	;
 # --> (PunctuationType result) {
 	tokens: result = punctuationType(#text(tokens));

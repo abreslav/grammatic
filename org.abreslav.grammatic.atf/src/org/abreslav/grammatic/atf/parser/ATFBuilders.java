@@ -1656,9 +1656,7 @@ public class ATFBuilders implements IATFBuilders {
 
 			Attribute assignTextTo = AspectDefinitionUtils.getAttribute(myCurrentAssignment, 
 					variable, getCurrentNamespace(), ATFMetadata.ASSIGN_TEXT_TO_ATTRIBUTE);
-			ATFAttributeReference ref = AtfFactory.eINSTANCE.createATFAttributeReference();
-			ref.setAttribute(attribute);
-			addCrossReferencedValue(assignTextTo, ref);
+			addCrossReferencedValue(assignTextTo, wrapIntoReference(attribute));
 			return attribute;
 		}
 		

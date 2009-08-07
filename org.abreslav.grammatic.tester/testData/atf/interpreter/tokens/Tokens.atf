@@ -1,0 +1,11 @@
+#javaoptions {
+	grammarName = 'Tokens';
+	grammarPackage = 'org.abreslav.grammatic.grammar';
+}
+  
+tokens
+	: $t=..
+	;
+# --> (Object result) {
+	t: result = someFunction(#text(t));
+}
