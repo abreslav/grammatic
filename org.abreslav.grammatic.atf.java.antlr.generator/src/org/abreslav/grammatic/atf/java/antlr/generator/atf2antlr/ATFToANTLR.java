@@ -114,7 +114,7 @@ public class ATFToANTLR {
 			processGlobalModules(grammar, moduleImplementations, moduleVariables);
 			
 			// TODO Build and create a variable for local SemanticModule: it is handled 
-			// by ModuleImplementationProvider rather than create manually
+			// by ModuleImplementationProvider rather than created manually
 			// it also is created once upon parser creation, so it's completely different
 
 		}
@@ -156,9 +156,9 @@ public class ATFToANTLR {
 			ModuleImplementationField field = SemanticsFactory.eINSTANCE.createModuleImplementationField();
 			field.setModule(implementation);
 			
-			field.setField(createImplVariable(name, implementation)); // TODO name, type
-			field.setConstructorParameter(createImplVariable(name, implementation)); // TODO name, type
-			moduleVariables.put(implementation, field.getField()); // TODO field name, scope
+			field.setField(createImplVariable(name, implementation));
+			field.setConstructorParameter(createImplVariable(name, implementation));
+			moduleVariables.put(implementation, field.getField());
 			
 			myResultGrammar.getModuleFields().add(field);
 		}
@@ -225,7 +225,7 @@ public class ATFToANTLR {
 			return variable;
 		}
 		variable = SemanticsFactory.eINSTANCE.createVariable();
-		variable.setName(attribute.getName()); // TODO : Scope
+		variable.setName(attribute.getName());
 		variable.setType(TypeUtils.getType((EGenericType) attribute.getType(), myJavaTypeStringRepresentationProvider));
 		map.put(attribute, variable);
 		return variable;
@@ -272,15 +272,15 @@ public class ATFToANTLR {
 	
 	private Method createGetMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
 		Method method = SemanticsFactory.eINSTANCE.createMethod();
-		method.setName("get" + moduleImplementation.getName()); // TODO case etc
-		method.setType(moduleImplementation); // TODO Type name
+		method.setName("get" + moduleImplementation.getName());
+		method.setType(moduleImplementation);
 		moduleImplementationProvider.getGetImplementationMethods().add(method);
 		return method;
 	}
 	
 	private Method createReleaseMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
 		Method method = SemanticsFactory.eINSTANCE.createMethod();
-		method.setName("release" + moduleImplementation.getName()); // TODO case etc
+		method.setName("release" + moduleImplementation.getName());
 		method.setType(TypeUtils.getVoidType());
 		moduleImplementationProvider.getReleaseImplementationMethods().add(method);
 		return method;
@@ -347,7 +347,7 @@ public class ATFToANTLR {
 			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, myMetadataProvider);
 			JavaStatement beforeStatement = getBefore(symbolMetadata);
 			if (beforeStatement != null) {
-				before.getStatements().add(beforeStatement);
+				before.getStatements().addAll(StructureUtils.contents(beforeStatement));
 			}
 			if (!before.getStatements().isEmpty()) {
 				rule.setBefore(before);
@@ -364,7 +364,7 @@ public class ATFToANTLR {
 			}
 			JavaStatement afterStatement = getAfter(symbolMetadata);
 			if (afterStatement != null) {
-				after.getStatements().add(0, afterStatement);
+				after.getStatements().addAll(0, StructureUtils.contents(afterStatement));
 			}
 			if (!after.getStatements().isEmpty()) {
 				rule.setAfter(after);
@@ -660,7 +660,8 @@ public class ATFToANTLR {
 			public JavaStatement caseBlock(Block object) {
 				CodeBlock block = SemanticsFactory.eINSTANCE.createCodeBlock();
 				for (Statement statement : object.getStatements()) {
-					block.getStatements().add(doSwitch(statement));
+					JavaStatement substatement = doSwitch(statement);
+					block.getStatements().addAll(StructureUtils.contents(substatement));
 				}
 				return block;
 			}

@@ -1,6 +1,8 @@
 package org.abreslav.grammatic.atf.generator;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,8 +55,9 @@ public class ATFGeneratorTest {
 				new ArrayList<ModuleImplementationProvider>(), 
 				new ArrayList<ModuleImplementation>());
 		
-		ANTLRGrammarPrinter.printGrammar(generate, System.out);
+		FileOutputStream fileOutputStream = new FileOutputStream(new File("generated/org/abreslav/grammatic/grammar/GrammaticMetadata.g"));
+		ANTLRGrammarPrinter.printGrammar(generate, new PrintStream(fileOutputStream));
+		fileOutputStream.close();
 	}
-
 
 }

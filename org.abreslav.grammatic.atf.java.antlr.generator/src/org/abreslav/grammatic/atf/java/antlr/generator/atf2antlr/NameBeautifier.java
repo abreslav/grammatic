@@ -24,8 +24,10 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
+import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
 import org.abreslav.grammatic.atf.java.antlr.semantics.util.SemanticsSwitch;
 import org.abreslav.grammatic.atf.java.antlr.util.AntlrSwitch;
+import org.abreslav.grammatic.parsingutils.INameScope;
 import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.abreslav.grammatic.parsingutils.NameScope;
 import org.abreslav.grammatic.parsingutils.ScopeUtils;
@@ -40,10 +42,10 @@ public class NameBeautifier {
 		void onExpression(ANTLRExpression expression);
 	}
 
-	private static class VariableNameFixer extends SemanticsSwitch<INull> {
+	private static class StatementProcessor extends SemanticsSwitch<INull> {
 		private final ISemanticHandler mySemanticHandler;
 		
-		public VariableNameFixer(ISemanticHandler semanticHandler) {
+		public StatementProcessor(ISemanticHandler semanticHandler) {
 			mySemanticHandler = semanticHandler;
 		}
 
@@ -79,17 +81,17 @@ public class NameBeautifier {
 	
 	private static class StatementTraverser extends AntlrSwitch<INull> {
 		private final ISemanticHandler mySemanticHandler;
-		private final VariableNameFixer myVariableNameFixer;
+		private final StatementProcessor myStatementProcessor;
 		
 		public StatementTraverser(ISemanticHandler semanticHandler) {
-			myVariableNameFixer = new VariableNameFixer(semanticHandler);
+			myStatementProcessor = new StatementProcessor(semanticHandler);
 			mySemanticHandler = semanticHandler;
 		}
 
 		@Override
 		public INull caseBeforeAfter(BeforeAfter object) {
-			myVariableNameFixer.doSwitch(object.getBefore());
-			myVariableNameFixer.doSwitch(object.getAfter());
+			myStatementProcessor.doSwitch(object.getBefore());
+			myStatementProcessor.doSwitch(object.getAfter());
 			return INull.NULL;
 		}
 		
@@ -131,15 +133,15 @@ public class NameBeautifier {
 	public void beautifyNames(ANTLRGrammar grammar) {
 
 		
-		NameScope rootScope = createKeywordSafeScope();
+		INameScope rootScope = createKeywordSafeScope();
 		grammar.setName(uniqueTypeName(grammar.getName(), rootScope));
 		
-		NameScope fieldScope = rootScope.createChildScope();
+		INameScope fieldScope = rootScope.createChildScope();
 		fieldScope.registerName("input");
 		fieldScope.registerName("state");
 		
-		NameScope moduleNameScope = createKeywordSafeScope();
-		NameScope constructorParametersScope = rootScope.createChildScope();
+		INameScope moduleNameScope = createKeywordSafeScope();
+		INameScope constructorParametersScope = rootScope.createChildScope();
 		for (ModuleImplementationField moduleField : grammar.getModuleFields()) {
 			ModuleImplementation module = moduleField.getModule();
 			beautifyModuleName(module, moduleNameScope);
@@ -150,7 +152,7 @@ public class NameBeautifier {
 		for (ImplementationPoolField poolField : grammar.getPoolFields()) {
 			processParserField(fieldScope, constructorParametersScope, poolField);
 			ModuleImplementationProvider provider = poolField.getProvider();
-			NameScope providerScope = createKeywordSafeScope();
+			INameScope providerScope = createKeywordSafeScope();
 			for (ModuleImplementation moduleImplementation : provider.getModuleImplementations()) {
 				beautifyModuleName(moduleImplementation, providerScope);
 			}
@@ -164,9 +166,10 @@ public class NameBeautifier {
 			}
 		}
 		
-		NameScope ruleNameScope = createKeywordSafeScope();
+		INameScope ruleNameScope = createKeywordSafeScope();
 		for (Rule rule : grammar.getRules()) {
-			final NameScope ruleLevelScope = fieldScope.createChildScope();
+			final INameScope ruleLevelScope = fieldScope.createChildScope();
+			final INameScope expresionLabelsScope = NameScope.createMultiparentScope(ruleLevelScope, ruleNameScope);  
 			final Set<Variable> definedVars = new HashSet<Variable>();
 			if (rule instanceof SyntacticalRule) {
 				rule.setName(uniqueVariableName(rule.getName(), ruleNameScope));
@@ -189,7 +192,11 @@ public class NameBeautifier {
 				
 				@Override
 				public void onExpression(ANTLRExpression expression) {
-					fixVariableName(expression.getAssignToVariable(), ruleLevelScope);
+					Variable assignToVariable = expression.getAssignToVariable();
+					if (assignToVariable != null) {
+						fixVariableName(assignToVariable, expresionLabelsScope);
+						ruleLevelScope.registerName(assignToVariable.getName());
+					}
 				}
 				
 				@Override
@@ -204,14 +211,31 @@ public class NameBeautifier {
 		}
 	}
 
-	private StatementTraverser addMissingDefinitions(Rule rule,
-			final Set<Variable> definedVars) {
+	private void addMissingDefinitions(Rule rule,
+			final Set<Variable> initiallyDefinedVars) {
+		final Set<Variable> definedVars = new HashSet<Variable>(initiallyDefinedVars);
 		final Set<Variable> usedVars = new HashSet<Variable>();
-		StatementTraverser statementTraverser = new StatementTraverser(new ISemanticHandler() {
+		new StatementTraverser(new ISemanticHandler() {
 			
 			@Override
 			public void onExpression(ANTLRExpression expression) {
-				definedVars.add(expression.getAssignToVariable());
+				Variable assignToVariable = expression.getAssignToVariable();
+				if (assignToVariable == null) {
+					return;
+				}
+				if (initiallyDefinedVars.contains(assignToVariable)) {
+					Variable newVariable = SemanticsFactory.eINSTANCE.createVariable();
+					newVariable.setName(assignToVariable.getName());
+					newVariable.setType(assignToVariable.getType());
+					JavaAssignment assignment = SemanticsFactory.eINSTANCE.createJavaAssignment();
+					assignment.setVariable(assignToVariable);
+					VariableReference ref = SemanticsFactory.eINSTANCE.createVariableReference();
+					ref.setVariable(newVariable);
+					assignment.setValue(ref);
+					expression.setAssignToVariable(newVariable);
+					expression.setAfter(StructureUtils.joinStatements(assignment, expression.getAfter()));
+				}
+				definedVars.add(assignToVariable);
 			}
 			
 			@Override
@@ -223,8 +247,7 @@ public class NameBeautifier {
 			public void onDefinition(VariableDefinition definition) {
 				definedVars.remove(definition.getVariable());
 			}
-		});
-		statementTraverser.doSwitch(rule);
+		}).doSwitch(rule);
 		usedVars.removeAll(definedVars);
 		
 		if (!usedVars.isEmpty()) {
@@ -234,16 +257,11 @@ public class NameBeautifier {
 				definition.setVariable(variable);
 				definitionBlock.getStatements().add(definition);
 			}
-			JavaStatement before = rule.getBefore();
-			if (before != null) {
-				definitionBlock.getStatements().add(before);
-			}
-			rule.setBefore(definitionBlock);
+			rule.setBefore(StructureUtils.joinStatements(definitionBlock, rule.getBefore()));
 		}
-		return statementTraverser;
 	}
 
-	private static void fixVariableName(Variable variable, NameScope scope) {
+	private static void fixVariableName(Variable variable, INameScope scope) {
 		if (variable == null) {
 			return;
 		}
@@ -251,20 +269,19 @@ public class NameBeautifier {
 	}
 
 	private void beautifyModuleName(ModuleImplementation module,
-			NameScope moduleNameScope) {
+			INameScope moduleNameScope) {
 		module.setName(moduleNameScope.getUniqueName("I" + JavaUtils.applyTypeNameConventions(module.getName())));
-		System.out.println(module.getName());
 	}
 
-	private NameScope createKeywordSafeScope() {
-		NameScope result = NameScope.createTopLevelScope();
+	private INameScope createKeywordSafeScope() {
+		INameScope result = NameScope.createTopLevelScope();
 		ScopeUtils.registerJavaKeywords(result);
 		ScopeUtils.registerNames(result, ANTLRMetadata.getAntlrKeywords());
 		return result;
 	}
 
-	private void processParserField(NameScope fieldScope,
-			NameScope constructorParametersScope, ParserField parserField) {
+	private void processParserField(INameScope fieldScope,
+			INameScope constructorParametersScope, ParserField parserField) {
 		// field name
 		Variable field = parserField.getField();
 		String fieldName = "my" + JavaUtils.applyTypeNameConventions(field.getName());
@@ -274,15 +291,15 @@ public class NameBeautifier {
 		fixVariableName(constructorParameter, constructorParametersScope);
 	}
 	
-	private static String uniqueVariableName(String name, NameScope scope) {
+	private static String uniqueVariableName(String name, INameScope scope) {
 		return scope.getUniqueName(JavaUtils.applyVarNameConventions(name));
 	}
 	
-	private static String uniqueTypeName(String name, NameScope scope) {
+	private static String uniqueTypeName(String name, INameScope scope) {
 		return scope.getUniqueName(JavaUtils.applyTypeNameConventions(name));
 	}
 	
-	private static String uniqueConstName(String name, NameScope scope) {
+	private static String uniqueConstName(String name, INameScope scope) {
 		return scope.getUniqueName(JavaUtils.applyConstNameConventions(name));
 	}
 }

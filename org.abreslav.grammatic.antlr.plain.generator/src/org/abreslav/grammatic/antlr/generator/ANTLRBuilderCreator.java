@@ -42,8 +42,8 @@ import org.abreslav.grammatic.antlr.generator.antlr.builders.MethodCall;
 import org.abreslav.grammatic.antlr.generator.antlr.builders.Statement;
 import org.abreslav.grammatic.antlr.generator.antlr.builders.VariableDefinition;
 import org.abreslav.grammatic.antlr.generator.antlr.util.AntlrSwitch;
+import org.abreslav.grammatic.parsingutils.INameScope;
 import org.abreslav.grammatic.parsingutils.JavaUtils;
-import org.abreslav.grammatic.parsingutils.NameScope;
 import org.abreslav.grammatic.parsingutils.ScopeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -156,7 +156,7 @@ public class ANTLRBuilderCreator {
 	};
 	
 	public Collection<BuilderFactory> createBuilders(ANTLRGrammar frontGrammar, BuilderFactory frontFactory, Map<Rule, BuilderFactory> ruleOrigins) {
-		NameScope grammarScope = ScopeUtils.getSafeToplevelScope();
+		INameScope grammarScope = ScopeUtils.getSafeToplevelScope();
 		grammarScope.registerName("options");
 		grammarScope.registerName("grammar");
 		grammarScope.registerName("tree");
@@ -171,7 +171,7 @@ public class ANTLRBuilderCreator {
 		Set<String> imports = new LinkedHashSet<String>();
 		Map<BuilderFactory, BuilderPoolVariable> factoryToVar = new HashMap<BuilderFactory, BuilderPoolVariable>();		
 		Collection<BuilderFactory> factories = new ArrayList<BuilderFactory>();
-		NameScope fieldScope = ScopeUtils.getSafeToplevelScope();
+		INameScope fieldScope = ScopeUtils.getSafeToplevelScope();
 //		BuilderFactory frontFactory = createBuilderFactory(frontGrammar.getPackage(), frontGrammar.getName(), frontGrammar.getImports());
 		for (Rule someRule : rules) {
 			if (false == someRule instanceof SyntacticalRule) {
@@ -246,7 +246,7 @@ public class ANTLRBuilderCreator {
 		}
 	}
 
-	private void createBuilder(final SyntacticalRule rule, NameScope ruleVariablesScope, BuilderPoolVariable poolVar) {
+	private void createBuilder(final SyntacticalRule rule, INameScope ruleVariablesScope, BuilderPoolVariable poolVar) {
 		registerRuleHeaderVariables(rule, ruleVariablesScope);
 		rule.getResultVariable().setName(ruleVariablesScope.getUniqueName("result"));
 		
@@ -255,7 +255,7 @@ public class ANTLRBuilderCreator {
 		String builderNameSuffix = getBuilderNameSuffix(ruleName);
 		builder.setName("I" + builderNameSuffix);
 		
-		final NameScope methodNameScope = ScopeUtils.getSafeToplevelScope();
+		final INameScope methodNameScope = ScopeUtils.getSafeToplevelScope();
 		methodNameScope.registerName("release");
 		
 		BuilderMethod initMethod = createInitMethod(rule, builder,
@@ -282,7 +282,7 @@ public class ANTLRBuilderCreator {
 		EList<ANTLRProduction> productions = rule.getProductions();
 		final boolean singleProduction = productions.size() == 1;
 		for (ANTLRProduction production : productions) {
-			final NameScope productionScope = ruleVariablesScope.createChildScope();
+			final INameScope productionScope = ruleVariablesScope.createChildScope();
 			ANTLRExpression expression = production.getExpression();
 			boolean passesResultArgument = passesResultArgument(expression);
 			if (passesResultArgument) {
@@ -294,7 +294,7 @@ public class ANTLRBuilderCreator {
 				final BuilderMethod method = BuildersFactory.eINSTANCE.createBuilderMethod();
 				final MethodCall methodCall = BuildersFactory.eINSTANCE.createMethodCall();
 				methodCall.setBuilderVariableName(builderVarName);
-				final NameScope parameterScope = ScopeUtils.getSafeToplevelScope();
+				final INameScope parameterScope = ScopeUtils.getSafeToplevelScope();
 				traverseThroughInformativeItems(expression, productionScope, new IItemHandler() {
 
 					@Override
@@ -368,7 +368,7 @@ public class ANTLRBuilderCreator {
 					}
 
 					private BuilderMethod createBuilderMethod(
-							final NameScope methodNameScope, String type,
+							final INameScope methodNameScope, String type,
 							String basicName) {
 						BuilderMethod method = BuildersFactory.eINSTANCE.createBuilderMethod();
 						method.setName(methodNameScope.getUniqueName(basicName));
@@ -422,7 +422,7 @@ public class ANTLRBuilderCreator {
 	}
 
 	private BuilderMethod createInitMethod(final SyntacticalRule rule,
-			final Builder builder, final NameScope methodNameScope) {
+			final Builder builder, final INameScope methodNameScope) {
 		BuilderMethod initMethod = BuildersFactory.eINSTANCE.createBuilderMethod();
 		initMethod.setType("void");
 		initMethod.setName(methodNameScope.getUniqueName("init"));
@@ -438,7 +438,7 @@ public class ANTLRBuilderCreator {
 		void handleItem(AssignableValue value, String type, String basicName, Argument argument);
 	}
 	
-	private void traverseThroughInformativeItems(ANTLRExpression expression, final NameScope productionScope, final IItemHandler handler) {
+	private void traverseThroughInformativeItems(ANTLRExpression expression, final INameScope productionScope, final IItemHandler handler) {
 		new AntlrSwitch<Boolean, Boolean>() {
 			
 			private void handleItem(AssignableValue value, String type,
@@ -550,7 +550,7 @@ public class ANTLRBuilderCreator {
 		return ourResultArgumentFinder.doSwitch(expression, null);
 	}
 
-	private void registerRuleHeaderVariables(SyntacticalRule rule, NameScope scope) {
+	private void registerRuleHeaderVariables(SyntacticalRule rule, INameScope scope) {
 		for (Parameter parameter : rule.getParameters()) {
 			scope.registerName(parameter.getName());
 		}
@@ -592,7 +592,7 @@ public class ANTLRBuilderCreator {
 	}
 
 	private void putCreateResultStatement(Builder builder, SyntacticalRule rule,
-			ANTLRProduction production, NameScope methodNameScope, String builderVarName) {
+			ANTLRProduction production, INameScope methodNameScope, String builderVarName) {
 		BuilderMethod method = BuildersFactory.eINSTANCE.createBuilderMethod();
 		builder.getMethods().add(method);
 		method.setType(rule.getResultVariable().getType());
@@ -603,7 +603,7 @@ public class ANTLRBuilderCreator {
 		production.setBefore(assign(rule.getResultVariable(), methodCall));
 	}
 
-	private String getSingleCallsMethodName(final NameScope methodNameScope, ANTLRExpression expression,
+	private String getSingleCallsMethodName(final INameScope methodNameScope, ANTLRExpression expression,
 			final String defaultName) {
 		String name = ourNameRetriever.doSwitch(expression, null);
 		String result = name == NAME_RETRIEVAL_ERROR ? defaultName : name;
