@@ -44,7 +44,7 @@ public class Test {
 				System.out.println(time);
 			}
 		}
-		Collection<SemanticModuleDescriptor> semanticModuleDescriptors = moduleLoader.getSemanticModuleDescriptors();
+		Collection<SemanticModuleDescriptor> semanticModuleDescriptors = moduleLoader.getSemanticModuleDescriptors().values();
 		StringTemplateGroup templateImplGroup = TemplateUtils.loadTemplateGroup("ModuleImplementation");
 		for (SemanticModuleDescriptor semanticModuleDescriptor : semanticModuleDescriptors) {
 			Map<String, Object> options = semanticModuleDescriptor.getOptions();

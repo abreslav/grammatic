@@ -1,7 +1,6 @@
 package org.abreslav.grammatic.utils;
 
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -110,9 +109,6 @@ public class CustomLinkedHashMap<K, V> extends CustomHashMap<K, V> implements
 			}
 		}
 
-		void recordRemoval(HashMap<K, V> m) {
-			remove();
-		}
 	}
 
 	private abstract class LinkedHashIterator<T> implements Iterator<T> {

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.dataflow.DataFlowAnalyzer;
 import org.abreslav.grammatic.atf.dataflow.GrammarControlFlowGraphBuilder;
 import org.abreslav.grammatic.atf.dataflow.GrammarGraphBuilderTrace;
@@ -15,6 +16,7 @@ import org.abreslav.grammatic.atf.dataflow.IControlFlowVertexHandler;
 import org.abreslav.grammatic.atf.parser.ATFModuleLoader;
 import org.abreslav.grammatic.atf.parser.IATFParserImplementationFactory;
 import org.abreslav.grammatic.atf.parser.ITypeSystemBuilder;
+import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.atf.types.ITypeSystem;
 import org.abreslav.grammatic.atf.types.checker.ATFTypeChecker;
 import org.abreslav.grammatic.atf.types.unification.ITypeErrorHandler;
@@ -51,7 +53,8 @@ public class ATFInterpreter {
 			FileLocator fileLocator,
 			ITypeSystemBuilder<T> typeSystemBuilder,
 			IATFParserImplementationFactory parserImplementationFactory,
-			MetadataAspect aspect)
+			MetadataAspect aspect,
+			Map<SemanticModule, SemanticModuleDescriptor> descriptors)
 			throws IOException, RecognitionException, FileNotFoundException, InterruptedException {
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
 		ParsingContext parsingContext = new ParsingContext(fileLocator, writableAspect, IGrammarLoadHandler.NONE);
@@ -79,6 +82,8 @@ public class ATFInterpreter {
 		parsingContext.handleUnresolvedKeys();
 		
 		applyATFSecifications(new HashSet<Grammar>(grammars.values()), aspect, typeSystemBuilder);
+		
+		descriptors.putAll(moduleParser.getSemanticModuleDescriptors());
 		
 		return grammars;
 	}

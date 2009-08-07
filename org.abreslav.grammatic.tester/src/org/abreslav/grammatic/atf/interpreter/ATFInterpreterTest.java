@@ -9,12 +9,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
+import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.java.parser.ATFJavaParserImplementationFactory;
 import org.abreslav.grammatic.atf.java.parser.JavaLangPackage;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeSystemBuilder;
 import org.abreslav.grammatic.atf.parser.IATFParserImplementationFactory;
 import org.abreslav.grammatic.atf.parser.ITypeSystemBuilder;
+import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.atf.types.ITypeSystem;
 import org.abreslav.grammatic.atf.types.unification.ISubtypingRelation;
 import org.abreslav.grammatic.atf.types.unification.ITypeErrorHandler;
@@ -76,7 +79,8 @@ public class ATFInterpreterTest {
 				new FileLocator(baseDir), 
 				typeSystemBuilder, 
 				parserImplementationFactory,
-				aspect);
+				aspect,
+				new HashMap<SemanticModule, SemanticModuleDescriptor>());
 
 //		DotPrinter.printDot(controlFlowGraph, new PrintStream(new FileOutputStream(new File(dataDir, "graph.dot"))), new IVertexNameProvider() {
 //

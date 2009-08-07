@@ -4,6 +4,7 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.JavaType;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.types.unification.IStringRepresentationProvider;
+import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -23,6 +24,9 @@ public class TypeUtils {
 			return null;
 		}
 		String name = myStringRepresentationProvider.getStringRepresentation(type);
+		if (JavaUtils.getPrimitiveTypeNames().contains(name)) {
+			return createJavaType(null, name);
+		}
 		EPackage ePackage = type.getEClassifier().getEPackage();
 		String pack = ePackage != null ? ePackage.getName() : null;
 		return createJavaType(pack, name);

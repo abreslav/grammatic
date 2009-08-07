@@ -1,3 +1,8 @@
+#javaoptions {
+	modulePackage = 'org.abreslav.grammatic.grammar';
+}
+
 #module null {
+	
 	null () --> (Void result);
 }

@@ -10,9 +10,12 @@ import org.abreslav.grammatic.atf.java.antlr.ANTLRGrammar;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRIteration;
 import org.abreslav.grammatic.atf.java.antlr.ANTLRProduction;
 import org.abreslav.grammatic.atf.java.antlr.BeforeAfter;
+import org.abreslav.grammatic.atf.java.antlr.LexicalRule;
 import org.abreslav.grammatic.atf.java.antlr.Rule;
+import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
+import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
@@ -22,9 +25,9 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
+import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
-import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
 import org.abreslav.grammatic.atf.java.antlr.semantics.util.SemanticsSwitch;
 import org.abreslav.grammatic.atf.java.antlr.util.AntlrSwitch;
 import org.abreslav.grammatic.parsingutils.INameScope;
@@ -139,14 +142,16 @@ public class NameBeautifier {
 		INameScope fieldScope = rootScope.createChildScope();
 		fieldScope.registerName("input");
 		fieldScope.registerName("state");
+		fieldScope.registerName("tokenNames");
 		
 		INameScope moduleNameScope = createKeywordSafeScope();
 		INameScope constructorParametersScope = rootScope.createChildScope();
 		for (ModuleImplementationField moduleField : grammar.getModuleFields()) {
 			ModuleImplementation module = moduleField.getModule();
 			beautifyModuleName(module, moduleNameScope);
-			
 			processParserField(fieldScope, constructorParametersScope, moduleField);
+			
+			beautifyModule(module);
 		}
 		
 		for (ImplementationPoolField poolField : grammar.getPoolFields()) {
@@ -155,6 +160,9 @@ public class NameBeautifier {
 			INameScope providerScope = createKeywordSafeScope();
 			for (ModuleImplementation moduleImplementation : provider.getModuleImplementations()) {
 				beautifyModuleName(moduleImplementation, providerScope);
+				Type providerInterface = provider.getProviderInterface();
+				moduleImplementation.setPackage(providerInterface.getPackage() + "." + providerInterface.getName());
+				beautifyModule(moduleImplementation);
 			}
 			
 			Iterator<Method> releaseIterator = provider.getReleaseImplementationMethods().iterator();
@@ -211,6 +219,19 @@ public class NameBeautifier {
 		}
 	}
 
+	private void beautifyModule(ModuleImplementation module) {
+		for (Method method : module.getMethods()) {
+			fixMethodParameters(method);
+		}
+	}
+
+	private void fixMethodParameters(Method method) {
+		INameScope parameterScope = createKeywordSafeScope();
+		for (Variable variable : method.getParameters()) {
+			fixVariableName(variable, parameterScope);
+		}
+	}
+
 	private void addMissingDefinitions(Rule rule,
 			final Set<Variable> initiallyDefinedVars) {
 		final Set<Variable> definedVars = new HashSet<Variable>(initiallyDefinedVars);
@@ -223,21 +244,17 @@ public class NameBeautifier {
 				if (assignToVariable == null) {
 					return;
 				}
+				 
 				if (initiallyDefinedVars.contains(assignToVariable)) {
-					Variable newVariable = SemanticsFactory.eINSTANCE.createVariable();
-					newVariable.setName(assignToVariable.getName());
-					newVariable.setType(assignToVariable.getType());
-					JavaAssignment assignment = SemanticsFactory.eINSTANCE.createJavaAssignment();
-					assignment.setVariable(assignToVariable);
-					VariableReference ref = SemanticsFactory.eINSTANCE.createVariableReference();
-					ref.setVariable(newVariable);
-					assignment.setValue(ref);
-					expression.setAssignToVariable(newVariable);
-					expression.setAfter(StructureUtils.joinStatements(assignment, expression.getAfter()));
+					introduceIntermediateVariable(expression);
+					definedVars.add(assignToVariable);
+				} else if (isLexicalReferenceWithVariable(expression)) {
+					introduceIntermediateVariable(expression);
+				} else {
+					definedVars.add(assignToVariable);
 				}
-				definedVars.add(assignToVariable);
 			}
-			
+
 			@Override
 			public void onAssignment(JavaAssignment assignment) {
 				usedVars.add(assignment.getVariable());
@@ -245,7 +262,7 @@ public class NameBeautifier {
 
 			@Override
 			public void onDefinition(VariableDefinition definition) {
-				definedVars.remove(definition.getVariable());
+				definedVars.add(definition.getVariable());
 			}
 		}).doSwitch(rule);
 		usedVars.removeAll(definedVars);
@@ -259,6 +276,38 @@ public class NameBeautifier {
 			}
 			rule.setBefore(StructureUtils.joinStatements(definitionBlock, rule.getBefore()));
 		}
+	}
+
+	private void introduceIntermediateVariable(
+			ANTLRExpression expression) {
+		/*
+		 * a=some {doIt();}
+		 * is transformed into
+		 * a1=some {a=a1; doIt();}
+		 */
+		Variable assignToVariable = expression.getAssignToVariable();
+		Variable newVariable = SemanticsFactory.eINSTANCE.createVariable();
+		newVariable.setName(assignToVariable.getName());
+		newVariable.setType(assignToVariable.getType());
+		
+		GrammarExpressionReference ref = SemanticsFactory.eINSTANCE.createGrammarExpressionReference();
+		ref.setExpression(expression);
+		expression.setAssignToVariable(newVariable);
+
+		JavaAssignment assignment = SemanticsFactory.eINSTANCE.createJavaAssignment();
+		assignment.setVariable(assignToVariable);
+		assignment.setValue(ref);
+		expression.setAfter(StructureUtils.joinStatements(assignment, expression.getAfter()));
+	}
+	
+	private boolean isLexicalReferenceWithVariable(ANTLRExpression expression) {
+		if (expression.getAssignToVariable() == null) {
+			return false;
+		}
+		if (false == expression instanceof RuleCall) {
+			return false;
+		}
+		return ((RuleCall) expression).getRule() instanceof LexicalRule;
 	}
 
 	private static void fixVariableName(Variable variable, INameScope scope) {

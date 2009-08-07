@@ -12,6 +12,8 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeStringRepresentationProvider;
 import org.abreslav.grammatic.atf.types.unification.IStringRepresentationProvider;
+import org.abreslav.grammatic.parsingutils.INameScope;
+import org.abreslav.grammatic.parsingutils.ScopeUtils;
 import org.eclipse.emf.ecore.EGenericType;
 
 public class ModuleImplementationBuilder {
@@ -31,9 +33,10 @@ public class ModuleImplementationBuilder {
 
 	private void buildImplMethods(List<FunctionSignature> functions,
 			List<Method> methods, IModuleImplementationBuilderTrace trace) {
+		INameScope keywordSafeScope = ScopeUtils.getSafeToplevelScope();
 		for (FunctionSignature function : functions) {
 			Method method = SemanticsFactory.eINSTANCE.createMethod();
-			method.setName(function.getName());
+			method.setName(keywordSafeScope.getUniqueName(function.getName()));
 			method.setType(getMethodType(function.getOutputAttributes()));
 			
 			buildParameters(function.getInputAttributes(), method.getParameters());

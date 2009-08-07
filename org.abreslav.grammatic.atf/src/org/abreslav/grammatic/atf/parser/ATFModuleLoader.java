@@ -2,8 +2,6 @@ package org.abreslav.grammatic.atf.parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +29,7 @@ public class ATFModuleLoader implements IATFModuleLoader {
 	private final IErrorHandler<RuntimeException> myErrorHandler = IErrorHandler.EXCEPTION;
 	private final Map<String, SemanticModule> mySemanticModules = new HashMap<String, SemanticModule>();
 	private final Set<String> myTypeSystemModules = new HashSet<String>();
-	private final Collection<SemanticModuleDescriptor> mySemanticModuleDescriptors = new ArrayList<SemanticModuleDescriptor>();
+	private final Map<SemanticModule, SemanticModuleDescriptor> mySemanticModuleDescriptors = new HashMap<SemanticModule, SemanticModuleDescriptor>();
 	
 	public ATFModuleLoader(ITypeSystemBuilder<?> typeSystemBuilder,
 			IATFParserImplementationFactory parserImplementationFactory,
@@ -92,7 +90,7 @@ public class ATFModuleLoader implements IATFModuleLoader {
 			mySemanticModules.put(moduleName, semanticModuleDeclaration);
 			SemanticModuleDescriptor descriptor = new SemanticModuleDescriptor(
 					moduleName, semanticModuleDeclaration, options.getOptions());
-			mySemanticModuleDescriptors.add(descriptor);
+			mySemanticModuleDescriptors.put(semanticModuleDeclaration, descriptor);
 			return semanticModuleDeclaration;
 		} catch (IOException e) {
 			myErrorHandler.reportError("Loading Semantic module %s: %s", moduleName, e.getMessage());
@@ -131,8 +129,8 @@ public class ATFModuleLoader implements IATFModuleLoader {
 	}
 	
 	@Override
-	public Collection<SemanticModuleDescriptor> getSemanticModuleDescriptors() {
-		return Collections.unmodifiableCollection(mySemanticModuleDescriptors);
+	public Map<SemanticModule, SemanticModuleDescriptor> getSemanticModuleDescriptors() {
+		return Collections.unmodifiableMap(mySemanticModuleDescriptors);
 	}
 	
 	private void addOptions(AspectDefinition atfModule, Map<String, String> options) {

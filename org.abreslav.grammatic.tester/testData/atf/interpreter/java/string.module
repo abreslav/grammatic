@@ -1,3 +1,7 @@
+#javaoptions {
+	modulePackage = 'org.abreslav.grammatic.grammar';
+}
+
 #module string {
 	createString (String token) --> (String result);
 }

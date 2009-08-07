@@ -12,6 +12,7 @@ import java.util.Set;
 public class JavaUtils {
 	private static Set<String> ourJavaReservedWords;
 	private static Map<Character, String> ourCharacterNames;
+	private static Set<String> ourPrimitiveTypeNames;
 
 	public static Set<String> getJavaReservedWords() {
 		if (ourJavaReservedWords == null) {
@@ -72,6 +73,23 @@ public class JavaUtils {
 			ourJavaReservedWords = Collections.unmodifiableSet(result);
 		}
 		return ourJavaReservedWords;
+	}
+	
+	public static Set<String> getPrimitiveTypeNames() {
+		if (ourPrimitiveTypeNames == null) {
+			HashSet<String> typeNames = new HashSet<String>();
+			typeNames.add("void");
+			typeNames.add("int");
+			typeNames.add("byte");
+			typeNames.add("short");
+			typeNames.add("long");
+			typeNames.add("float");
+			typeNames.add("double");
+			typeNames.add("boolean");
+			typeNames.add("char");
+			ourPrimitiveTypeNames = Collections.unmodifiableSet(typeNames);
+		}
+		return ourPrimitiveTypeNames;
 	}
 
 	public static String getCharacterName(char c) {

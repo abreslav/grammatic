@@ -1,17 +1,29 @@
 group ModuleImplemetation;
 
 main(package, imports, module) ::= <<
-
 package <package>;
 
 <imports:{import <it.imported>;<\n>}>
+<moduleImplementation(module=module)>
+>>
+
+moduleImplementation(module, importMan) ::= <<
 public interface <module.name> {
 
-    <module.methods:methodDeclaration(method=it)>
+    <module.methods:methodDeclaration(method=it, importMan=importMan)>
 }	
 >>
 
-methodDeclaration(method) ::= <<
-<method.type> <method.name>(<method.parameters:{<it.type> <it.name>}; separator=", ">); 
+methodDeclaration(method, importMan) ::= <<
+<importMan.(method.type)> <method.name>(<method.parameters:{<importMan.(it.type)> <it.name>}; separator=", ">); 
 
+>>
+
+moduleImplementationProvider(provider, importMan) ::= <<
+public interface <provider.providerInterface.name> {
+    <provider.moduleImplementations:moduleImplementation(module=it, importMan=importMan)>
+    
+    <provider.getImplementationMethods:methodDeclaration(method=it, importMan=importMan)>
+    <provider.releaseImplementationMethods:methodDeclaration(method=it, importMan=importMan)>
+}
 >>

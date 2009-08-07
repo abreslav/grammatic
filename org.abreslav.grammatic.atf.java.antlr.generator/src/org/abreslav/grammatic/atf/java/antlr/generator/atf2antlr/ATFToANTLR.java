@@ -51,6 +51,7 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeStringRepresentationProvider;
+import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.atf.util.AtfSwitch;
 import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Alternative;
@@ -82,9 +83,10 @@ public class ATFToANTLR {
 			Collection<Grammar> usedGrammars, 
 			ISymbolInclusionStrategy inclusionStrategy,
 			IMetadataProvider metadataProvider,
+			Map<SemanticModule, SemanticModuleDescriptor> semanticModuleDescriptors,
 			Collection<ModuleImplementationProvider> moduleImplementationProviders,
 			Collection<ModuleImplementation> moduleImplementations) {
-		return new ATFToANTLR(metadataProvider).doGenerate(frontGrammar, usedGrammars, inclusionStrategy, moduleImplementationProviders, moduleImplementations);
+		return new ATFToANTLR(metadataProvider).doGenerate(frontGrammar, usedGrammars, inclusionStrategy, semanticModuleDescriptors, moduleImplementationProviders, moduleImplementations);
 	}
 	
 	private final JavaTypeStringRepresentationProvider myJavaTypeStringRepresentationProvider = new JavaTypeStringRepresentationProvider();
@@ -103,6 +105,7 @@ public class ATFToANTLR {
 			Grammar frontGrammar, 
 			Collection<Grammar> usedGrammars, 
 			ISymbolInclusionStrategy inclusionStrategy,
+			Map<SemanticModule, SemanticModuleDescriptor> semanticModuleDescriptors, 
 			Collection<ModuleImplementationProvider> moduleImplementationProviders,
 			Collection<ModuleImplementation> moduleImplementations) {
 		
@@ -111,7 +114,7 @@ public class ATFToANTLR {
 		
 		Map<ModuleImplementation, Variable> moduleVariables = new HashMap<ModuleImplementation, Variable>();
 		for (Grammar grammar : allGrammars) {
-			processGlobalModules(grammar, moduleImplementations, moduleVariables);
+			processGlobalModules(grammar, semanticModuleDescriptors, moduleImplementations, moduleVariables);
 			
 			// TODO Build and create a variable for local SemanticModule: it is handled 
 			// by ModuleImplementationProvider rather than created manually
@@ -132,11 +135,13 @@ public class ATFToANTLR {
 		
 		new NameBeautifier().beautifyNames(myResultGrammar);
 		
+		myTrace.dumpModuleImplementationProviders(moduleImplementationProviders);
+		
 		return myResultGrammar;
 	}
 
 	private void processGlobalModules(Grammar grammar,
-			Collection<ModuleImplementation> moduleImplementations,
+			Map<SemanticModule, SemanticModuleDescriptor> semanticModuleDescriptors, Collection<ModuleImplementation> moduleImplementations,
 			Map<ModuleImplementation, Variable> moduleVariables) {
 		
 		IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
@@ -150,6 +155,8 @@ public class ATFToANTLR {
 			}
 			// TODO Interface name & package!
 			ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
+			SemanticModuleDescriptor descriptor = semanticModuleDescriptors.get(semanticModule);
+			implementation.setPackage((String) descriptor.getOptions().get("modulePackage"));
 			moduleImplementations.add(implementation);
 			String name = semanticModule.getName();
 			
@@ -283,6 +290,10 @@ public class ATFToANTLR {
 		method.setName("release" + moduleImplementation.getName());
 		method.setType(TypeUtils.getVoidType());
 		moduleImplementationProvider.getReleaseImplementationMethods().add(method);
+		Variable parameter = SemanticsFactory.eINSTANCE.createVariable();
+		parameter.setName("functions");
+		parameter.setType(moduleImplementation);
+		method.getParameters().add(parameter);
 		return method;
 	}
 

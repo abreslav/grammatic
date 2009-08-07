@@ -146,17 +146,18 @@
           eType="#//semantics/JavaExpression" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="JavaStatement" abstract="true" interface="true"/>
-    <eClassifiers xsi:type="ecore:EClass" name="VariableDefinition" eSuperTypes="#//semantics/JavaStatement">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="variable" lowerBound="1"
-          eType="#//semantics/Variable" containment="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractVariableAssignment" abstract="true"
+        eSuperTypes="#//semantics/JavaStatement">
       <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//semantics/JavaExpression"
           containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="JavaAssignment" eSuperTypes="#//semantics/JavaStatement">
+    <eClassifiers xsi:type="ecore:EClass" name="VariableDefinition" eSuperTypes="#//semantics/AbstractVariableAssignment">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="variable" lowerBound="1"
+          eType="#//semantics/Variable" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="JavaAssignment" eSuperTypes="#//semantics/AbstractVariableAssignment">
       <eStructuralFeatures xsi:type="ecore:EReference" name="variable" lowerBound="1"
           eType="#//semantics/Variable"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1"
-          eType="#//semantics/JavaExpression" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="JavaExpression" abstract="true" interface="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//semantics/JavaExpression">

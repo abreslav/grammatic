@@ -1,5 +1,6 @@
 package org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -109,6 +110,10 @@ import org.abreslav.grammatic.metadata.Namespace;
 
 	public void putPoolField(ModuleImplementationProvider key, ImplementationPoolField value) {
 		myPoolFields.put(key, value);
+	}
+	
+	public void dumpModuleImplementationProviders(Collection<ModuleImplementationProvider> providers) {
+		providers.addAll(myModuleImplementationProviders.values());
 	}
 
 }

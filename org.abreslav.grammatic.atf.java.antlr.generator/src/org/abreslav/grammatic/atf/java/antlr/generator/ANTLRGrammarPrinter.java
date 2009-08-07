@@ -23,17 +23,18 @@ import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
 import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
-import org.abreslav.grammatic.atf.java.antlr.semantics.Import;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
+import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
 import org.abreslav.grammatic.atf.java.antlr.semantics.util.SemanticsSwitch;
 import org.abreslav.grammatic.atf.java.antlr.util.AntlrSwitch;
+import org.abreslav.grammatic.parsingutils.ImportManager;
 import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.abreslav.grammatic.utils.CharacterUtils;
 import org.abreslav.grammatic.utils.INull;
@@ -48,15 +49,29 @@ import org.eclipse.emf.ecore.EObject;
 public class ANTLRGrammarPrinter {
 
 	public static void printGrammar(ANTLRGrammar grammar, Appendable out) throws IOException {
-		new ANTLRGrammarPrinter(out).printGrammar(grammar);
+		StringBuilder buffer = new StringBuilder();
+		ANTLRGrammarPrinter antlrGrammarPrinter = new ANTLRGrammarPrinter(buffer);
+		antlrGrammarPrinter.printGrammar(grammar);
+		printFileHeader(new Printer(out, "    "), grammar, antlrGrammarPrinter.myImportManager.getImports());
+		out.append(buffer);
 	}
 	
-	private static final Comparator<ParserField> INTERFACE_NAME_ORDER = new Comparator<ParserField>() {
+	private static void printFileHeader(Printer printer, ANTLRGrammar grammar, List<String> imports) {
+		String name = grammar.getName();
+		printer.words("grammar", name + "").separator(";").endln();
+		printer.endln();
+
+		printer.blockStart("@header {");
+		JavaHeaderPrinter.printHeader(printer, grammar.getPackage(), imports);
+		printer.blockEnd("}").endln();
+	}
+
+	private final Comparator<ParserField> myInterfaceNameOrder = new Comparator<ParserField>() {
 
 		@Override
 		public int compare(ParserField o1, ParserField o2) {
-			String type1 = o1.getField().getType().getName();
-			String type2 = o2.getField().getType().getName();
+			String type1 = getTypeName(o1.getField().getType());
+			String type2 = getTypeName(o2.getField().getType());
 			return type1.compareTo(type2);
 		}
 		
@@ -75,7 +90,6 @@ public class ANTLRGrammarPrinter {
 		}
 
 		private void processGrammarMetadata(ANTLRGrammar object) {
-			printFileHeader(object);
 			printOptions(object);
 			printJavaFileHeaders(object);
 			printMembers(object);
@@ -84,11 +98,8 @@ public class ANTLRGrammarPrinter {
 		private void printJavaFileHeaders(ANTLRGrammar object) {
 			String pack = object.getPackage();
 			if (pack != null) {
-				myPrinter.blockStart("@header {");
-				JavaHeaderPrinter.printHeader(myPrinter, pack, object.getImports());
-				myPrinter.blockEnd("}").endln();
 				myPrinter.blockStart("@lexer::header {");
-				JavaHeaderPrinter.printHeader(myPrinter, pack, Collections.<Import>emptyList());
+				JavaHeaderPrinter.printHeader(myPrinter, pack, Collections.<String>emptyList());
 				myPrinter.blockEnd("}").endln();
 			}
 		}
@@ -98,7 +109,7 @@ public class ANTLRGrammarPrinter {
 			
 			List<ParserField> parserFields = new ArrayList<ParserField>(grammar.getPoolFields());
 			parserFields.addAll(grammar.getModuleFields());
-			Collections.sort(parserFields, INTERFACE_NAME_ORDER);
+			Collections.sort(parserFields, myInterfaceNameOrder);
 			StringTemplateGroup group = TemplateUtils.loadTemplateGroup("ParserMembers");
 			StringTemplate membersTemplate = group.getInstanceOf("main");
 			membersTemplate.setAttribute("fields", parserFields);
@@ -124,12 +135,6 @@ public class ANTLRGrammarPrinter {
 			}
 			myPrinter.blockEnd("}").endln();
 		}
-
-		private void printFileHeader(ANTLRGrammar grammar) {
-			String name = grammar.getName();
-			myPrinter.words("grammar", name + "").separator(";").endln();
-			myPrinter.endln();
-		}
 		
 		@Override
 		public INull caseLexicalRule(LexicalRule object) {
@@ -154,7 +159,7 @@ public class ANTLRGrammarPrinter {
 				printRuleParameters(rule);
 			}
 			Variable resultVariable = rule.getResultVariable();
-			String type = resultVariable.getType().getName();
+			String type = getTypeName(resultVariable.getType());
 			if (!JavaUtils.isVoid(type)) {
 				myPrinter.word("returns").print("[").words(type, resultVariable.getName()).separator("]");
 			}
@@ -180,7 +185,7 @@ public class ANTLRGrammarPrinter {
 		private void printRuleParameters(SyntacticalRule rule) {
 			myPrinter.print("[").list(", ");
 			for (Variable parameter : rule.getParameters()) {
-				myPrinter.item().words(parameter.getType().getName(), parameter.getName());
+				myPrinter.item().words(getTypeName(parameter.getType()), parameter.getName());
 			}
 			myPrinter.endList().separator("]").softSpace();
 		}
@@ -363,7 +368,7 @@ public class ANTLRGrammarPrinter {
 		@Override
 		public INull caseVariableDefinition(VariableDefinition object) {
 			Variable variable = object.getVariable();
-			myPrinter.words(variable.getType().getName(), variable.getName());
+			myPrinter.words(getTypeName(variable.getType()), variable.getName());
 			JavaExpression value = object.getValue();
 			if (value != null) {
 				myPrinter.word("=");
@@ -432,6 +437,7 @@ public class ANTLRGrammarPrinter {
 	};
 	private final Printer myPrinter;
 	private final AntlrSwitch<INull> myPrinterSwitch = new ANTLRGrammarPrinterSwitch();
+	private ImportManager myImportManager;
 
 	private ANTLRGrammarPrinter(Appendable out) {
 		myPrinter = new Printer(out, "    ");
@@ -457,9 +463,10 @@ public class ANTLRGrammarPrinter {
 		myPrinter.blockEnd("}").endl();
 	}
 	
-	public void printGrammar(ANTLRGrammar ANTLRGrammar) throws IOException {
+	public void printGrammar(ANTLRGrammar grammar) throws IOException {
 		try {
-			myPrinterSwitch.doSwitch(ANTLRGrammar);
+			myImportManager = new ImportManager(grammar.getPackage());
+			myPrinterSwitch.doSwitch(grammar);
 		} catch (IllegalStateException e) {
 			throw (IOException) e.getCause();
 		}
@@ -483,5 +490,17 @@ public class ANTLRGrammarPrinter {
 	
 	private <T extends EObject> Iterable<IPrintable> wrapOne(T object) {
 		return wrap(Collections.singletonList(object));
+	}
+	
+	private String getTypeName(Type type) {
+		ImportManager importManager = myImportManager;
+		return getTypeName(type, importManager);
+	}
+
+	public static String getTypeName(Type type, ImportManager importManager) {
+		String pack = type.getPackage();
+		String name = type.getName();
+		String fqn = pack != null ? pack + "." + name : name;
+		return importManager.getTypeName(fqn);
 	}
 }
