@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.abreslav.grammatic.grammar.GrammaticMetadataLexer;
-import org.abreslav.grammatic.grammar.GrammaticMetadataParser;
-import org.abreslav.grammatic.grammar.IGrammaticCharacterModuleImplementationProvider;
-import org.abreslav.grammatic.grammar.IGrammaticMetadataModuleImplementationProvider;
-import org.abreslav.grammatic.grammar.IString;
+import org.abreslav.grammatic.grammar1.GrammaticMetadataLexer;
+import org.abreslav.grammatic.grammar1.GrammaticMetadataParser;
+import org.abreslav.grammatic.grammar1.IGrammaticCharacterModuleImplementationProvider;
+import org.abreslav.grammatic.grammar1.IGrammaticMetadataModuleImplementationProvider;
+import org.abreslav.grammatic.grammar1.IString;
 import org.abreslav.grammatic.metadata.Annotated;
 import org.abreslav.grammatic.metadata.Attribute;
 import org.abreslav.grammatic.metadata.IdValue;

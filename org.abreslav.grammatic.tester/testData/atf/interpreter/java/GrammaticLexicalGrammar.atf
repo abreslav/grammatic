@@ -9,7 +9,7 @@
 
 #javaoptions {
 	grammarName = 'GrammaticLexicalGrammar';
-	grammarPackage = 'org.abreslav.grammatic.grammar';
+	grammarPackage = 'org.abreslav.grammatic.grammar1';
 }
 
 basicLexicalAtom

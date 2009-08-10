@@ -1,6 +1,7 @@
 package org.abreslav.grammatic.atf.generator;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import org.abreslav.grammatic.metadata.aspects.AspectsFactory;
 import org.abreslav.grammatic.metadata.aspects.MetadataAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.MetadataProvider;
 import org.abreslav.grammatic.utils.FileLocator;
+import org.antlr.runtime.RecognitionException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,11 +39,21 @@ public class ATFGeneratorTest {
 
 	@Test
 	public void test() throws Exception {
+		String sourceDir = "testData/atf/interpreter/java";
+		String targetDir = "generated/";
+		String packageDir = "org/abreslav/grammatic/grammar1/";
+		generate(sourceDir, targetDir, packageDir, "GrammaticMetadata");
+		generate(sourceDir, targetDir, packageDir, "GrammaticLexicalGrammar");
+	}
+
+	private void generate(String sourceDir, String targetDir,
+			String packageDir, String grammarBaseName) throws IOException,
+			RecognitionException, FileNotFoundException, InterruptedException {
 		JavaTypeSystemBuilder typeSystemBuilder = new JavaTypeSystemBuilder();
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		
 		Map<SemanticModule, SemanticModuleDescriptor> descriptors = new HashMap<SemanticModule, SemanticModuleDescriptor>();
-		File baseDir = new File("testData/atf/interpreter/java");
+		File baseDir = new File(sourceDir);
 		Map<String, Grammar> grammars = ATFInterpreter.INSTANCE.loadATFGrammar(
 				ATFInterpreterTest.createApplicationsFromDirectory(baseDir),
 				new FileLocator(baseDir), 
@@ -50,7 +62,7 @@ public class ATFGeneratorTest {
 				aspect,
 				descriptors);
 		
-		String frontGrammarName = "GrammaticMetadata.grammar";
+		String frontGrammarName = grammarBaseName + ".grammar";
 		Grammar frontGrammar = grammars.get(frontGrammarName);
 		if (frontGrammar == null) {
 			Assert.fail("No front grammar found");
@@ -68,8 +80,7 @@ public class ATFGeneratorTest {
 				moduleImplementationProviders, 
 				moduleImplementations);
 		
-		String targetDir = "generated/";
-		FileOutputStream fileOutputStream = new FileOutputStream(new File(targetDir + "org/abreslav/grammatic/grammar/GrammaticMetadata.g"));
+		FileOutputStream fileOutputStream = new FileOutputStream(new File(targetDir + packageDir + grammarBaseName + ".g"));
 		ANTLRGrammarPrinter.printGrammar(generate, new PrintStream(fileOutputStream));
 		fileOutputStream.close();
 		
@@ -91,7 +102,6 @@ public class ATFGeneratorTest {
 			ImplementationClassGenerator.generatePoolsImplementationCode(fos, provider);
 			fos.close();
 		}
-		
 	}
 
 	private FileWriter getWriterForType(String targetDir, Type type)

@@ -12,7 +12,7 @@
   
 #javaoptions {
 	grammarName = 'GrammaticMetadata';
-	grammarPackage = 'org.abreslav.grammatic.grammar';
+	grammarPackage = 'org.abreslav.grammatic.grammar1';
 }
   
 #module local {

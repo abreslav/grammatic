@@ -4,7 +4,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.abreslav.grammatic.atf.java.antlr.generator/generated"
     modelPluginID="org.abreslav.grammatic.atf.java.antlr.generator" modelName="Antlr"
     updateClasspath="false" importerID="org.eclipse.emf.importer.ecore" bundleManifest="false"
-    complianceLevel="6.0" copyrightFields="false">
+    complianceLevel="6.0" copyrightFields="false" usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
   <foreignModel>antlr.ecore</foreignModel>
   <genPackages prefix="Antlr" basePackage="org.abreslav.grammatic.atf.java" disposableProviderFactory="true"
       ecorePackage="antlr.ecore#/">
@@ -24,12 +24,15 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRGrammar/imports"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRGrammar/options"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRGrammar/rules"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRGrammar/poolVariables"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRGrammar/poolFields"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRGrammar/moduleFields"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="antlr.ecore#//BeforeAfter">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//BeforeAfter/before"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//BeforeAfter/after"/>
     </genClasses>
     <genClasses image="false" ecoreClass="antlr.ecore#//Rule">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//Rule/productions"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//Rule/before"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//Rule/after"/>
     </genClasses>
     <genClasses ecoreClass="antlr.ecore#//LexicalRule">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//LexicalRule/fragment"/>
@@ -41,14 +44,10 @@
     </genClasses>
     <genClasses ecoreClass="antlr.ecore#//ANTLRProduction">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRProduction/expression"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRProduction/before"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRProduction/after"/>
     </genClasses>
     <genClasses image="false" ecoreClass="antlr.ecore#//ANTLRExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRExpression/options"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRExpression/before"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//ANTLRExpression/assignToVariable"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRExpression/after"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference antlr.ecore#//ANTLRExpression/assignToVariable"/>
     </genClasses>
     <genClasses ecoreClass="antlr.ecore#//ANTLREmpty"/>
     <genClasses image="false" ecoreClass="antlr.ecore#//ANTLRCombination">
@@ -71,62 +70,80 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//ANTLRCharacterRange/lowerBound"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//ANTLRCharacterRange/upperBound"/>
     </genClasses>
-    <nestedGenPackages prefix="Builders" disposableProviderFactory="true" ecorePackage="antlr.ecore#//builders">
-      <genClasses image="false" ecoreClass="antlr.ecore#//builders/Typed">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/Typed/type"/>
+    <nestedGenPackages prefix="Semantics" basePackage="org.abreslav.grammatic.atf.java.antlr"
+        disposableProviderFactory="true" ecorePackage="antlr.ecore#//semantics">
+      <genClasses image="false" ecoreClass="antlr.ecore#//semantics/Type">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//semantics/Type/package"/>
       </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/BuilderPoolVariable">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/BuilderPoolVariable/fieldName"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/BuilderPoolVariable/constructorParameterName"/>
+      <genClasses ecoreClass="antlr.ecore#//semantics/GenericJavaType">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/GenericJavaType/genericType"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/JavaType"/>
+      <genClasses image="false" ecoreClass="antlr.ecore#//semantics/Typed">
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference antlr.ecore#//builders/BuilderPoolVariable/builderFactory"/>
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/Typed/type"/>
       </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/Import">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/Import/imported"/>
+      <genClasses ecoreClass="antlr.ecore#//semantics/ParserField">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ParserField/field"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ParserField/constructorParameter"/>
       </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/Variable"/>
-      <genClasses ecoreClass="antlr.ecore#//builders/BuilderFactory">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/BuilderFactory/package"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/BuilderFactory/imports"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/BuilderFactory/factoryInterfaceName"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/BuilderFactory/poolsClassName"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/BuilderFactory/builders"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/BuilderFactory/methods"/>
-      </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/Builder">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/Builder/name"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/Builder/methods"/>
-      </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/Method">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/Method/type"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/Method/name"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/Method/parameters"/>
-      </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/CodeBlock">
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/CodeBlock/statements"/>
-      </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/MethodCall">
+      <genClasses ecoreClass="antlr.ecore#//semantics/ModuleImplementationField">
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference antlr.ecore#//builders/MethodCall/variable"/>
-        <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference antlr.ecore#//builders/MethodCall/method"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/MethodCall/arguments"/>
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationField/module"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationField/initExpression"/>
       </genClasses>
-      <genClasses image="false" ecoreClass="antlr.ecore#//builders/JavaStatement"/>
-      <genClasses ecoreClass="antlr.ecore#//builders/JavaAssignment">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//builders/JavaAssignment/definition"/>
+      <genClasses ecoreClass="antlr.ecore#//semantics/ImplementationPoolField">
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference antlr.ecore#//builders/JavaAssignment/variable"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//builders/JavaAssignment/value"/>
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/ImplementationPoolField/provider"/>
       </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/JavaExpression"/>
-      <genClasses ecoreClass="antlr.ecore#//builders/VariableReference">
-        <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference antlr.ecore#//builders/VariableReference/variable"/>
+      <genClasses ecoreClass="antlr.ecore#//semantics/Import">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute antlr.ecore#//semantics/Import/imported"/>
       </genClasses>
-      <genClasses ecoreClass="antlr.ecore#//builders/GrammarExpressionReference">
+      <genClasses ecoreClass="antlr.ecore#//semantics/Variable"/>
+      <genClasses ecoreClass="antlr.ecore#//semantics/ModuleImplementationProvider">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationProvider/imports"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationProvider/providerInterface"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationProvider/poolsClass"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationProvider/moduleImplementations"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationProvider/getImplementationMethods"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementationProvider/releaseImplementationMethods"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/ModuleImplementation">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/ModuleImplementation/methods"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/Method">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/Method/parameters"/>
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference antlr.ecore#//semantics/Method/module"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/CodeBlock">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/CodeBlock/statements"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/MethodCall">
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference antlr.ecore#//builders/GrammarExpressionReference/expression"/>
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/MethodCall/variable"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/MethodCall/method"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/MethodCall/arguments"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="antlr.ecore#//semantics/JavaStatement"/>
+      <genClasses image="false" ecoreClass="antlr.ecore#//semantics/AbstractVariableAssignment">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/AbstractVariableAssignment/value"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/VariableDefinition">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference antlr.ecore#//semantics/VariableDefinition/variable"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/JavaAssignment">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/JavaAssignment/variable"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="antlr.ecore#//semantics/JavaExpression"/>
+      <genClasses ecoreClass="antlr.ecore#//semantics/VariableReference">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/VariableReference/variable"/>
+      </genClasses>
+      <genClasses ecoreClass="antlr.ecore#//semantics/GrammarExpressionReference">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference antlr.ecore#//semantics/GrammarExpressionReference/expression"/>
       </genClasses>
     </nestedGenPackages>
   </genPackages>

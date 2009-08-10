@@ -1,5 +1,5 @@
 #javaoptions {
-	modulePackage = 'org.abreslav.grammatic.grammar';
+	modulePackage = 'org.abreslav.grammatic.grammar1';
 }
 
 #module string {

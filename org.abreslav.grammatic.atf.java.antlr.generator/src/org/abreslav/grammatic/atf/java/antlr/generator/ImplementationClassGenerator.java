@@ -27,7 +27,7 @@ public class ImplementationClassGenerator {
 		StringTemplate template = POOLS_GROUP.getInstanceOf("main");
 		template.setAttribute("provider", provider);
 		
-		String interfaceFQN = ANTLRGrammarPrinter.getQualifiedName(provider.getProviderInterface());
+		String interfaceFQN = TypeUtils.getQualifiedName(provider.getProviderInterface());
 		List<String> imports = new ArrayList<String>();
 		String targetPackage = provider.getPoolsClass().getPackage();
 		String interfacePackage = provider.getProviderInterface().getPackage();
@@ -57,7 +57,7 @@ public class ImplementationClassGenerator {
 			@Override
 			public Object get(Object key) {
 				Type type = (Type) key;
-				return ANTLRGrammarPrinter.getTypeName(type, importManager);
+				return TypeUtils.getTypeName(type, importManager);
 			}
 			
 			@Override

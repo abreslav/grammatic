@@ -124,7 +124,7 @@ public class ANTLRGrammarPrinter {
 			for (ParserField parserField : parserFields) {
 				Variable parameter = parserField.getConstructorParameter();
 				if (parameter != null) {
-					myPrinter.item().endl().word(parameter.getType().getName()).print(parameter.getName());
+					myPrinter.item().endl().word(getTypeName(parameter.getType())).print(parameter.getName());
 				}
 			}
 			myPrinter.endList().endl().blockEnd(")").blockStart("{").endl();
@@ -518,18 +518,6 @@ public class ANTLRGrammarPrinter {
 	
 	private String getTypeName(Type type) {
 		ImportManager importManager = myImportManager;
-		return getTypeName(type, importManager);
-	}
-
-	public static String getTypeName(Type type, ImportManager importManager) {
-		String fqn = getQualifiedName(type);
-		return importManager.getTypeName(fqn);
-	}
-
-	public static String getQualifiedName(Type type) {
-		String pack = type.getPackage();
-		String name = type.getName();
-		String fqn = pack != null ? pack + "." + name : name;
-		return fqn;
+		return TypeUtils.getTypeName(type, importManager);
 	}
 }

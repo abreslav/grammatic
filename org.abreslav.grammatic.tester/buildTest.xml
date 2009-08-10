@@ -4,12 +4,19 @@
 	<import file="../org.abreslav.grammatic.bootstrap/buildGrammar.xml"/>
 	
 	<target name="default">
-		<property name="targetFolder" value="generated/org/abreslav/grammatic/grammar"/>
+		<property name="targetFolder" value="generated/org/abreslav/grammatic/grammar1"/>
 		<antcall target="buildGrammar">
 			<param name="doclear" value="true"/>
 			<param name="project" value="org.abreslav.grammatic.tester"/>
 			<param name="lib" value="${targetFolder}"/>
 			<param name="grammarFile" value="../${targetFolder}/GrammaticMetadata.g"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+		</antcall>
+		<antcall target="buildGrammar">
+			<param name="doclear" value="true"/>
+			<param name="project" value="org.abreslav.grammatic.tester"/>
+			<param name="lib" value="${targetFolder}"/>
+			<param name="grammarFile" value="../${targetFolder}/GrammaticLexicalGrammar.g"/>
 			<param name="targetFolder" value="${targetFolder}"/>
 		</antcall>
     </target>

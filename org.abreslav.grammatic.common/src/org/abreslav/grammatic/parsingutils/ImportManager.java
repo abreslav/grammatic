@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EGenericType;
+
 public class ImportManager {
 
 	private final String myPackage;
@@ -76,6 +78,10 @@ public class ImportManager {
 	public String getTypeName(String fqn) {
 		addType(fqn);
 		return myFQNToShortName.get(fqn);
+	}
+	
+	public String getTypeName(EGenericType type) {
+		return "#generic#";
 	}
 	
 	public List<String> getImports() {

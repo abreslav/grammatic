@@ -1,6 +1,6 @@
 #javaoptions {
 	grammarName = 'GrammaticLexer';
-	grammarPackage = 'org.abreslav.grammatic.grammar';
+	grammarPackage = 'org.abreslav.grammatic.grammar1';
 }
   
 WS : #token(whitespace); 

@@ -88,6 +88,11 @@
     <eClassifiers xsi:type="ecore:EClass" name="Type" abstract="true" eSuperTypes="#//Named">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="package" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="GenericJavaType" eSuperTypes="#//semantics/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="genericType" lowerBound="1"
+          eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EGenericType"
+          containment="true"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="JavaType" eSuperTypes="#//semantics/Type"/>
     <eClassifiers xsi:type="ecore:EClass" name="Typed" abstract="true" interface="true">
       <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
