@@ -47,13 +47,13 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementation;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationProvider;
 import org.abreslav.grammatic.atf.java.antlr.semantics.SemanticsFactory;
+import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableDefinition;
 import org.abreslav.grammatic.atf.java.antlr.semantics.VariableReference;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeStringRepresentationProvider;
 import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.atf.util.AtfSwitch;
-import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Alternative;
 import org.abreslav.grammatic.grammar.CharacterRange;
 import org.abreslav.grammatic.grammar.Empty;
@@ -201,10 +201,10 @@ public class ATFToANTLR {
 	}
 	
 	private Variable createImplVariable(String name,
-			ModuleImplementation implementation) {
+			Type type) {
 		Variable variable = SemanticsFactory.eINSTANCE.createVariable();
 		variable.setName(name);
-		variable.setType(implementation);
+		variable.setType(type);
 		return variable;
 	}
 
@@ -236,10 +236,7 @@ public class ATFToANTLR {
 			ATFAttribute atfAttribute = outputAttributes.get(0);
 			rule.setResultVariable(getOrCreateVariableInAMap(atfAttribute, variableMap));
 		} else {
-			Variable voidResult = SemanticsFactory.eINSTANCE.createVariable();
-			voidResult.setType(TypeUtils.getVoidType());
-			voidResult.setName("<no result>");
-			rule.setResultVariable(voidResult);
+			rule.setResultVariable(createImplVariable("<no result>", TypeUtils.getVoidType()));
 		}
 		
 		Namespace namespace = myTrace.getNamespaceByFunction(function);
@@ -260,9 +257,8 @@ public class ATFToANTLR {
 		if (variable != null) {
 			return variable;
 		}
-		variable = SemanticsFactory.eINSTANCE.createVariable();
-		variable.setName(attribute.getName());
-		variable.setType(TypeUtils.getType((EGenericType) attribute.getType(), myJavaTypeStringRepresentationProvider));
+		variable = createImplVariable(attribute.getName(), 
+				TypeUtils.getType((EGenericType) attribute.getType(), myJavaTypeStringRepresentationProvider));
 		map.put(attribute, variable);
 		return variable;
 	}
@@ -272,14 +268,14 @@ public class ATFToANTLR {
 		if (field == null) {
 			field = SemanticsFactory.eINSTANCE.createImplementationPoolField();
 			field.setProvider(moduleImplementationProvider);
-			Variable variable = SemanticsFactory.eINSTANCE.createVariable();
 			// Strip the first "I"
-			variable.setName(moduleImplementationProvider.getProviderInterface().getName().substring(1));
-			variable.setType(moduleImplementationProvider.getProviderInterface());
+			String varName = moduleImplementationProvider.getProviderInterface().getName().substring(1);
+			Variable variable = createImplVariable(varName, 
+				moduleImplementationProvider.getPoolsClass());
 			field.setField(variable);
 			
-			 // TODO this works only if we are going to set names afterwards
-			field.setConstructorParameter(EMFProxyUtil.copy(variable));
+			field.setConstructorParameter(createImplVariable(varName, 
+					moduleImplementationProvider.getProviderInterface()));
 			
 			myResultGrammar.getPoolFields().add(field);
 			
@@ -326,9 +322,7 @@ public class ATFToANTLR {
 		method.setName("release" + moduleImplementation.getName());
 		method.setType(TypeUtils.getVoidType());
 		moduleImplementationProvider.getReleaseImplementationMethods().add(method);
-		Variable parameter = SemanticsFactory.eINSTANCE.createVariable();
-		parameter.setName("functions");
-		parameter.setType(moduleImplementation);
+		Variable parameter = createImplVariable("functions", moduleImplementation);
 		method.getParameters().add(parameter);
 		myReleaseMethods.put(moduleImplementation, method);
 		return method;

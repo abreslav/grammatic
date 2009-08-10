@@ -23,7 +23,5 @@ moduleImplementationProvider(provider, importMan) ::= <<
 public interface <provider.providerInterface.name> {
     <provider.moduleImplementations:moduleImplementation(module=it, importMan=importMan); separator="\n">    
     <provider.getImplementationMethods:methodDeclaration(method=it, importMan=importMan); separator="\n">
-    
-    <provider.releaseImplementationMethods:methodDeclaration(method=it, importMan=importMan); separator="\n">
 }
 >>

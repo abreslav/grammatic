@@ -14,6 +14,7 @@ package org.abreslav.grammatic.grammar.template.parser {
 
 package org.abreslav.grammatic.metadata {
 	class TupleValue extends Value, Annotated;
+	class MultiValue extends Value;
 	class Value extends EObject;
 	class Annotated extends EObject;
 	class Namespace extends EObject;

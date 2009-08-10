@@ -6,6 +6,7 @@
 #import org.abreslav.grammatic.metadata.Annotated;
 #import org.abreslav.grammatic.metadata.Value;
 #import org.abreslav.grammatic.metadata.TupleValue;
+#import org.abreslav.grammatic.metadata.MultiValue;
 #import org.abreslav.grammatic.metadata.Namespace;
 #import org.abreslav.grammatic.metadata.PunctuationType;
   
@@ -74,6 +75,7 @@ attributeValue
 //	: '<<' alternative '>>'
 	;
 # --> (Value result) {
+	createMultiValue() --> (MultiValue result);
 	character : result = createCharacterValue(character#);
 	INT : result = createIntValue(INT#);
 	STRING : result = createStringValue(string.createString(STRING#));
