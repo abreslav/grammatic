@@ -28,6 +28,7 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
+import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
@@ -135,12 +136,11 @@ public class ANTLRGrammarPrinter {
 					.print("this", ".").words(fieldName, "=", "new", poolsClassName).separator("(")
 						.print(parameterName).separator(");").endl();
 			}
-			for (ParserField parserField : parserFields) {
-				Variable parameter = parserField.getConstructorParameter();
-				Variable field = parserField.getField();
-				if (parameter != null) {
-					myPrinter.print("this", ".").words(field.getName(), "=", parameter.getName()).separator(";").endl();
-				}
+			for (ModuleImplementationField moduleField : grammar.getModuleFields()) {
+				Variable field = moduleField.getField();
+				myPrinter.print("this", ".").words(field.getName(), "=");
+				myStatementPrinter.doSwitch(moduleField.getInitExpression());
+				myPrinter.separator(";").endl();
 			}
 			myPrinter.blockEnd("}").endl();
 			
