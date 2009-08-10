@@ -1,4 +1,6 @@
 #import org.eclipse.emf.ecore.EObject;
+#import org.abreslav.grammatic.template.TemplateBody;
+#import org.abreslav.grammatic.grammar.CharacterRange;
 
 package org.eclipse.emf.ecore {
 	class EObject;
@@ -25,6 +27,16 @@ package org.abreslav.grammatic.grammar {
 	class Grammar extends EObject;
 	class Expression extends EObject;
 	class CharacterRange extends Expression;
+	class Alternative extends Expression;
+}
+
+package org.abreslav.grammatic.grammar.template.grammarTemplate {
+	class CharacterRangeTemplate extends TemplateBody<CharacterRange>;
+	class AlternativeTemplate extends TemplateBody<org.abreslav.grammatic.grammar.Alternative>;
+}
+
+package org.abreslav.grammatic.parser.util {
+	class ListBuilder<I, L extends I>;
 }
 
 package org.abreslav.grammatic {

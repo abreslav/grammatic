@@ -6,6 +6,7 @@
 #import org.abreslav.grammatic.grammar.CharacterRange;
 #import org.abreslav.grammatic.grammar.Expression;
 #import org.abreslav.grammatic.template.TemplateBody;
+#import org.abreslav.grammatic.parser.util.ListBuilder;
 
 #javaoptions {
 	grammarName = 'GrammaticLexicalGrammar';
@@ -30,10 +31,12 @@ range
  	: rangeComplement
 	;
 # --> (TemplateBody<? extends Expression> result) {
-	'['.before : result = createRangeBuilder();   
+	ListBuilder<TemplateBody<? extends Expression>, org.abreslav.grammatic.grammar.template.grammarTemplate.AlternativeTemplate> listBuilder; 
+	'['.before : listBuilder = createListBuilder();
 	rangeItem:: item = rangeItem();
-	rangeItem : addRangeItem(result, item);
-	rangeComplement : result = createRangeTemplate(rangeComplement#);
+	rangeItem : addRangeItem(listBuilder, item);
+	']'.after : result = getExpressionTemplate(listBuilder);
+	rangeComplement : result = createComplementTemplate(rangeComplement#);
 }
 
 rangeComplement

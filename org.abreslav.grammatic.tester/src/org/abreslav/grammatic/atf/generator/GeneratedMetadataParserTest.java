@@ -9,9 +9,7 @@ import java.util.Map;
 
 import org.abreslav.grammatic.grammar1.GrammaticMetadataLexer;
 import org.abreslav.grammatic.grammar1.GrammaticMetadataParser;
-import org.abreslav.grammatic.grammar1.IGrammaticCharacterModuleImplementationProvider;
 import org.abreslav.grammatic.grammar1.IGrammaticMetadataModuleImplementationProvider;
-import org.abreslav.grammatic.grammar1.IString;
 import org.abreslav.grammatic.metadata.Annotated;
 import org.abreslav.grammatic.metadata.Attribute;
 import org.abreslav.grammatic.metadata.IdValue;
@@ -33,65 +31,6 @@ import org.junit.Test;
 
 
 public class GeneratedMetadataParserTest {
-
-	private final class StringModule implements IString {
-		@Override
-		public String createString(String token) {
-			return token.substring(1, token.length() - 1);
-		}
-	}
-
-	private final class GrammaticCharacterModuleImplementationProvider
-			implements IGrammaticCharacterModuleImplementationProvider {
-		@Override
-		public ICharacterFunctions getCharacterFunctions() {
-			return new ICharacterFunctions() {
-				
-				@Override
-				public char getCharacter(String character) {
-					char c = character.charAt(1);
-					if (c != '\\') {
-						return c;
-					}
-					char escaped = character.charAt(2);
-					switch (escaped) {
-					case '\\':
-					case '\'':
-					case '\"':
-						return escaped;
-					case 'n':
-						return '\n';
-					case 'r':
-						return '\r';
-					case 't':
-						return '\t';
-					case 'f':
-						return '\f';
-					case 'b':
-						return '\b';
-					default:
-						throw new IllegalArgumentException();
-					}
-				}
-				
-				@Override
-				public char getCharByCode(String code) {
-					String s = code.substring(2);
-					char c = 0;
-					for (int i = 0; i < 4; i++) {
-						char dig = Character.toLowerCase(s.charAt(i));
-						c = (char) (c * 16);
-						if (Character.isDigit(dig)) {
-							c += dig - '0';
-						} else {
-							c += 10 + dig - 'a';
-						}
-					}
-					return c;
-				}
-			};
-		}
-	}
 
 	private final class GrammaticMetadataModuleImplementationProvider implements
 			IGrammaticMetadataModuleImplementationProvider {
@@ -344,7 +283,7 @@ public class GeneratedMetadataParserTest {
 
 	@Test
 	public void test() throws Exception {
-		String data = "{a = b; b = 'c'; c = 5; d = {a; b; c;}; e = {{ d - 6 }}; f = 'sdfsd' }";
+		String data = "{a = b; b = 0x000A; c = 5; d = {a; b; c;}; e = {{ d - 6 }}; f = 'sdfsd' }";
 		ANTLRReaderStream input = new ANTLRReaderStream(new StringReader(data ));
 		GrammaticMetadataLexer tokenSource = new GrammaticMetadataLexer(input);
 		GrammaticMetadataParser parser = new GrammaticMetadataParser(new CommonTokenStream(tokenSource));
@@ -355,7 +294,7 @@ public class GeneratedMetadataParserTest {
 		assertTrue(EcoreUtil.equals(attributeList,
 				tuple(
 						att("a", id("b")),
-						att("b", ch('c')),
+						att("b", ch((char) 10)),
 						att("c", int_(5)),
 						att("d", tuple(att("a"), att("b"), att("c"))),
 						att("e", multi(id("d"), punct("-"), int_(6))),

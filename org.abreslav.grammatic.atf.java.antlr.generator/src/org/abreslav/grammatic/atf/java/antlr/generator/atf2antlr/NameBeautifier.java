@@ -273,6 +273,8 @@ public class NameBeautifier {
 			for (Variable variable : usedVars) {
 				VariableDefinition definition = SemanticsFactory.eINSTANCE.createVariableDefinition();
 				definition.setVariable(variable);
+				// TODO Support primitive types: 0 and false
+				definition.setValue(SemanticsFactory.eINSTANCE.createNullExpression());
 				definitionBlock.getStatements().add(definition);
 			}
 			rule.setBefore(StructureUtils.joinStatements(definitionBlock, rule.getBefore()));

@@ -29,6 +29,7 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField;
+import org.abreslav.grammatic.atf.java.antlr.semantics.NullExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
@@ -254,6 +255,7 @@ public class ANTLRGrammarPrinter {
 		}
 		
 		private void preExpression(ANTLRExpression expression) {
+			printStatementBlock(expression.getBefore());
 			printVariablePreamble(expression);
 			if (expression.getAfter() != null) {
 //				myPrinter.print("(");
@@ -384,6 +386,11 @@ public class ANTLRGrammarPrinter {
 			}
 			return INull.NULL;
 		}
+		
+		public INull caseNullExpression(NullExpression object) {
+			myPrinter.print("null");
+			return INull.NULL;
+		};
 		
 		private boolean isNotSyntacticalReference(GrammarExpressionReference object) {
 			return ourLexicalReferenceExpert.doSwitch(object.getExpression());

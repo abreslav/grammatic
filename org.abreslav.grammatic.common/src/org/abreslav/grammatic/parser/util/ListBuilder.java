@@ -3,7 +3,7 @@ package org.abreslav.grammatic.parser.util;
 
 public class ListBuilder<I, L extends I> {
 	
-	public interface IListOperations<I, L> {
+	public interface IListOperations<I, L extends I> {
 		void addItemToList(L list, I item);
 		L createList();
 	}

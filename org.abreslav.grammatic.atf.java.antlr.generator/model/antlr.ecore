@@ -167,6 +167,7 @@
           eType="#//semantics/Variable"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="JavaExpression" abstract="true" interface="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NullExpression" eSuperTypes="#//semantics/JavaExpression"/>
     <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//semantics/JavaExpression">
       <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//semantics/Variable"/>
     </eClassifiers>

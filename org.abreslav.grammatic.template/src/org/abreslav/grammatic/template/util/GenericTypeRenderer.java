@@ -9,6 +9,9 @@ public class GenericTypeRenderer {
 		if (genericType == null) {
 			return "null";
 		}
+		if (genericType.getETypeParameter() != null) {
+			return rawRender(genericType);
+		}
 		switch (genericType.getEClassifier().getClassifierID()) {
 		case EcorePackage.ECHAR:
 			return "char";
@@ -27,9 +30,13 @@ public class GenericTypeRenderer {
 		case EcorePackage.EDOUBLE:
 			return "double";
 		default:
-			String gts = genericType.toString();
-			return gts.substring(gts.indexOf(':') + 2, gts.indexOf(')'));
+			return rawRender(genericType);
 		}
+	}
+
+	private static String rawRender(EGenericType genericType) {
+		String gts = genericType.toString();
+		return gts.substring(gts.indexOf(':') + 2, gts.indexOf(')'));
 	}
 	
 }
