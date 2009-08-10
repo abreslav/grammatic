@@ -22,6 +22,7 @@ import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
+import org.abreslav.grammatic.atf.java.antlr.semantics.DumpStringExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
@@ -29,7 +30,6 @@ import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
 import org.abreslav.grammatic.atf.java.antlr.semantics.MethodCall;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ModuleImplementationField;
-import org.abreslav.grammatic.atf.java.antlr.semantics.NullExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ParserField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Type;
 import org.abreslav.grammatic.atf.java.antlr.semantics.Variable;
@@ -387,8 +387,8 @@ public class ANTLRGrammarPrinter {
 			return INull.NULL;
 		}
 		
-		public INull caseNullExpression(NullExpression object) {
-			myPrinter.print("null");
+		public INull caseDumpStringExpression(DumpStringExpression object) {
+			myPrinter.print(object.getString());
 			return INull.NULL;
 		};
 		

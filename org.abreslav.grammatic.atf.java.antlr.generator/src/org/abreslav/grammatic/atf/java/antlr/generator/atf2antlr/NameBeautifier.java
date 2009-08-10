@@ -13,6 +13,7 @@ import org.abreslav.grammatic.atf.java.antlr.Rule;
 import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
+import org.abreslav.grammatic.atf.java.antlr.semantics.DumpStringExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
 import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
@@ -274,7 +275,20 @@ public class NameBeautifier {
 				VariableDefinition definition = SemanticsFactory.eINSTANCE.createVariableDefinition();
 				definition.setVariable(variable);
 				// TODO Support primitive types: 0 and false
-				definition.setValue(SemanticsFactory.eINSTANCE.createNullExpression());
+				DumpStringExpression init = SemanticsFactory.eINSTANCE.createDumpStringExpression();
+				String typeName = variable.getType().getName();
+				String value;
+				if (JavaUtils.getPrimitiveTypeNames().contains(typeName)) {
+					if ("boolean".equals(typeName)) {
+						value = "false";
+					} else {
+						value = "((" + typeName + ") 0)";
+					}
+				} else {
+					value = "null";
+				}
+				init.setString(value);
+				definition.setValue(init);
 				definitionBlock.getStatements().add(definition);
 			}
 			rule.setBefore(StructureUtils.joinStatements(definitionBlock, rule.getBefore()));

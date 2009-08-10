@@ -2,6 +2,7 @@ package org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,6 +98,7 @@ public class ATFToANTLR {
 	private final IMetadataProvider myMetadataProvider;
 	private final Map<ModuleImplementation, Method> myGetMethods = new HashMap<ModuleImplementation, Method>();
 	private final Map<ModuleImplementation, Method> myReleaseMethods = new HashMap<ModuleImplementation, Method>();
+	private final Set<SemanticModule> myProcessedSemanticModules = new HashSet<SemanticModule>();
 	
 	private ATFToANTLR(IMetadataProvider metadataProvider) {
 		myMetadataProvider = metadataProvider;
@@ -170,9 +172,10 @@ public class ATFToANTLR {
 			return;
 		}
 		for (SemanticModule semanticModule : modules) {
-			if (moduleVariables.containsKey(semanticModule)) {
+			if (myProcessedSemanticModules.contains(semanticModule)) {
 				continue;
 			}
+			myProcessedSemanticModules.add(semanticModule);
 			SemanticModuleDescriptor descriptor = semanticModuleDescriptors.get(semanticModule);
 			String pack = (String) descriptor.getOptions().get("modulePackage");
 			createModuleImplementationAndFields(semanticModule, pack, moduleImplementations, moduleVariables);
