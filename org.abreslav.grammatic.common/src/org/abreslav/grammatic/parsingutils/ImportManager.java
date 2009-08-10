@@ -11,7 +11,7 @@ import java.util.Set;
 public class ImportManager {
 
 	private final String myPackage;
-	private final Set<String> myJavaLangImports = new HashSet<String>();
+	private final Set<String> myDefaultImports = new HashSet<String>();
 	private final Map<String, String> myShortNameToFQN = new HashMap<String, String>();
 	private final Map<String, String> myFQNToShortName = new HashMap<String, String>();
 
@@ -46,7 +46,7 @@ public class ImportManager {
 			if (JavaUtils.getPrimitiveTypeNames().contains(fqn)) {
 				myFQNToShortName.put(fqn, fqn);
 				myShortNameToFQN.put(fqn, fqn);
-				myJavaLangImports.add(fqn);
+				myDefaultImports.add(fqn);
 				return;
 			}
 			if (myPackage.length() > 0) {
@@ -67,8 +67,8 @@ public class ImportManager {
 			myFQNToShortName.put(fqn, simpleName);
 			myShortNameToFQN.put(simpleName, fqn);
 			String pack = fqn.substring(0, lastDot);
-			if ("java.lang".equals(pack)) {
-				myJavaLangImports.add(fqn);
+			if ("java.lang".equals(pack) || myPackage.equals(pack)) {
+				myDefaultImports.add(fqn);
 			}
 		}
 	}
@@ -80,7 +80,7 @@ public class ImportManager {
 	
 	public List<String> getImports() {
 		List<String> imports = new ArrayList<String>(myShortNameToFQN.values());
-		imports.removeAll(myJavaLangImports);
+		imports.removeAll(myDefaultImports);
 		Collections.sort(imports);
 		return imports;
 	}

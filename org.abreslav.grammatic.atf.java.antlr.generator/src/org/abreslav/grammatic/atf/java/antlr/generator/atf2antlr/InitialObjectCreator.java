@@ -108,7 +108,7 @@ public class InitialObjectCreator {
 			return;
 		}
 		
-		ModuleImplementation symbolModuleImpl = createSemanticModuleImpl(metadata);
+		ModuleImplementation symbolModuleImpl = createSemanticModuleImpl(metadata, symbol.getName());
 		myTrace.putSymbolToModuleImpl(symbol, symbolModuleImpl);
 
 		Map<String, Namespace> functionNamespaces = metadata.readObject(ATFMetadata.FUNCTION_NAME_TO_NAMESPACE);
@@ -117,7 +117,7 @@ public class InitialObjectCreator {
 			IMetadataStorage projectedMetadata = MetadataStorage.getMetadataStorage(symbol, projection);
 			FunctionSignature function = projectedMetadata.readEObject(ATFMetadata.SYNTACTIC_FUNCTION);
 
-			ModuleImplementation functionModuleImpl = createSemanticModuleImpl(projectedMetadata);
+			ModuleImplementation functionModuleImpl = createSemanticModuleImpl(projectedMetadata, function.getName());
 			myTrace.putFunctionToModuleImpl(function, functionModuleImpl);
 			
 			myTrace.putFunctionToNamespace(function, namespace);
@@ -128,7 +128,7 @@ public class InitialObjectCreator {
 	private LexicalRule createLexicalRuleStub(Symbol symbol, IMetadataStorage metadata) {
 		LexicalRule result = AntlrFactory.eINSTANCE.createLexicalRule();
 		
-		result.setName(symbol.getName()); // TODO : Scope, To underscored upper case
+		result.setName(symbol.getName());
 			
 		myTrace.putTokenToRule(symbol, result);
 		myResultGrammar.getRules().add(result);
@@ -138,7 +138,7 @@ public class InitialObjectCreator {
 	private SyntacticalRule createSyntacticalRuleStub(Symbol symbol, FunctionSignature function) {
 		SyntacticalRule result = AntlrFactory.eINSTANCE.createSyntacticalRule();
 
-		result.setName(function.getName()); // TODO : Scope, To CamelCase
+		result.setName(function.getName());
 		
 		myTrace.putFunctionToRule(function, result);
 		myTrace.putSyntacticalRuleToSymbol(result, symbol);
@@ -146,12 +146,12 @@ public class InitialObjectCreator {
 		return result;
 	}
 
-	private ModuleImplementation createSemanticModuleImpl(IMetadataStorage metadata) {
+	private ModuleImplementation createSemanticModuleImpl(IMetadataStorage metadata, String defaultName) {
 		SemanticModule semanticModule = metadata.readEObject(ATFMetadata.SEMANTIC_MODULE);
 		if (semanticModule != null) {
-			// TODO : Interface name and package
 			ModuleImplementation moduleImpl = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
-			moduleImpl.setName(moduleImpl.getName() + "Functions");
+			String name = moduleImpl.getName();
+			moduleImpl.setName((name == null ? defaultName : name) + "Functions");
 			return moduleImpl;
 		}
 		return null;

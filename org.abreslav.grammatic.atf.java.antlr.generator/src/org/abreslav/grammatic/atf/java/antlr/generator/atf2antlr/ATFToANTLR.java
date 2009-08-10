@@ -95,6 +95,8 @@ public class ATFToANTLR {
 	private final ATFToANTLRTrace myTrace = new ATFToANTLRTrace();
 	private final SymbolMetadataProvider mySymbolMetadataProvider;
 	private final IMetadataProvider myMetadataProvider;
+	private final Map<ModuleImplementation, Method> myGetMethods = new HashMap<ModuleImplementation, Method>();
+	private final Map<ModuleImplementation, Method> myReleaseMethods = new HashMap<ModuleImplementation, Method>();
 	
 	private ATFToANTLR(IMetadataProvider metadataProvider) {
 		myMetadataProvider = metadataProvider;
@@ -115,11 +117,6 @@ public class ATFToANTLR {
 		Map<ModuleImplementation, Variable> moduleVariables = new HashMap<ModuleImplementation, Variable>();
 		for (Grammar grammar : allGrammars) {
 			processGlobalModules(grammar, semanticModuleDescriptors, moduleImplementations, moduleVariables);
-			
-			// TODO Build and create a variable for local SemanticModule: it is handled 
-			// by ModuleImplementationProvider rather than created manually
-			// it also is created once upon parser creation, so it's completely different
-
 		}
 		
 		for (Map.Entry<Symbol, LexicalRule> tokenToRule : myTrace.getAllTokenRulePairs()) {
@@ -145,6 +142,24 @@ public class ATFToANTLR {
 			Map<ModuleImplementation, Variable> moduleVariables) {
 		
 		IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(grammar, myMetadataProvider);
+
+		SemanticModule localModule = metadataStorage.readEObject(ATFMetadata.SEMANTIC_MODULE);
+		if (localModule != null) {
+			// create an implementation
+			// create a field in a parser (a change to the model -- we must know that we do not need a constructor parameter for it)
+			// put it into module-to-field map
+			ModuleImplementationField field = createModuleImplementationAndFields(localModule, null, moduleImplementations, moduleVariables);
+			field.setConstructorParameter(null);
+			ModuleImplementation implementation = field.getModule();
+			
+			// put it inside a provider
+			ModuleImplementationProvider moduleImplementationProvider = getModuleImplementationProvider(grammar);
+			moduleImplementationProvider.getModuleImplementations().add(implementation);
+			// add a method for creating it (no method for releasing it, by the way)
+			createGetMethod(moduleImplementationProvider, implementation);
+			// initialize it inside a constructor of the parser (by calling provider's method, this requires a change to the model, a constructor does not have a body model by now)
+		}
+
 		List<SemanticModule> modules = metadataStorage.readEObjects(ATFMetadata.USED_SEMANTIC_MODULES);
 		if (modules == null) {
 			return;
@@ -153,24 +168,29 @@ public class ATFToANTLR {
 			if (moduleVariables.containsKey(semanticModule)) {
 				continue;
 			}
-			// TODO Interface name & package!
-			ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
 			SemanticModuleDescriptor descriptor = semanticModuleDescriptors.get(semanticModule);
-			implementation.setPackage((String) descriptor.getOptions().get("modulePackage"));
-			moduleImplementations.add(implementation);
-			String name = semanticModule.getName();
-			
-			ModuleImplementationField field = SemanticsFactory.eINSTANCE.createModuleImplementationField();
-			field.setModule(implementation);
-			
-			field.setField(createImplVariable(name, implementation));
-			field.setConstructorParameter(createImplVariable(name, implementation));
-			moduleVariables.put(implementation, field.getField());
-			
-			myResultGrammar.getModuleFields().add(field);
+			String pack = (String) descriptor.getOptions().get("modulePackage");
+			createModuleImplementationAndFields(semanticModule, pack, moduleImplementations, moduleVariables);
 		}
 	}
 
+	private ModuleImplementationField createModuleImplementationAndFields(SemanticModule semanticModule, String pack, Collection<ModuleImplementation> moduleImplementations, Map<ModuleImplementation, Variable> moduleVariables) {
+		ModuleImplementation implementation = ModuleImplementationBuilder.INSTANCE.buildModuleImplementation(semanticModule, myTrace);
+		implementation.setPackage(pack);
+		moduleImplementations.add(implementation);
+		ModuleImplementationField field = SemanticsFactory.eINSTANCE.createModuleImplementationField();
+		field.setModule(implementation);
+		
+		field.setField(createImplVariable(semanticModule.getName(), implementation));
+		moduleVariables.put(implementation, field.getField());
+
+		field.setConstructorParameter(createImplVariable(semanticModule.getName(), implementation));
+
+		myResultGrammar.getModuleFields().add(field);
+		
+		return field;
+	}
+	
 	private Variable createImplVariable(String name,
 			ModuleImplementation implementation) {
 		Variable variable = SemanticsFactory.eINSTANCE.createVariable();
@@ -260,13 +280,11 @@ public class ATFToANTLR {
 	}
 
 	private ModuleImplementationProvider getModuleImplementationProvider(
-			Symbol symbol) {
-		Grammar grammar = StructureUtils.getGrammar(symbol);
+			Grammar grammar) {
 		GrammarOptions grammarOptions = InitialObjectCreator.getGrammarOptions(grammar, myMetadataProvider);
 		ModuleImplementationProvider moduleImplementationProvider = myTrace.getModuleImplementationProvider(grammar);
 		if (moduleImplementationProvider == null) {
 			moduleImplementationProvider = SemanticsFactory.eINSTANCE.createModuleImplementationProvider();
-			moduleImplementationProvider.getImports(); // TODO : ?
 			String name = JavaUtils.applyTypeNameConventions(grammarOptions.getName());
 			String pack = grammarOptions.getPackage();
 			moduleImplementationProvider.setPoolsClass(TypeUtils.createJavaType(pack, name + "Pools"));
@@ -278,15 +296,24 @@ public class ATFToANTLR {
 	}
 	
 	private Method createGetMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
-		Method method = SemanticsFactory.eINSTANCE.createMethod();
+		Method method = myGetMethods.get(moduleImplementation);
+		if (method != null) {
+			return method;
+		}
+		method = SemanticsFactory.eINSTANCE.createMethod();
 		method.setName("get" + moduleImplementation.getName());
 		method.setType(moduleImplementation);
 		moduleImplementationProvider.getGetImplementationMethods().add(method);
+		myGetMethods.put(moduleImplementation, method);
 		return method;
 	}
 	
 	private Method createReleaseMethod(ModuleImplementationProvider moduleImplementationProvider, ModuleImplementation moduleImplementation) {
-		Method method = SemanticsFactory.eINSTANCE.createMethod();
+		Method method = myReleaseMethods.get(moduleImplementation);
+		if (method != null) {
+			return method;
+		}
+		method = SemanticsFactory.eINSTANCE.createMethod();
 		method.setName("release" + moduleImplementation.getName());
 		method.setType(TypeUtils.getVoidType());
 		moduleImplementationProvider.getReleaseImplementationMethods().add(method);
@@ -294,6 +321,7 @@ public class ATFToANTLR {
 		parameter.setName("functions");
 		parameter.setType(moduleImplementation);
 		method.getParameters().add(parameter);
+		myReleaseMethods.put(moduleImplementation, method);
 		return method;
 	}
 
@@ -389,7 +417,7 @@ public class ATFToANTLR {
 			VariableDefinition definition = SemanticsFactory.eINSTANCE.createVariableDefinition();
 			definition.setVariable(variable);
 			MethodCall createImplCall = SemanticsFactory.eINSTANCE.createMethodCall();
-			ModuleImplementationProvider moduleImplementationProvider = getModuleImplementationProvider(symbol);
+			ModuleImplementationProvider moduleImplementationProvider = getModuleImplementationProvider(StructureUtils.getGrammar(symbol));
 			moduleImplementationProvider.getModuleImplementations().add(moduleImplementation);
 			Variable providerVariable = getModuleImplementationProviderVariable(moduleImplementationProvider );
 			createImplCall.setVariable(providerVariable);

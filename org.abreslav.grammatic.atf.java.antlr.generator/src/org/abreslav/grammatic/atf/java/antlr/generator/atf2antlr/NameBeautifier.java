@@ -1,7 +1,6 @@
 package org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.abreslav.grammatic.atf.java.antlr.ANTLRCombination;
@@ -131,10 +130,10 @@ public class NameBeautifier {
 			return null; // fall through
 		}
 	}
+	
+	public final Set<ModuleImplementation> myBeautifiedModules = new HashSet<ModuleImplementation>();
 
 	public void beautifyNames(ANTLRGrammar grammar) {
-
-		
 		INameScope rootScope = createKeywordSafeScope();
 		grammar.setName(uniqueTypeName(grammar.getName(), rootScope));
 		
@@ -164,12 +163,15 @@ public class NameBeautifier {
 				beautifyModule(moduleImplementation);
 			}
 			
-			Iterator<Method> releaseIterator = provider.getReleaseImplementationMethods().iterator();
-			for (Method getMethod : provider.getGetImplementationMethods()) {
+			for (Method method : provider.getGetImplementationMethods()) {
 				// Strip initial "I"
-				String baseName = getMethod.getType().getName().substring(1);
-				getMethod.setName("get" + baseName);
-				releaseIterator.next().setName("release" + baseName);
+				String baseName = method.getType().getName().substring(1);
+				method.setName("get" + baseName);
+			}
+			for (Method method : provider.getReleaseImplementationMethods()) {
+				// Strip initial "I"
+				String baseName = method.getParameters().get(0).getType().getName().substring(1);
+				method.setName("release" + baseName);
 			}
 		}
 		
@@ -318,6 +320,10 @@ public class NameBeautifier {
 
 	private void beautifyModuleName(ModuleImplementation module,
 			INameScope moduleNameScope) {
+		if (myBeautifiedModules.contains(module)) {
+			return;
+		}
+		myBeautifiedModules.add(module);
 		module.setName(moduleNameScope.getUniqueName("I" + JavaUtils.applyTypeNameConventions(module.getName())));
 	}
 

@@ -74,6 +74,9 @@ public class ATFGeneratorTest {
 		fileOutputStream.close();
 		
 		for (ModuleImplementation moduleImplementation : moduleImplementations) {
+			if (moduleImplementation.eContainer() instanceof ModuleImplementationProvider) {
+				continue;
+			}
 			FileWriter fos = getWriterForType(targetDir, moduleImplementation);
 			ImplementationClassGenerator.generateModuleImplementationCode(fos, moduleImplementation);
 			fos.close();

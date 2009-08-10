@@ -23,6 +23,7 @@ import org.abreslav.grammatic.atf.java.antlr.RuleCall;
 import org.abreslav.grammatic.atf.java.antlr.SyntacticalRule;
 import org.abreslav.grammatic.atf.java.antlr.semantics.CodeBlock;
 import org.abreslav.grammatic.atf.java.antlr.semantics.GrammarExpressionReference;
+import org.abreslav.grammatic.atf.java.antlr.semantics.ImplementationPoolField;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaAssignment;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaExpression;
 import org.abreslav.grammatic.atf.java.antlr.semantics.JavaStatement;
@@ -110,11 +111,41 @@ public class ANTLRGrammarPrinter {
 			List<ParserField> parserFields = new ArrayList<ParserField>(grammar.getPoolFields());
 			parserFields.addAll(grammar.getModuleFields());
 			Collections.sort(parserFields, myInterfaceNameOrder);
+			
+			for (ParserField parserField : parserFields) {
+				Variable field = parserField.getField();
+				String typeName = getTypeName(field.getType());
+				myPrinter.words("private", typeName, field.getName()).separator(";").endl();
+			}
+			myPrinter.endln();
+			
+			myPrinter.words("public void setModuleImplementations").blockStart("(").endl().list(", ");
+			for (ParserField parserField : parserFields) {
+				Variable parameter = parserField.getConstructorParameter();
+				if (parameter != null) {
+					myPrinter.item().endl().word(parameter.getType().getName()).print(parameter.getName());
+				}
+			}
+			myPrinter.endList().endl().blockEnd(")").blockStart("{").endl();
+			for (ImplementationPoolField poolField : grammar.getPoolFields()) {
+				String fieldName = poolField.getField().getName();
+				String poolsClassName = getTypeName(poolField.getProvider().getPoolsClass());
+				String parameterName = poolField.getConstructorParameter().getName();
+				myPrinter
+					.print("this", ".").words(fieldName, "=", "new", poolsClassName).separator("(")
+						.print(parameterName).separator(");").endl();
+			}
+			for (ParserField parserField : parserFields) {
+				Variable parameter = parserField.getConstructorParameter();
+				Variable field = parserField.getField();
+				if (parameter != null) {
+					myPrinter.print("this", ".").words(field.getName(), "=", parameter.getName()).separator(";").endl();
+				}
+			}
+			myPrinter.blockEnd("}").endl();
+			
 			StringTemplateGroup group = TemplateUtils.loadTemplateGroup("ParserMembers");
 			StringTemplate membersTemplate = group.getInstanceOf("main");
-			membersTemplate.setAttribute("fields", parserFields);
-			membersTemplate.setAttribute("poolVars", grammar.getPoolFields());
-			membersTemplate.setAttribute("modules", grammar.getModuleFields());
 			myPrinter.print(membersTemplate.toString());
 			
 			myPrinter.blockEnd("}").endl();
@@ -380,9 +411,9 @@ public class ANTLRGrammarPrinter {
 		
 		@Override
 		public INull caseMethodCall(MethodCall methodCall) {
-			String variable = methodCall.getVariable().getName();
+			Variable variable = methodCall.getVariable();
 			if (variable != null) {
-				myPrinter.print(variable, ".");
+				myPrinter.print(variable.getName(), ".");
 			}
 			String name = methodCall.getMethod().getName();
 			myPrinter.print(name, "(").list(", ", wrap(methodCall.getArguments()), "").separator(")");
