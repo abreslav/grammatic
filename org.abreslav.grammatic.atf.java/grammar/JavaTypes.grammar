@@ -75,5 +75,5 @@ genericArgument
 	;
 	
 wildcard
-	: '?' ('extends' classType | 'super' classType)
+	: '?' ('extends' classType | 'super' classType)?
 	;

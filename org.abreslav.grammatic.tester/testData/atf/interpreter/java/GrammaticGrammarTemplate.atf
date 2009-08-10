@@ -1,0 +1,228 @@
+#import 
+  'string.module'{string}, 	
+  'boolean.module'{false, true},
+  'grammatic.typesystem'{some};
+
+#import org.abreslav.grammatic.template.Template;
+#import org.abreslav.grammatic.template.TemplateApplication;
+#import org.abreslav.grammatic.template.TemplateArgument;
+#import org.abreslav.grammatic.template.TemplateBody;
+#import org.abreslav.grammatic.template.TemplateParameter;
+#import org.abreslav.grammatic.template.ParameterReference;
+#import org.abreslav.grammatic.grammar.Expression;
+#import org.abreslav.grammatic.grammar.Grammar;
+#import org.abreslav.grammatic.grammar.Production;
+#import org.abreslav.grammatic.grammar.Symbol;
+#import org.abreslav.grammatic.grammar.template.grammarTemplate.IterationTemplate;
+#import org.abreslav.grammatic.grammar.template.grammarTemplate.AlternativeTemplate;
+#import org.abreslav.grammatic.grammar.template.grammarTemplate.SequenceTemplate;
+#import org.abreslav.grammatic.grammar.template.grammarTemplate.GrammarTemplate;
+#import org.eclipse.emf.ecore.EClass;
+#import org.abreslav.grammatic.parser.util.ListBuilder;
+#import org.abreslav.grammatic.grammar1.RenamingManager;
+
+#javaoptions {
+	grammarName = 'GrammaticGrammarTemplate';
+	grammarPackage = 'org.abreslav.grammatic.grammar1';
+}
+
+grammar 
+	: import* (defaultTemplate | '#grammar' templateApplication)
+	;
+# (RenamingManager manager) --> (Grammar result) {
+	import:: #(manager);
+	defaultTemplate:: result = #();
+	templateApplication: result = instantiate(templateApplication#); 
+}
+	
+lexicalAtomIndependent
+	: basicLexicalAtom
+	;	
+# --> (Expression result) {
+	#after: result = instantiate(basicLexicalAtom#);
+}
+	
+templateLibrary 
+	: import* templateDeclaration*
+	;
+# (RenamingManager manager) {
+	import:: #(manager);
+	templateDeclaration: addTemplateDeclaration(templateDeclaration#);
+}
+	
+defaultTemplate
+	: rule*
+	;
+# --> (Grammar result) {
+	// NB: Duplication here (see templateBody)!!!!!!!!!!
+	GrammarTemplate template;
+	#before: template = createGrammarTemplate();
+	rule: addRule(template, rule#);
+	#after: result = instantiate(template);	
+}
+	
+templateApplication
+	: NAME ('<' templateArguments '>')?
+	;
+# --> (TemplateApplication<Grammar> result) {
+	NAME: result = createTemplateApplication(NAME#);
+	templateArguments:: #(result);
+}
+	
+templateArguments
+	: templateArgument (',' templateArgument)*
+	;
+# (TemplateApplication<?> application) {
+	templateArgument: addArgument(application, templateArgument#);
+}
+
+templateArgument
+	: (':' production)*
+	;
+# --> (TemplateArgument<Production> result) {
+	#before: result = createTemplateArgument();
+	production: addProduction(result, production#);
+}
+	
+production
+	: alternative
+	;
+# --> (Production result) {
+	#after: result = createProduction(alternative#);
+}
+	
+templateDeclaration 
+	: type NAME '<' templateParameters? '>' templateBody
+	;
+# --> (Template<Grammar> result) {
+	NAME: result = createTemplate(type#, NAME#);
+	templateParameters:: #(result);
+	templateBody : addBody(result, templateBody#);
+}
+
+type
+	: NAME
+	;
+# --> (EClass type) {
+	NAME : type = getEClass(NAME#);
+}
+	
+templateParameters
+	: templateParameter (',' templateParameter)*
+	;
+#(Template<?> template) {
+	templateParameter: addParameter(template, templateParameter#);
+}
+	
+templateParameter
+	: ('#refer' | '#copy')? type operation NAME
+	;
+# --> (TemplateParameter<?> result) {
+	#before: {
+		refer = Boolean.false();
+		copy = Boolean.false();
+	}
+	'#refer': refer = Boolean.true();
+	'#copy': copy = Boolean.true();
+	#after: result = createTemplateParameter(
+		refer, copy, type#, operation#, NAME#);
+}
+
+templateBody
+	: '{' rule* '}'
+	;
+# --> (TemplateBody<Grammar> result) {
+	#before: result = createGrammarTemplate();
+	rule: addRule(result, rule#);
+}
+
+rule
+	: NAME metadata? (':' productionTemplate)+ ';'
+	;
+# --> (TemplateBody<Symbol> result) {
+	NAME: result = createSymbolTemplate(NAME#);
+	metadata:: metadata(result);
+	productionTemplate: addProduction(result, productionTemplate#);
+}
+	
+productionTemplate
+	: alternative
+	: templateParameterReference
+	;
+# --> (TemplateBody<Production> result) {
+	alternative : result = createProductionTemplate(alternative#);
+	templateParameterReference : result = convertToProductionTemplate(templateParameterReference#);
+}
+
+templateParameterReference
+	: '<' NAME '>'
+	;
+# --> (ParameterReference<?> result) {
+	NAME : result = createParameterReference(NAME#);
+}
+	
+alternative
+	: sequence ('|' sequence)*	
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	ListBuilder<TemplateBody<? extends Expression>, AlternativeTemplate> builder;
+	#before: builder = createListBuilder();
+	sequence: addItem(builder, sequence#);
+	#after: result = getResult(builder);
+}
+
+expression
+	: alternative ';'
+	;
+# --> (Expression result) {
+	alternative: result = instantiate(alternative#);
+}
+
+sequence
+	: iteration (iteration)*
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	ListBuilder<TemplateBody<? extends Expression>, SequenceTemplate> builder;
+	#before: builder = createListBuilder();
+	iteration: addItem(builder, iteration#);
+	#after: result = getResult(builder);
+}
+	
+iteration
+	: atom metadata? operation
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	metadata:: metadata(atom#);
+	#after: result = createIteration(atom#, operation#);
+}
+	
+operation 
+	: $token=('*' | '+' | '?')
+	: $e=#empty
+	;
+# --> (IterationTemplate result) {
+	token: result = createIterationTemplate(#text(token));
+	e: result = null();
+}
+	
+atom
+	: NAME
+	: '(' alternative ')'
+	: lexicalAtom
+	: '#empty'
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	NAME: result = createSymbolReference(NAME#);
+	alternative:: result = #();
+	lexicalAtom:: result = #();
+	'#empty': result = createEmpty();
+}
+	
+lexicalAtom
+	:  basicLexicalAtom
+	: '[[' alternative ']]'
+	;
+# --> (TemplateBody<? extends Expression> result) {
+	basicLexicalAtom:: result = #();
+	alternative:: result = #();
+}

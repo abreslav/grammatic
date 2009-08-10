@@ -1,9 +1,13 @@
 #import 
   'string.module'{string}, 	
-  'null.module'{null},
   'grammatic.typesystem'{some};
   
-#import org.abreslav.grammatic.RenamingManager;
+#import org.abreslav.grammatic.grammar1.RenamingManager;
+
+#javaoptions {
+	grammarName = 'Imports';
+	grammarPackage = 'org.abreslav.grammatic.grammar1';
+}
 
 import
 	: '#import' importSpec (',' importSpec)* ';'

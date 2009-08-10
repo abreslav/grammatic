@@ -4,10 +4,16 @@
 
 package org.eclipse.emf.ecore {
 	class EObject;
+	class EClass;
 }
 
 package org.abreslav.grammatic.template {
 	class TemplateBody<T> extends EObject;
+	class TemplateArgument<T>;
+	class TemplateParameter<T>;
+	class Template<T>;
+	class TemplateApplication<T>;
+	class ParameterReference<T>;
 }
 
 package org.abreslav.grammatic.grammar.template.parser {
@@ -28,17 +34,23 @@ package org.abreslav.grammatic.grammar {
 	class Expression extends EObject;
 	class CharacterRange extends Expression;
 	class Alternative extends Expression;
+	class Production;
+	class Sequence extends Expression;
+	class Symbol;
 }
 
 package org.abreslav.grammatic.grammar.template.grammarTemplate {
 	class CharacterRangeTemplate extends TemplateBody<CharacterRange>;
 	class AlternativeTemplate extends TemplateBody<org.abreslav.grammatic.grammar.Alternative>;
+	class IterationTemplate;
+	class GrammarTemplate;
+	class SequenceTemplate extends TemplateBody<org.abreslav.grammatic.grammar.Sequence>;
 }
 
 package org.abreslav.grammatic.parser.util {
 	class ListBuilder<I, L extends I>;
 }
 
-package org.abreslav.grammatic {
+package org.abreslav.grammatic.grammar1 {
 	class RenamingManager;
 }

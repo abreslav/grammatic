@@ -200,7 +200,7 @@ wildcard
 		EGenericType wildcard();
 	}};
 ]]
-	: '?' ('extends' $e=classType | 'super' $s=classType)
+	: '?' ('extends' $e=classType | 'super' $s=classType)?
 	[[
 		e.separate;
 		e.variable = upper;

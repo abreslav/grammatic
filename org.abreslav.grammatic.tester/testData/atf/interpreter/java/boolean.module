@@ -1,0 +1,8 @@
+#javaoptions {
+	modulePackage = 'org.abreslav.grammatic.grammar1';
+}
+
+#module Boolean {
+	false () --> (boolean result);
+	true () --> (boolean result);
+}

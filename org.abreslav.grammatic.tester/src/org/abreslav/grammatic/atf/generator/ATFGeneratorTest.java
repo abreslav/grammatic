@@ -44,6 +44,7 @@ public class ATFGeneratorTest {
 		String packageDir = "org/abreslav/grammatic/grammar1/";
 		generate(sourceDir, targetDir, packageDir, "GrammaticMetadata");
 		generate(sourceDir, targetDir, packageDir, "GrammaticLexicalGrammar");
+		generate(sourceDir, targetDir, packageDir, "GrammaticGrammarTemplate");
 	}
 
 	private void generate(String sourceDir, String targetDir,

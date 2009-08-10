@@ -19,5 +19,12 @@
 			<param name="grammarFile" value="../${targetFolder}/GrammaticLexicalGrammar.g"/>
 			<param name="targetFolder" value="${targetFolder}"/>
 		</antcall>
+		<antcall target="buildGrammar">
+			<param name="doclear" value="true"/>
+			<param name="project" value="org.abreslav.grammatic.tester"/>
+			<param name="lib" value="${targetFolder}"/>
+			<param name="grammarFile" value="../${targetFolder}/GrammaticGrammarTemplate.g"/>
+			<param name="targetFolder" value="${targetFolder}"/>
+		</antcall>
     </target>
 </project>

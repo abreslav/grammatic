@@ -455,7 +455,7 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 		@Override
 		public void read(ATFAttribute attribute, Set<ATFAttribute> context) throws E{
 			if (!context.contains(attribute)) {
-				myErrorHandler.reportError("'%s': Attribute '%s' is read but might be never written before", getFunctionName(), attribute.getName());
+				myErrorHandler.reportError("'%s': Attribute '%s' is read but might have been never written before", getFunctionName(), attribute.getName());
 			}
 		}
 
