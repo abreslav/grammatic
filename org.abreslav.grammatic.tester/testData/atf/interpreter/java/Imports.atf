@@ -2,7 +2,7 @@
   'string.module'{string}, 	
   'grammatic.typesystem'{some};
   
-#import org.abreslav.grammatic.grammar1.RenamingManager;
+#import org.abreslav.grammatic.atf.generator.IRenamingManager;
 
 #javaoptions {
 	grammarName = 'Imports';
@@ -12,14 +12,14 @@
 import
 	: '#import' importSpec (',' importSpec)* ';'
 	;	
-# (RenamingManager manager) {
+# (IRenamingManager manager) {
 	importSpec:: #(manager);
 }
 	
 importSpec
 	: STRING '{' renaming (',' renaming)* '}'
 	;
-# (RenamingManager manager) {
+# (IRenamingManager manager) {
 	STRING : moduleName = string.createString(STRING#);
 	renaming:: #(manager, moduleName);
 }
@@ -27,7 +27,7 @@ importSpec
 renaming
 	: ($old=NAME '=')? $new=NAME
 	;
-# (RenamingManager manager, String moduleName) {
+# (IRenamingManager manager, String moduleName) {
 	#before : old = null();
 	old : old = old#;
 	new : addRenaming(manager, moduleName, old, new#);

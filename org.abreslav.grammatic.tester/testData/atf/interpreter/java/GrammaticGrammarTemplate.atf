@@ -17,9 +17,10 @@
 #import org.abreslav.grammatic.grammar.template.grammarTemplate.AlternativeTemplate;
 #import org.abreslav.grammatic.grammar.template.grammarTemplate.SequenceTemplate;
 #import org.abreslav.grammatic.grammar.template.grammarTemplate.GrammarTemplate;
+#import org.abreslav.grammatic.grammar.template.grammarTemplate.SymbolTemplate;
 #import org.eclipse.emf.ecore.EClass;
 #import org.abreslav.grammatic.parser.util.ListBuilder;
-#import org.abreslav.grammatic.grammar1.RenamingManager;
+#import org.abreslav.grammatic.atf.generator.IRenamingManager;
 
 #javaoptions {
 	grammarName = 'GrammaticGrammarTemplate';
@@ -29,7 +30,7 @@
 grammar 
 	: import* (defaultTemplate | '#grammar' templateApplication)
 	;
-# (RenamingManager manager) --> (Grammar result) {
+# (IRenamingManager manager) --> (Grammar result) {
 	import:: #(manager);
 	defaultTemplate:: result = #();
 	templateApplication: result = instantiate(templateApplication#); 
@@ -45,9 +46,9 @@ lexicalAtomIndependent
 templateLibrary 
 	: import* templateDeclaration*
 	;
-# (RenamingManager manager) {
+# (IRenamingManager manager) {
 	import:: #(manager);
-	templateDeclaration: addTemplateDeclaration(templateDeclaration#);
+//	templateDeclaration: addTemplateDeclaration(templateDeclaration#);
 }
 	
 defaultTemplate
@@ -55,10 +56,10 @@ defaultTemplate
 	;
 # --> (Grammar result) {
 	// NB: Duplication here (see templateBody)!!!!!!!!!!
-	GrammarTemplate template;
-	#before: template = createGrammarTemplate();
-	rule: addRule(template, rule#);
-	#after: result = instantiate(template);	
+	addRule(Grammar grammar, Symbol symbol);
+	#before: result = createGrammar();
+	rule: addRule(result, instantiate(rule#));
+	#after: cleanCurrentTemplateName();
 }
 	
 templateApplication
@@ -98,6 +99,7 @@ templateDeclaration
 	NAME: result = createTemplate(type#, NAME#);
 	templateParameters:: #(result);
 	templateBody : addBody(result, templateBody#);
+	#after: clear();
 }
 
 type
@@ -131,7 +133,7 @@ templateParameter
 templateBody
 	: '{' rule* '}'
 	;
-# --> (TemplateBody<Grammar> result) {
+# --> (GrammarTemplate result) {
 	#before: result = createGrammarTemplate();
 	rule: addRule(result, rule#);
 }
@@ -139,7 +141,7 @@ templateBody
 rule
 	: NAME metadata? (':' productionTemplate)+ ';'
 	;
-# --> (TemplateBody<Symbol> result) {
+# --> (SymbolTemplate result) {
 	NAME: result = createSymbolTemplate(NAME#);
 	metadata:: metadata(result);
 	productionTemplate: addProduction(result, productionTemplate#);

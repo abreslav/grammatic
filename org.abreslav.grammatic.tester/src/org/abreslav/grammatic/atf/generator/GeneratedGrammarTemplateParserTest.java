@@ -3,7 +3,6 @@ package org.abreslav.grammatic.atf.generator;
 import static org.abreslav.grammatic.grammar.template.parser.CharacterRangeUtils.createCharacter;
 import static org.abreslav.grammatic.grammar.template.parser.CharacterRangeUtils.createCharacterRange;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -33,7 +32,6 @@ public class GeneratedGrammarTemplateParserTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void test() throws Exception {
-		fail("Do it!");
 		Object[][] data = {
 				{"'sadas'", str("sadas")},
 				{"'c'", createCharacter('c')},
@@ -64,148 +62,8 @@ public class GeneratedGrammarTemplateParserTest {
 		ANTLRReaderStream input = new ANTLRReaderStream(new StringReader(data ));
 		GrammaticGrammarTemplateLexer tokenSource = new GrammaticGrammarTemplateLexer(input);
 		GrammaticGrammarTemplateParser parser = new GrammaticGrammarTemplateParser(new CommonTokenStream(tokenSource));
-		IGrammaticGrammarTemplateModuleImplementationProvider temp = new IGrammaticGrammarTemplateModuleImplementationProvider() {
-			
-			@Override
-			public ITypeFunctions getTypeFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateParametersFunctions getTemplateParametersFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateParameterReferenceFunctions getTemplateParameterReferenceFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateParameterFunctions getTemplateParameterFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateLibraryFunctions getTemplateLibraryFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateDeclarationFunctions getTemplateDeclarationFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateBodyFunctions getTemplateBodyFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateArgumentsFunctions getTemplateArgumentsFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateArgumentFunctions getTemplateArgumentFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ITemplateApplicationFunctions getTemplateApplicationFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ISequenceFunctions getSequenceFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IRuleFunctions getRuleFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IProductionTemplateFunctions getProductionTemplateFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IProductionFunctions getProductionFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IOperationFunctions getOperationFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ILexicalAtomIndependentFunctions getLexicalAtomIndependentFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IIterationFunctions getIterationFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IGrammarFunctions getGrammarFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IExpressionFunctions getExpressionFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IDefaultTemplateFunctions getDefaultTemplateFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IAtomFunctions getAtomFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IAlternativeFunctions getAlternativeFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-		IImportsModuleImplementationProvider imp = new IImportsModuleImplementationProvider() {
-			
-			@Override
-			public IRenamingFunctions getRenamingFunctions() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
+		IGrammaticGrammarTemplateModuleImplementationProvider temp = new GrammaticGrammarTemplateModuleImplementationProvider();
+		IImportsModuleImplementationProvider imp = new ImportsModuleImplementationProvider();
 		IWritableAspect writableAspect = IWritableAspect.NONE;
 		parser.setModuleImplementations(
 				new GrammaticCharacterModuleImplementationProvider(),

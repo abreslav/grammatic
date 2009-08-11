@@ -44,6 +44,7 @@ package org.abreslav.grammatic.grammar.template.grammarTemplate {
 	class AlternativeTemplate extends TemplateBody<org.abreslav.grammatic.grammar.Alternative>;
 	class IterationTemplate;
 	class GrammarTemplate;
+	class SymbolTemplate;
 	class SequenceTemplate extends TemplateBody<org.abreslav.grammatic.grammar.Sequence>;
 }
 
@@ -51,6 +52,6 @@ package org.abreslav.grammatic.parser.util {
 	class ListBuilder<I, L extends I>;
 }
 
-package org.abreslav.grammatic.grammar1 {
-	class RenamingManager;
+package org.abreslav.grammatic.atf.generator {
+	class IRenamingManager;
 }
