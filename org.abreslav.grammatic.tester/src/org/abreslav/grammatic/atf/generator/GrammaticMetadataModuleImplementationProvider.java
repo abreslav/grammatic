@@ -3,9 +3,15 @@
  */
 package org.abreslav.grammatic.atf.generator;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.abreslav.grammatic.grammar.Expression;
+import org.abreslav.grammatic.grammar.ExpressionValue;
+import org.abreslav.grammatic.grammar.GrammarFactory;
+import org.abreslav.grammatic.grammar.template.parser.GrammaticGrammarTemplateBuilders;
+import org.abreslav.grammatic.grammar.template.parser.IParsingContext;
 import org.abreslav.grammatic.grammar1.IGrammaticMetadataModuleImplementationProvider;
 import org.abreslav.grammatic.metadata.Annotated;
 import org.abreslav.grammatic.metadata.Attribute;
@@ -20,18 +26,30 @@ import org.abreslav.grammatic.metadata.StringValue;
 import org.abreslav.grammatic.metadata.TupleValue;
 import org.abreslav.grammatic.metadata.Value;
 import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
+import org.abreslav.grammatic.template.TemplateBody;
+import org.abreslav.grammatic.template.instantiator.TemplateInstantiatorInterpreter;
 import org.eclipse.emf.ecore.EObject;
 
 public class GrammaticMetadataModuleImplementationProvider implements
 		IGrammaticMetadataModuleImplementationProvider {
 	private final Map<String, Namespace> myNamespaces = new HashMap<String, Namespace>();
+	private final TemplateInstantiatorInterpreter myInstantiator;
 	private final IWritableAspect myWritableAspect;
 
 	public GrammaticMetadataModuleImplementationProvider(
-			IWritableAspect writableAspect) {
+			IWritableAspect writableAspect,
+			TemplateInstantiatorInterpreter instantiator) {
+		myInstantiator = instantiator;
 		myWritableAspect = writableAspect;
 	}
 
+	public GrammaticMetadataModuleImplementationProvider(IParsingContext parsingContext) {
+		this(
+			parsingContext.getWritableAspectForTemplates(), 
+			parsingContext.getInstantiator(null)
+		);
+	}
+	
 	@Override
 	public ITermFunctions getTermFunctions() {
 		return new ITermFunctions() {
@@ -216,6 +234,15 @@ public class GrammaticMetadataModuleImplementationProvider implements
 			@Override
 			public void addItem(MultiValue multi, Value term) {
 				multi.getValues().add(term);
+			}
+
+			@Override
+			public Value createExpressionValue(
+					TemplateBody<? extends Expression> alternative) {
+				ExpressionValue value = GrammarFactory.eINSTANCE.createExpressionValue();
+				Collection<Expression> expression = myInstantiator.instantiateTemplateBody(alternative);
+				value.setExpression(GrammaticGrammarTemplateBuilders.unwrap(expression));
+				return value;
 			}
 		};
 	}

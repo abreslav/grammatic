@@ -56,19 +56,22 @@ public class ParsingContext implements IParsingContext {
 	private final WritableAspect myTemplatesMetadata;
 	private final Set<String> myLoadedTemlpates = new HashSet<String>();
 	private final Map<String, Grammar> myLoadedGrammars = new HashMap<String, Grammar>();
+	private final IGrammarParser myGrammarParser;
 	
 	private final IGrammarLoadHandler myLoadHandler;
 
-	public ParsingContext(FileLocator fileLocator, IWritableAspect writableAspect, IGrammarLoadHandler loadHandler) {
-		this(fileLocator, writableAspect, THROW_EXCEPTION, THROW_EXCEPTION, loadHandler);
+	public ParsingContext(IGrammarParser grammarParser, FileLocator fileLocator, IWritableAspect writableAspect, IGrammarLoadHandler loadHandler) {
+		this(grammarParser, fileLocator, writableAspect, THROW_EXCEPTION, THROW_EXCEPTION, loadHandler);
 	}
 	
 	public ParsingContext(
+			IGrammarParser grammarParser,
 			FileLocator fileLocator, 
 			final IWritableAspect writableAspect, 
 			IUnresolvedKeysHandler<IKey> unresolvedSymbolsHandler, 
 			IUnresolvedKeysHandler<IKey> unresolvedTemplatesHandler,
 			IGrammarLoadHandler loadHandler) {
+		myGrammarParser = grammarParser;
 		myFileLocator = fileLocator;
 		mySymbolDomain = ResolvingDomain.create(SYMBOL_STUB_FACTORY);
 		myTemplateDomain = ResolvingDomain.create(TEMPLATE_STUB_FACTORY);
@@ -138,7 +141,7 @@ public class ParsingContext implements IParsingContext {
 		if (!myLoadedGrammars.containsKey(fileName)) {
 			// We may use IProxy, but it's too heavy
 			myLoadedGrammars.put(fileName, null);
-			grammar = GrammarParser.parseGrammarWithGivenContext(fileName, 
+			grammar = myGrammarParser.parseGrammarWithGivenContext(fileName, 
 					getFile(fileName), this);
 			myLoadedGrammars.put(fileName, grammar);
 			myLoadHandler.grammarLoaded(fileName, grammar);
@@ -152,7 +155,7 @@ public class ParsingContext implements IParsingContext {
 		if (myLoadedTemlpates.contains(fileName)) {
 			return;
 		}
-		GrammarParser.parseTemplatesWithGivenContext(fileName, 
+		myGrammarParser.parseTemplatesWithGivenContext(fileName, 
 				getFile(fileName), this);
 		myLoadedTemlpates.add(fileName);
 	}

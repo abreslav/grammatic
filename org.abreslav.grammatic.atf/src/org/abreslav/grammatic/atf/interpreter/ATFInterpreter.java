@@ -28,6 +28,7 @@ import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.Production;
 import org.abreslav.grammatic.grammar.Symbol;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
 import org.abreslav.grammatic.grammar.template.parser.ParsingContext;
 import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
@@ -57,7 +58,7 @@ public class ATFInterpreter {
 			Map<SemanticModule, SemanticModuleDescriptor> descriptors)
 			throws IOException, RecognitionException, FileNotFoundException, InterruptedException {
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
-		ParsingContext parsingContext = new ParsingContext(fileLocator, writableAspect, IGrammarLoadHandler.NONE);
+		ParsingContext parsingContext = new ParsingContext(GrammarParserUtils.GRAMMAR_PARSER, fileLocator, writableAspect, IGrammarLoadHandler.NONE);
 		
 		ATFModuleLoader moduleParser = new ATFModuleLoader(typeSystemBuilder, parserImplementationFactory, fileLocator);
 		

@@ -2,4 +2,4 @@
 	'GrammaticMetadata.templates'{GrammaticMetadata}, 
 	'GrammaticGrammarTemplate.grammar' {alternative};
 
-#grammar GrammaticMetadata<: '<<' 'alternative' '>>'>
+#grammar GrammaticMetadata<: '<<' alternative '>>'>

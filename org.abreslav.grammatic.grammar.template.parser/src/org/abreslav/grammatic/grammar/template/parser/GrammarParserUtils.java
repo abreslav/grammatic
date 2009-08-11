@@ -17,21 +17,37 @@ import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-public class GrammarParser {
+public class GrammarParserUtils {
+	public static final IGrammarParser GRAMMAR_PARSER = new IGrammarParser() {
+		
+		@Override
+		public void parseTemplatesWithGivenContext(String fileName,
+				InputStream file, IParsingContext parsingContext)
+				throws IOException, RecognitionException {
+			GrammarParserUtils.parseTemplatesWithGivenContext(fileName, file, parsingContext);
+		}
+		
+		@Override
+		public Grammar parseGrammarWithGivenContext(String fileName,
+				InputStream file, IParsingContext parsingContext)
+				throws IOException, RecognitionException {
+			return GrammarParserUtils.parseGrammarWithGivenContext(fileName, file, parsingContext);
+		}
+	};
+	
 	public static Grammar parseGrammar(String mainGrammar,
 			FileLocator fileLocator, IWritableAspect writableAspect, IGrammarLoadHandler loadHandler) throws IOException,
 			RecognitionException {
-		IParsingContext parsingContext = new ParsingContext(fileLocator, writableAspect, loadHandler);
+		IParsingContext parsingContext = new ParsingContext(GRAMMAR_PARSER, fileLocator, writableAspect, loadHandler);
 		
 		Grammar grammar = parsingContext.loadGrammar(mainGrammar);
-		
 		parsingContext.handleUnresolvedKeys();
 		
 		return grammar;
 	}
 	
 	public static Expression parseExpressionFromString(String string, Map<String, Symbol> symbols, IWritableAspect writableAspect) throws RecognitionException {
-		ParsingContext parsingContext = new ParsingContext(null, writableAspect, IGrammarLoadHandler.NONE);
+		ParsingContext parsingContext = new ParsingContext(GRAMMAR_PARSER, null, writableAspect, IGrammarLoadHandler.NONE);
 		try {
 			GrammaticGrammarTemplateParser parser = configureParser("", new ByteArrayInputStream(string.getBytes()), 
 					parsingContext);

@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Symbol;
-import org.abreslav.grammatic.grammar.template.parser.GrammarParser;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.metadata.aspects.AspectsFactory;
 import org.abreslav.grammatic.metadata.aspects.MetadataAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.AspectWriter;
@@ -100,7 +100,7 @@ public class ExpressionMatcherTest {
 	public void test() throws Exception {
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
-		Expression expression = GrammarParser.parseExpressionFromString(myExpression + ";", new HashMap<String, Symbol>(), writableAspect);
+		Expression expression = GrammarParserUtils.parseExpressionFromString(myExpression + ";", new HashMap<String, Symbol>(), writableAspect);
 		ExpressionQuery query = QueryParser.parseExpressionQuery(myQuery + ";");
 		ExpressionMatcher expressionMatcher = new Matchers(new MetadataProvider(aspect)).getExpressionMatcher();
 		assertEquals(myExpression + " - " + myQuery, myResult, expressionMatcher.matchExpression(query, expression, new VariableValues()));

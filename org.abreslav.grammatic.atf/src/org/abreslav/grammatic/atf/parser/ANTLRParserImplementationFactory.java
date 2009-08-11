@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticCharacterBuilders;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticGrammarTemplateBuilders;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticLexicalGrammarBuilders;
@@ -56,6 +57,7 @@ public abstract class ANTLRParserImplementationFactory<P extends Parser> impleme
 		P parser = createParser(new CommonTokenStream(lexer));
 		ATFBuilders atfBuilders = new ATFBuilders(parserFrontEnd, typeSystemBuilder, errorHandler);
 		IParsingContext parsingContext = new ParsingContext(
+				GrammarParserUtils.GRAMMAR_PARSER,
 				fileLocator, 
 				IWritableAspect.ERROR, // Specifying metadata for attribute values is not supported 
 				IGrammarLoadHandler.NONE);

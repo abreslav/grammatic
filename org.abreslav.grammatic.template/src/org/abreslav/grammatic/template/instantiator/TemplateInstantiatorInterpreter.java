@@ -87,7 +87,7 @@ public class TemplateInstantiatorInterpreter {
 			return null;
 		}
 		// Template parameter references
-		if (body instanceof ParameterReference) {
+		if (body instanceof ParameterReference<?>) {
 			ParameterReference<? extends T> parameterReference = (ParameterReference<? extends T>) body;
 			TemplateParameter<? extends T> parameter = parameterReference.getParameter();
 			@SuppressWarnings("unchecked")
@@ -108,11 +108,11 @@ public class TemplateInstantiatorInterpreter {
 			return value;
 		}
 		// Template applications
-		if (body instanceof TemplateApplication) {
+		if (body instanceof TemplateApplication<?>) {
 			return instantiate((TemplateApplication<? extends T>) body);
 		}
 		// ObjectContainer
-		if (body instanceof ObjectContainer) {
+		if (body instanceof ObjectContainer<?>) {
 			ObjectContainer<? extends T> container = (ObjectContainer<? extends T>) body;
 			@SuppressWarnings("unchecked")
 			T copy = (T) EMFProxyUtil.copy(container.getObject(), myCopyHandler);

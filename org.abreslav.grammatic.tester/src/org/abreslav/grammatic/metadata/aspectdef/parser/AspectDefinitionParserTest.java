@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 
 import org.abreslav.grammatic.emfutils.ResourceLoader;
 import org.abreslav.grammatic.grammar.Grammar;
-import org.abreslav.grammatic.grammar.template.parser.GrammarParser;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
 import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
 import org.abreslav.grammatic.metadata.aspectdef.interpreter.AspectDefinitionInterpreter;
@@ -25,7 +25,7 @@ public class AspectDefinitionParserTest {
 		AspectDefinition aspectDefinition = AspectDefinitionParser.parseAspectDefinition(new FileInputStream(dataDir + "test.aspect"), null);
 		new ResourceLoader(dataDir + "/.").save("result.xmi", aspectDefinition);
 		
-		Grammar grammar = GrammarParser.parseGrammar("test.grammar",
+		Grammar grammar = GrammarParserUtils.parseGrammar("test.grammar",
 				new FileLocator(new File(dataDir)),
 				IWritableAspect.NONE,
 				IGrammarLoadHandler.NONE);

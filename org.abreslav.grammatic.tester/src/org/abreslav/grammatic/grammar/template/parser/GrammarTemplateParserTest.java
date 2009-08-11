@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.abreslav.grammatic.atf.generator.GrammarParserATF;
 import org.abreslav.grammatic.emfutils.ResourceLoader;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
@@ -30,6 +31,48 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(MyParameterized.class)
 public class GrammarTemplateParserTest {
 
+	private interface IGrammarParser {
+		Grammar parseGrammar(String grammarName,
+				FileLocator fileLocator, IWritableAspect writableAspect, IGrammarLoadHandler handler)
+				throws IOException, RecognitionException;
+	}
+	
+	private static final IGrammarParser[] GRAMMAR_PARSERS = {
+		new IGrammarParser() {
+
+			@Override
+			public Grammar parseGrammar(String grammarName,
+					FileLocator fileLocator, IWritableAspect writableAspect, IGrammarLoadHandler handler)
+					throws IOException, RecognitionException {
+					Grammar grammar = GrammarParserUtils.parseGrammar(
+							grammarName, 
+							fileLocator, 
+							writableAspect,
+							handler);
+					return grammar;
+			}
+			
+		},
+		
+		new IGrammarParser() {
+
+			@Override
+			public Grammar parseGrammar(String grammarName,
+					FileLocator fileLocator, IWritableAspect writableAspect,
+					IGrammarLoadHandler handler) throws IOException,
+					RecognitionException {
+				IParsingContext parsingContext = new ParsingContext(GrammarParserATF.INSTANCE, fileLocator, 
+						writableAspect, handler);
+				try {
+					return parsingContext.loadGrammar(grammarName);
+				} catch (Exception e) {
+					throw new RuntimeException(grammarName + ": " + e.getMessage(), e);
+				}
+			}
+			
+		}
+	};
+	
 	@Parameters
 	public static Collection<Object[]> parameters() throws FileNotFoundException, IOException, RecognitionException {
 		File testDir = new File("testData/grammarTemplateParser");
@@ -42,27 +85,26 @@ public class GrammarTemplateParserTest {
 			
 		});
 		List<Object[]> result = new ArrayList<Object[]>();
-		for (File file : listFiles) {
-			String grammarName = file.getName().replace(".aspect", ".grammar");
-			FileLocator fileLocator = new FileLocator(testDir);
-			MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
-			IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
-			Grammar grammar = GrammarParser.parseGrammar(
-					grammarName, 
-					fileLocator, 
-					writableAspect,
-					IGrammarLoadHandler.NONE);
-			AspectDefinition aspectDefinition = AspectDefinitionParser.parseAspectDefinition(new FileInputStream(file), null);
-			result.add(new Object[] {
-				file.getName(),
-				aspectDefinition,
-				grammar,
-				aspect,
-			});
+		for (IGrammarParser parser : GRAMMAR_PARSERS) {
+			for (File file : listFiles) {
+				String grammarName = file.getName().replace(".aspect", ".grammar");
+				FileLocator fileLocator = new FileLocator(testDir);
+				MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
+				IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
+				Grammar grammar = parser.parseGrammar(grammarName, fileLocator,
+						writableAspect, IGrammarLoadHandler.NONE);
+				AspectDefinition aspectDefinition = AspectDefinitionParser.parseAspectDefinition(new FileInputStream(file), null);
+				result.add(new Object[] {
+						file.getName(),
+						aspectDefinition,
+						grammar,
+						aspect,
+				});
+			}
 		}
 		return result;
 	}
-	
+
 	private final Grammar myGrammar;
 	private final AspectDefinition myAspectDefinition;
 	private final MetadataAspect myAspect;

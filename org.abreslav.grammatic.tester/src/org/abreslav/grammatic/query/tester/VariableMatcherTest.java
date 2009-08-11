@@ -27,7 +27,7 @@ import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Symbol;
 import org.abreslav.grammatic.grammar.SymbolReference;
-import org.abreslav.grammatic.grammar.template.parser.GrammarParser;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.metadata.aspects.AspectsFactory;
 import org.abreslav.grammatic.metadata.aspects.MetadataAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.AspectWriter;
@@ -412,7 +412,7 @@ public class VariableMatcherTest {
 		Map<String, Symbol> symbols = new HashMap<String, Symbol>();
 		myMetadataAspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(myMetadataAspect);
-		myExpression = GrammarParser.parseExpressionFromString(expression + ";", symbols, writableAspect);
+		myExpression = GrammarParserUtils.parseExpressionFromString(expression + ";", symbols, writableAspect);
 		if (result) {
 			for (Object[] objects : vars) {
 				List<VariableValue> values = new ArrayList<VariableValue>();

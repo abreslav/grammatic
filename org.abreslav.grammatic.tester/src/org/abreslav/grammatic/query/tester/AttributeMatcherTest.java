@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Symbol;
-import org.abreslav.grammatic.grammar.template.parser.GrammarParser;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.metadata.aspects.AspectsFactory;
 import org.abreslav.grammatic.metadata.aspects.MetadataAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.AspectWriter;
@@ -70,7 +70,7 @@ public class AttributeMatcherTest {
 	public void testExactValue() throws Exception {
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
-		Expression expression = GrammarParser.parseExpressionFromString(myExpression + ";", new HashMap<String, Symbol>(), writableAspect);
+		Expression expression = GrammarParserUtils.parseExpressionFromString(myExpression + ";", new HashMap<String, Symbol>(), writableAspect);
 		
 		List<AttributeQuery> queries = QueryParser.parseAttributeQuery(myQueries);
 		MetadataProvider metadataProvider = new MetadataProvider(aspect);

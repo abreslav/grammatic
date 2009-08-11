@@ -28,10 +28,10 @@ importSpec
 }
 	
 renaming
-	: ($old=NAME '=')? $new=NAME
+	: ($new=NAME '=')? $old=NAME
 	;
 # (IRenamingManager manager, String moduleName) {
-	#before : old = null();
-	old : old = old#;
-	new : addRenaming(manager, moduleName, old, new#);
+	#before : new = null();
+	new : new = new#;
+	old : addRenaming(manager, moduleName, old#, new);
 }

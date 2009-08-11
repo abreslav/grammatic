@@ -5,8 +5,7 @@ annotatedGrammar
 imports
 	: '#import' NAME (',' NAME)* ';'
 	;
-	
-	
+
 rule
 	: NAME metadata? ':' production ('||' production)* ';'
 	;
@@ -47,3 +46,4 @@ lexicalAtom
 	:  basicLexicalAtom
 	: '[[' alternative ']]'
 	;
+	

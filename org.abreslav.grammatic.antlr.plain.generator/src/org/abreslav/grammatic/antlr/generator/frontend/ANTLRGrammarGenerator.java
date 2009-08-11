@@ -25,7 +25,7 @@ import org.abreslav.grammatic.antlr.generator.utils.TemplateUtils;
 import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.Symbol;
-import org.abreslav.grammatic.grammar.template.parser.GrammarParser;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
 import org.abreslav.grammatic.metadata.Value;
 import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
@@ -64,7 +64,7 @@ public class ANTLRGrammarGenerator {
 		importsPath.add(new File(grammarDir));
 		FileLocator fileLocator = new FileLocator(importsPath);
 		final Map<String, Grammar> loadedGrammars = new HashMap<String, Grammar>();;
-		Grammar grammar = GrammarParser.parseGrammar(grammarName + ".grammar", fileLocator, writableAspect, new IGrammarLoadHandler() {
+		Grammar grammar = GrammarParserUtils.parseGrammar(grammarName + ".grammar", fileLocator, writableAspect, new IGrammarLoadHandler() {
 
 			@Override
 			public void grammarLoaded(String fileName, Grammar grammar) {

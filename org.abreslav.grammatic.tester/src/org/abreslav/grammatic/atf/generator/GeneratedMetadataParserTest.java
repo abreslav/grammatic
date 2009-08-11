@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.StringReader;
 import java.util.Arrays;
 
+import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
+import org.abreslav.grammatic.grammar.template.parser.IParsingContext;
+import org.abreslav.grammatic.grammar.template.parser.ParsingContext;
 import org.abreslav.grammatic.grammar1.GrammaticMetadataLexer;
 import org.abreslav.grammatic.grammar1.GrammaticMetadataParser;
 import org.abreslav.grammatic.metadata.Attribute;
@@ -32,8 +35,13 @@ public class GeneratedMetadataParserTest {
 		ANTLRReaderStream input = new ANTLRReaderStream(new StringReader(data ));
 		GrammaticMetadataLexer tokenSource = new GrammaticMetadataLexer(input);
 		GrammaticMetadataParser parser = new GrammaticMetadataParser(new CommonTokenStream(tokenSource));
-		parser.setModuleImplementations(new GrammaticCharacterModuleImplementationProvider(), 
-				new GrammaticMetadataModuleImplementationProvider(IWritableAspect.NONE), 
+		IParsingContext parsingContext = new ParsingContext(GrammarParserATF.INSTANCE, null, 
+				IWritableAspect.ERROR, IGrammarLoadHandler.NONE);
+		parser.setModuleImplementations(new GrammaticCharacterModuleImplementationProvider(),
+				new GrammaticGrammarTemplateModuleImplementationProvider("<none>", parsingContext),
+				new GrammaticLexicalGrammarModuleImplementationProvider(),
+				new GrammaticMetadataModuleImplementationProvider(parsingContext),
+				new BooleanModule(),
 				new StringModule());
 		TupleValue attributeList = parser.attributeList();
 		assertTrue(EcoreUtil.equals(attributeList,

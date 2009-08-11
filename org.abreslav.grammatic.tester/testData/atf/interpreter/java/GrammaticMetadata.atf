@@ -71,8 +71,8 @@ attributeValue
 	: STRING
 	: NAME
 	: metadata
-	$t=|: '{{' term* '}}'
-//	: '<<' alternative '>>'
+	$t=: '{{' term* '}}'
+	: '<<' alternative '>>'
 	;
 # --> (Value result) {
 	createMultiValue() --> (MultiValue result);
@@ -84,8 +84,7 @@ attributeValue
 	t.before : multi = createMultiValue();
 	term : addItem(multi, term#);
 	t.after : result = multi;
-	#before : result = local.valueNull();
-//	alternative : result = createExpressionValue(alternative#);
+	alternative : result = createExpressionValue(alternative#);
 }
 	
 term 

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticCharacterBuilders;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticGrammarTemplateBuilders;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticLexicalGrammarBuilders;
@@ -63,7 +64,7 @@ public class QueryParser {
 	private static GrammaticQueryBuilders configureParser(
 			GrammaticQueryParser parser) {
 		GrammaticQueryBuilders grammaticQueryBuilders = new GrammaticQueryBuilders();
-		IParsingContext parsingContext = new ParsingContext(new FileLocator(new File(".")), IWritableAspect.NONE, IGrammarLoadHandler.NONE);
+		IParsingContext parsingContext = new ParsingContext(GrammarParserUtils.GRAMMAR_PARSER, new FileLocator(new File(".")), IWritableAspect.NONE, IGrammarLoadHandler.NONE);
 		parser.setBuilders(
 				new GrammaticCharacterBuilders(), 
 				new GrammaticGrammarTemplateBuilders("<test module>", parsingContext),

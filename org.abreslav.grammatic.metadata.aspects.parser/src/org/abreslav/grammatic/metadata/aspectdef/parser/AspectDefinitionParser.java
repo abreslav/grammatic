@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticCharacterBuilders;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticGrammarTemplateBuilders;
 import org.abreslav.grammatic.grammar.template.parser.GrammaticLexicalGrammarBuilders;
@@ -36,6 +37,7 @@ public class AspectDefinitionParser {
 		GrammaticMetadataAspectsBuilders grammaticMetadataAspectBuilders = new GrammaticMetadataAspectsBuilders(grammaticQueryBuilders);
 		
 		IParsingContext parsingContext = new ParsingContext(
+				GrammarParserUtils.GRAMMAR_PARSER,
 				fileLocator, 
 				IWritableAspect.ERROR, // Specifying metadata for attribute values is not supported 
 				IGrammarLoadHandler.NONE);

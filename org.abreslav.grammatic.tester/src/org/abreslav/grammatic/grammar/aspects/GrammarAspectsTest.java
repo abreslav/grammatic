@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.abreslav.grammatic.emfutils.ResourceLoader;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.Symbol;
-import org.abreslav.grammatic.grammar.template.parser.GrammarParser;
+import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
 import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
 import org.abreslav.grammatic.metadata.aspectdef.interpreter.AspectDefinitionInterpreter;
@@ -25,7 +25,7 @@ public class GrammarAspectsTest {
 	public void test() throws Exception {
 		File dataDir = new File("testData/grammarAspects/");
 		FileLocator fileLocator = new FileLocator(dataDir);
-		final Grammar grammar = GrammarParser.parseGrammar("src.grammar", fileLocator, IWritableAspect.NONE, IGrammarLoadHandler.NONE);
+		final Grammar grammar = GrammarParserUtils.parseGrammar("src.grammar", fileLocator, IWritableAspect.NONE, IGrammarLoadHandler.NONE);
 		AspectDefinition gaspect = AspectDefinitionParser.parseAspectDefinition(new FileInputStream(new File(dataDir, "change.gaspect")), fileLocator);
 		AspectDefinition test = AspectDefinitionParser.parseAspectDefinition(new FileInputStream(new File(dataDir, "test.aspect")), fileLocator);
 		
