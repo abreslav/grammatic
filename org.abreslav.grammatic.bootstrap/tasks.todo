@@ -33,6 +33,8 @@
   <tasks description="ExpressionMatcher: Known bug (see embedParts): &quot;(('a' 'a') | ('b' 'b') | 'm') ('a' | ('b' 'b') | 'm')&quot;, &quot;(('a' 'a') | $alt:...) ('a' | $b:$alt )&quot;,"/>
   <tasks description="Automatically apply transformations like left factoring (with aspect-ruled syntex and workflow)" hits="1"/>
   <tasks description="Introduce #EOF eyword in grammar language" hits="2"/>
-  <tasks description="ATF: Introduce &quot;Inherited attributes&quot; -- the ones which are implicitly passed down the stack" hits="2"/>
+  <tasks description="ATF: Introduce &quot;Inherited attributes&quot; -- the ones which are implicitly passed down the stack" hits="3"/>
   <tasks description="ATFJava: Allow calling methods on objects (writing redundant functions is a mess)" hits="1"/>
+  <tasks description="ATF: For expression like x? and x* provide a label handling absence of an item" hits="1"/>
+  <tasks description="ATF: what about default attribute values? It's too verbose to initialize everything with nulls (maybe that label about absence on x? will help?)" hits="2"/>
 </todo:Tasks>

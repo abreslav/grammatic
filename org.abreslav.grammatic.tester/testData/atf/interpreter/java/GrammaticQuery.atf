@@ -1,0 +1,242 @@
+#import 
+	'GrammaticLexer.grammar'{NAME}, 
+	'GrammaticMetadata.grammar'{attributeValue},
+	'GrammaticGrammarTemplate.grammar'{lexicalAtomIndependent};
+
+ruleQueryContainer
+	: symbolQueryWithVar productionQuery* ';'
+	;
+# --> (QueryContainer<RuleQuery> result) {
+	RuleQuery query;
+	#before: query = createRuleQuery();
+	symbolQueryWithVar:: #(query);
+	productionQuery:: #(query);
+	#after: result = createQueryContainer(query);
+}
+		
+symbolQueryWithVar
+	: variablePrefix? anonymousSymbolQuery
+	: namedSymbolQuery
+	;
+# (RuleQuery query) {
+	#before: varName = string.null();
+	variablePrefix: varName = variablePrefix#;
+	anonymousSymbolQuery: anonymousLeftSide(query, varName, anonymousSymbolQuery#); 
+	namedSymbolQuery: namedLeftSide(query, namedSymbolQuery#);
+}
+	
+variablePrefix
+	: $d='$' NAME? '='
+	;
+# --> (String result) {
+	#before: result = #text(d);
+	NAME: result = NAME#;
+}
+
+symbolReferenceQuery
+	: anonymousSymbolQuery
+	: namedSymbolQuery
+	;
+# --> (ExpressionQuery result) {
+	anonymousSymbolQuery:: result = createSymbolReferenceQuery(anonymousSymbolQuery#);
+	namedSymbolQuery:: result = addSymbolQueryVariable(namedSymbolQuery#);
+}
+		
+anonymousSymbolQuery
+	: '#'
+	: '@' queryMetadata '@'
+	;
+# --> (SymbolQuery result) {
+	#before: result = createSymbolQuery();
+	queryMetadata:: #(result);
+}
+	
+namedSymbolQuery
+	: NAME
+	;
+# --> (SymbolQuery result) {
+	NAME: result = createNamedQuery(NAME#);
+}
+		
+productionQuery 
+	: $pV=variablePrefix? (':' | '|:') alternativeQuery
+	: ':' $wV=variablePrefix? '{...}'
+	;
+# (RuleQuery query) {
+	#before: productionVariable = string.null();
+	pV: productionVariable = pV#;
+	alternativeQuery: addProduction(query, productionVariable, alternativeQuery#);
+	wV: setWildcardVariable(query, vW#);
+	'|:',  
+	'{...}': setOpen(query);
+}
+	
+expressionQuery
+	: alternativeQuery ';'
+	;
+# --> (ExpressionQuery result) {
+	alternativeQuery:: result = #();
+}
+	
+alternativeQuery
+	: sequenceQuery ('|' (sequenceQuery | alternativeWildcard))*
+	;
+# --> (ExpressionQuery result) {
+	ListBuilder builder;
+	#before: {
+		builder = createListBuilder();
+		open = Boolean.false();
+	}
+	sequenceQuery: addItem(builder, sequenceQuery#);
+	alternativeWildcard: open = Boolean.true();
+	#after: result = getResult(builder, open);
+}
+
+alternativeWildcard
+	: variablePrefix? '...'
+	;
+
+sequenceQuery
+	: iterationQuery+
+	;
+# --> (ExpressionQuery result) {
+	ListBuilder builder;
+	#before: builder = createListBuilder();
+	iterationQuery: addItem(builder, iterationQuery#);
+	#after: result = getResult(builder);
+}
+	
+iterationQuery
+	: varOrAtom (queryMetadata)? operation
+	: variablePrefix? '..'
+	;
+# --> (ExpressionQuery result) {
+	queryMetadata:: #(varOrAtom#);
+	operation:: operation();
+	operation: result = assembleIterationQuery(varOrAtom#, operation#);
+	#before: variablePrefix = null();
+	variablePrefix:: variablePrefix = #();
+	'..': result = createSequeceWildcard(variablePrefix); 
+}
+	
+operation 
+	: $token=('*' | '+' | '?'
+	: #empty
+	;
+[[
+	operation() --> (IterationQuery result) {
+		token: result = createIteration(#text(token));
+		#empty: result = null();
+	}
+	lexicalOperation() --> (Iteration result) {
+		token: result = createIteration(#text(token));
+		#empty: result = null();
+	}
+]]
+
+varOrAtom
+	: $a=atom
+	$var=: variablePrefix atom
+	;
+# --> (ExpressionQuery result) {
+	a:: result = #();
+	var: result = createVariableQuery(variablePrefix#, atom#);
+}
+
+atom
+	: symbolReferenceQuery
+	: '$' NAME
+	: '(' alternativeQuery ')'
+	: lexicalAtom
+	: '#lex'
+	: '#empty'
+	;
+# --> (ExpressionQuery result) {
+	symbolReferenceQuery:: result = #();
+	NAME: result = createVariableReference(NAME#);
+	alternativeQuery: result = #();
+	lexicalAtom: result = createExactQuery(lexicalAtom#);
+	'#lex': result = createAnyLexicalQuery();
+	'#empty': result = createEmptyQuery();
+}
+	
+queryMetadata 
+	: '{' (attributeQuery (';' attributeQuery?)*)? '}'
+	;
+# (MetadataQuery query) {
+	attributeQuery: addAttribute(query, attributeQuery#);
+}
+
+attributeQuery 
+	: attributeWithValueQuery
+	$not=: '!' namespaceUri? NAME
+	: namespaceUri? NAME ':' attributeType 
+	;		 
+# --> (AttributeQuery result) {
+	attributeWithValueQuery:: result = #();
+	#before: namespaceUri = null();
+	namespaceUri:: namespaceUri = #();
+	not.after: result = createAbsence(namespaceUri, NAME#);
+	attributeType: result = createType(namespaceUri, NAME#, attributeType#);
+}
+
+attributeWithValueQuery
+	: namespaceUri? NAME ('=' attributeValue)?
+	;
+# --> (AttributeQuery result) {
+	namespaceUri: setNamespace(result, namespaceUri#);
+	NAME: setName(result, NAME#);
+	attributeValue: setValue(result, attributeValue#);
+}
+	
+namespaceUri
+	: NAME ':'
+	;
+# --> (String result) {
+	NAME: result = NAME#;
+}
+
+attributeType
+	: '#' NAME
+	;
+# --> (AttributeTypeOptions result) {
+	NAME: result = getOptions(NAME#);
+}
+////////////////////////////////////////////////
+	
+lexicalAlternative
+	: lexicalSequence ('|' lexicalSequence)*
+	;
+# --> (Expression result) {
+	ListBuilder builder;
+	#before: builder = createListBuilder();
+	lexicalSequence: addItem(builder, lexicalSequence#);
+	#after: result = getResult(builder);
+}
+
+lexicalSequence
+	: lexicalIteration+
+	;
+# --> (Expression result) {
+	ListBuilder builder;
+	#before: builder = createListBuilder();
+	lexicalIteration: addItem(builder, lexicalIteration#);
+	#after: result = getResult(builder);
+}
+	
+lexicalIteration
+	: lexicalAtom operation
+	;
+# --> (Expression result) {
+	operation:: lexicalOperation(); 
+	#after: result = assembleIteration(lexicalOperation#, lexicalAtom#);
+}
+	
+lexicalAtom
+	: lexicalAtomIndependent
+	: '[[' lexicalAlternative ']]'
+	;
+# --> (Expression result) {
+	lexicalAtomIndependent:: result = #();
+	lexicalAlternative:: result = #();
+}
