@@ -35,6 +35,7 @@ import org.abreslav.grammatic.template.TemplateBody;
 import org.abreslav.grammatic.template.TemplateFactory;
 import org.abreslav.grammatic.template.TemplateParameter;
 import org.abreslav.grammatic.template.instantiator.TemplateInstantiatorInterpreter;
+import org.abreslav.grammatic.utils.IErrorHandler;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -42,22 +43,41 @@ public class GrammaticGrammarTemplateModuleImplementationProvider
 		implements IGrammaticGrammarTemplateModuleImplementationProvider {
 
 	private final Map<String, TemplateParameter<?>> myTemplateParameters = new HashMap<String, TemplateParameter<?>>();
-	private final ImportsModuleImplementationProvider myImportsModuleImplementationProvider;
+	private final IErrorHandler<RuntimeException> myErrorHandler = new IErrorHandler<RuntimeException>() {
+		@Override
+		public void reportError(String string, Object... objects) {
+			GrammaticGrammarTemplateModuleImplementationProvider.this.reportError(string, objects);
+		}
+	};
+	private final IRenamingManager myRenamingManager = new RenamingManager(myErrorHandler);
+	
 	private final String myModuleName;
 	private final IParsingContext myParsingContext;
 	private final TemplateInstantiatorInterpreter myInstantiator;
 	private String myCurrentTemplateName;
 
 	public GrammaticGrammarTemplateModuleImplementationProvider(
-			String moduleName, IParsingContext parsingContext,
-			String currentTemplateName) {
+			String moduleName, IParsingContext parsingContext) {
 		myModuleName = moduleName;
 		myParsingContext = parsingContext;
-		myCurrentTemplateName = currentTemplateName;
-		// TODO:
-		throw new UnsupportedOperationException("Initialize import provider and instantiator properly!");
+		myInstantiator = parsingContext.getInstantiator(myModuleName);
 	}
 
+	public IErrorHandler<RuntimeException> getErrorHandler() {
+		return myErrorHandler;
+	}
+	
+	@Override
+	public IServices getServices() {
+		return new IServices() {
+			
+			@Override
+			public IRenamingManager getRenamingManager() {
+				return myRenamingManager;
+			}
+		};
+	}
+	
 	@Override
 	public ITypeFunctions getTypeFunctions() {
 		return new ITypeFunctions() {
@@ -495,7 +515,7 @@ public class GrammaticGrammarTemplateModuleImplementationProvider
 	}
 
 	private IKey resolveName(String name) {
-		IKey key = myImportsModuleImplementationProvider.resolveName(name);
+		IKey key = myRenamingManager.resolveName(name);
 		if (key == null) {
 			key = TemplateKey.createKey(myModuleName + "/" + myCurrentTemplateName, name);
 		}

@@ -20,7 +20,10 @@ importSpec
 	: STRING '{' renaming (',' renaming)* '}'
 	;
 # (IRenamingManager manager) {
-	STRING : moduleName = string.createString(STRING#);
+	STRING : {
+		moduleName = string.createString(STRING#);
+		loadModule(moduleName);
+	}
 	renaming:: #(manager, moduleName);
 }
 	

@@ -27,11 +27,15 @@
 	grammarPackage = 'org.abreslav.grammatic.grammar1';
 }
 
+#module services {
+	getRenamingManager() --> (IRenamingManager manager); 
+}
+
 grammar 
 	: import* (defaultTemplate | '#grammar' templateApplication)
 	;
-# (IRenamingManager manager) --> (Grammar result) {
-	import:: #(manager);
+# --> (Grammar result) {
+	import:: #(services.getRenamingManager());
 	defaultTemplate:: result = #();
 	templateApplication: result = instantiate(templateApplication#); 
 }
@@ -46,8 +50,8 @@ lexicalAtomIndependent
 templateLibrary 
 	: import* templateDeclaration*
 	;
-# (IRenamingManager manager) {
-	import:: #(manager);
+# {
+	import:: #(services.getRenamingManager());
 //	templateDeclaration: addTemplateDeclaration(templateDeclaration#);
 }
 	

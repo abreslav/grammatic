@@ -4,6 +4,7 @@ import static org.abreslav.grammatic.grammar.template.parser.CharacterRangeUtils
 import static org.abreslav.grammatic.grammar.template.parser.CharacterRangeUtils.createCharacterRange;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -14,12 +15,15 @@ import org.abreslav.grammatic.grammar.template.grammarTemplate.AlternativeTempla
 import org.abreslav.grammatic.grammar.template.grammarTemplate.GrammarTemplateFactory;
 import org.abreslav.grammatic.grammar.template.grammarTemplate.LexicalExpressionTemplate;
 import org.abreslav.grammatic.grammar.template.grammarTemplate.StringExpressionTemplate;
+import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
+import org.abreslav.grammatic.grammar.template.parser.IParsingContext;
+import org.abreslav.grammatic.grammar.template.parser.ParsingContext;
 import org.abreslav.grammatic.grammar1.GrammaticGrammarTemplateLexer;
 import org.abreslav.grammatic.grammar1.GrammaticGrammarTemplateParser;
-import org.abreslav.grammatic.grammar1.IGrammaticGrammarTemplateModuleImplementationProvider;
 import org.abreslav.grammatic.grammar1.IImportsModuleImplementationProvider;
 import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
 import org.abreslav.grammatic.template.TemplateBody;
+import org.abreslav.grammatic.utils.FileLocator;
 import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -62,8 +66,9 @@ public class GeneratedGrammarTemplateParserTest {
 		ANTLRReaderStream input = new ANTLRReaderStream(new StringReader(data ));
 		GrammaticGrammarTemplateLexer tokenSource = new GrammaticGrammarTemplateLexer(input);
 		GrammaticGrammarTemplateParser parser = new GrammaticGrammarTemplateParser(new CommonTokenStream(tokenSource));
-		IGrammaticGrammarTemplateModuleImplementationProvider temp = new GrammaticGrammarTemplateModuleImplementationProvider();
-		IImportsModuleImplementationProvider imp = new ImportsModuleImplementationProvider();
+		IParsingContext parsingContext = new ParsingContext(new FileLocator(new File(".")), IWritableAspect.ERROR, IGrammarLoadHandler.NONE);
+		GrammaticGrammarTemplateModuleImplementationProvider temp = new GrammaticGrammarTemplateModuleImplementationProvider(data, parsingContext);
+		IImportsModuleImplementationProvider imp = new ImportsModuleImplementationProvider(parsingContext, temp.getErrorHandler());
 		IWritableAspect writableAspect = IWritableAspect.NONE;
 		parser.setModuleImplementations(
 				new GrammaticCharacterModuleImplementationProvider(),

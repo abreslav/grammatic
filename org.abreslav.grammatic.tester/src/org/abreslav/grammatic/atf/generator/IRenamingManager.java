@@ -1,5 +1,7 @@
 package org.abreslav.grammatic.atf.generator;
 
-public interface IRenamingManager {
+import org.abreslav.grammatic.grammar.template.parser.INameResolver;
 
+public interface IRenamingManager extends INameResolver {
+	void addRenaming(String module, String newName, String oldName);
 }
