@@ -173,7 +173,36 @@ functionCall
 patternBinding
 	: VARIABLE '->' pattern // conditionalElement?
 	;
+	
+test
+	: VARIABLE
+	: literalValue // expression?
+	: ':' functionCall
+	: '=' functionCall
+	: '/' JAVA_REG_EXP '/'
+	: '~' test
+	; 
+	
+tests
+	: VARIABLE? testExpression? // ambiguity: we cannot syntactically distinguish
+								// a variable which is bounded here from
+								// the one which is used here
+								// semantically advised parsing needed!
+	;
+	
+testExpression
+	: testMult ('|' testMult)*
+	;
 
+testMult
+	: testAtom ('&' testAtom)*
+	; 
+	
+testAtom
+	: test
+	: '(' testExpression ')' // ~ is forbidden for use before ()
+	;
+	
 conditionalElement
 	: patternBinding
 	: pattern
