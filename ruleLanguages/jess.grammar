@@ -170,11 +170,29 @@ functionCall
 	: '(' expression+ ')'
 	;
 
+patternBinding
+	: VARIABLE '->' pattern // conditionalElement?
+	;
+
+conditionalElement
+	: patternBinding
+	: pattern
+	: connective 
+	;
+	
+patternComparison
+	: '<' | '>' | '<=' | '>=' | '==' | '!=' | '<>'
+	;
+
+patternConnective
+	: '&&' | '||'
+	;
+
 defrule 
 	: '(' 'defrule' nonVariableSymbol
     	STRING?
     	ruleDeclarations?
-    	expression* // conditional element???
+    	conditionalElement*
     	'=>'
     	functionCall* // it is a nonempty list! 
       ')'
@@ -199,7 +217,7 @@ defquery
 	: '(' 'defquery' nonVariableSymbol
     	STRING?
     	queryDeclarations?
-    	expression* // Any restrictions here?! 
+    	conditionalElement* 
       ')'
 	;
 	
