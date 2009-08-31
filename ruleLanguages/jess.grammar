@@ -1,6 +1,10 @@
 // keywords are soft!!!
 // Consider '.' in names
 //   prohibited for slots and variables 
+//   variables ? and $? emit a new variable on each occurrence 
+// a multifield is not a special kind of variable. When a multifield $?list is matched, it's the variable ?list that receives the value.
+// names may be preceded by MODULE_NAME::
+// Suport for (bind ?pt (new java.awt.Point))
 WS : 0x0000--' ';
 NEWLINE : '\n' | '\r' ;
 INLINE_COMMENT : ';' [^ NEWLINE] NEWLINE ;
@@ -175,7 +179,7 @@ patternBinding
 	;
 	
 test
-	: VARIABLE
+	: (VARIABLE | MULTIFIELD) // duplication
 	: literalValue // expression?
 	: ':' functionCall
 	: '=' functionCall
@@ -184,7 +188,7 @@ test
 	; 
 	
 tests
-	: VARIABLE? testExpression? // ambiguity: we cannot syntactically distinguish
+	: (VARIABLE | MULTIFIELD)? testExpression? // ambiguity: we cannot syntactically distinguish
 								// a variable which is bounded here from
 								// the one which is used here
 								// semantically advised parsing needed!
@@ -204,9 +208,22 @@ testAtom
 	;
 	
 conditionalElement
+	: conditionalElementBody 
 	: patternBinding
+	;
+	
+
+conditionalElementBody
 	: pattern
-	: connective 
+	: '(' 'and' conditionalElement+ ')' // are bindings allowed here?
+	: '(' 'or' conditionalElement+ ')' // are bindings allowed here?
+	: '(' 'logical' conditionalElement+ ')' // are bindings allowed here? multiple?
+	: '(' 'forall' conditionalElement conditionalElement+ ')' // are bindings allowed here? patterns?
+	: '(' 'exists' conditionalElement ')' // are bindings allowed here?
+	: '(' 'not' conditionalElementBody ')' // no bindings; only local variables allowed
+	: '(' 'test' functionCall ')' // boolean result! same as no bindings; only local variables allowed
+	: '(' 'accumulate' ?! ')' // ???
+	: '(' 'unique' conditionalElement+ ')' // ignored
 	;
 	
 patternComparison
