@@ -36,6 +36,7 @@ package org.abreslav.grammatic.grammar {
 	class Alternative extends Expression;
 	class Production;
 	class Sequence extends Expression;
+	class Iteration extends Expression;
 	class Symbol;
 }
 
@@ -54,4 +55,18 @@ package org.abreslav.grammatic.parser.util {
 
 package org.abreslav.grammatic.atf.generator {
 	class IRenamingManager;
+}
+
+package org.abreslav.grammatic.query {
+	class AttributeQuery;
+	class AttributeTypeOptions;
+	class ExpressionQuery;
+	class SequenceQuery extends ExpressionQuery;
+	class AlternativeQuery extends ExpressionQuery;
+	class IterationQuery;
+	class MetadataQuery;
+	class ProductionQuery;
+	class RuleQuery;
+	class SymbolQuery;
+	class QueryContainer<T>;
 }

@@ -1,7 +1,30 @@
 #import 
-	'GrammaticLexer.grammar'{NAME}, 
-	'GrammaticMetadata.grammar'{attributeValue},
-	'GrammaticGrammarTemplate.grammar'{lexicalAtomIndependent};
+  'string.module'{string},
+  'boolean.module'{x}, 	
+  'grammatic.typesystem'{some};
+
+#import org.abreslav.grammatic.grammar.Expression;
+#import org.abreslav.grammatic.grammar.Iteration;
+#import org.abreslav.grammatic.grammar.Sequence;
+#import org.abreslav.grammatic.grammar.Alternative;
+#import org.abreslav.grammatic.metadata.Value;
+#import org.abreslav.grammatic.query.AttributeQuery;
+#import org.abreslav.grammatic.query.AttributeTypeOptions;
+#import org.abreslav.grammatic.query.ExpressionQuery;
+#import org.abreslav.grammatic.query.IterationQuery;
+#import org.abreslav.grammatic.query.MetadataQuery;
+#import org.abreslav.grammatic.query.ProductionQuery;
+#import org.abreslav.grammatic.query.RuleQuery;
+#import org.abreslav.grammatic.query.SymbolQuery;
+#import org.abreslav.grammatic.query.SequenceQuery;
+#import org.abreslav.grammatic.query.AlternativeQuery;
+#import org.abreslav.grammatic.query.QueryContainer;
+#import org.abreslav.grammatic.parser.util.ListBuilder;
+
+#javaoptions {
+	grammarName = 'GrammaticQuery';
+	grammarPackage = 'org.abreslav.grammatic.grammar1';
+}
 
 ruleQueryContainer
 	: symbolQueryWithVar productionQuery* ';'
@@ -38,8 +61,8 @@ symbolReferenceQuery
 	: namedSymbolQuery
 	;
 # --> (ExpressionQuery result) {
-	anonymousSymbolQuery:: result = createSymbolReferenceQuery(anonymousSymbolQuery#);
-	namedSymbolQuery:: result = addSymbolQueryVariable(namedSymbolQuery#);
+	anonymousSymbolQuery: result = createSymbolReferenceQuery(anonymousSymbolQuery#);
+	namedSymbolQuery: result = addSymbolQueryVariable(namedSymbolQuery#);
 }
 		
 anonymousSymbolQuery
@@ -66,7 +89,7 @@ productionQuery
 	#before: productionVariable = string.null();
 	pV: productionVariable = pV#;
 	alternativeQuery: addProduction(query, productionVariable, alternativeQuery#);
-	wV: setWildcardVariable(query, vW#);
+	wV: setWildcardVariable(query, wV#);
 	'|:',  
 	'{...}': setOpen(query);
 }
@@ -79,28 +102,26 @@ expressionQuery
 }
 	
 alternativeQuery
-	: sequenceQuery ('|' (sequenceQuery | alternativeWildcard))*
+	: sequenceQuery ('|' (sequenceQuery | (variablePrefix? '...')))*
 	;
 # --> (ExpressionQuery result) {
-	ListBuilder builder;
+	ListBuilder<ExpressionQuery, AlternativeQuery> builder;
 	#before: {
 		builder = createListBuilder();
 		open = Boolean.false();
+		variablePrefix = string.null();
 	}
 	sequenceQuery: addItem(builder, sequenceQuery#);
-	alternativeWildcard: open = Boolean.true();
-	#after: result = getResult(builder, open);
+	'...': open = Boolean.true();
+	variablePrefix:: variablePrefix = #();
+	#after: result = getResult(builder, open, variablePrefix);
 }
-
-alternativeWildcard
-	: variablePrefix? '...'
-	;
 
 sequenceQuery
 	: iterationQuery+
 	;
 # --> (ExpressionQuery result) {
-	ListBuilder builder;
+	ListBuilder<ExpressionQuery, SequenceQuery> builder;
 	#before: builder = createListBuilder();
 	iterationQuery: addItem(builder, iterationQuery#);
 	#after: result = getResult(builder);
@@ -112,35 +133,35 @@ iterationQuery
 	;
 # --> (ExpressionQuery result) {
 	queryMetadata:: #(varOrAtom#);
-	operation:: operation();
-	operation: result = assembleIterationQuery(varOrAtom#, operation#);
+	operation:: op = operation();
+	operation: result = assembleIterationQuery(varOrAtom#, op);
 	#before: variablePrefix = null();
 	variablePrefix:: variablePrefix = #();
 	'..': result = createSequeceWildcard(variablePrefix); 
 }
 	
 operation 
-	: $token=('*' | '+' | '?'
-	: #empty
+	: $token=('*' | '+' | '?')
+	: $e=#empty
 	;
 [[
 	operation() --> (IterationQuery result) {
 		token: result = createIteration(#text(token));
-		#empty: result = null();
+		e: result = null();
 	}
 	lexicalOperation() --> (Iteration result) {
 		token: result = createIteration(#text(token));
-		#empty: result = null();
+		e: result = null();
 	}
 ]]
 
 varOrAtom
-	: $a=atom
+	: atom
 	$var=: variablePrefix atom
 	;
 # --> (ExpressionQuery result) {
-	a:: result = #();
-	var: result = createVariableQuery(variablePrefix#, atom#);
+	atom:: result = #();
+	var: result = createVariableQuery(variablePrefix#, result);
 }
 
 atom
@@ -154,7 +175,7 @@ atom
 # --> (ExpressionQuery result) {
 	symbolReferenceQuery:: result = #();
 	NAME: result = createVariableReference(NAME#);
-	alternativeQuery: result = #();
+	alternativeQuery:: result = #();
 	lexicalAtom: result = createExactQuery(lexicalAtom#);
 	'#lex': result = createAnyLexicalQuery();
 	'#empty': result = createEmptyQuery();
@@ -184,6 +205,7 @@ attributeWithValueQuery
 	: namespaceUri? NAME ('=' attributeValue)?
 	;
 # --> (AttributeQuery result) {
+	#before: result = createAttributeQuery();
 	namespaceUri: setNamespace(result, namespaceUri#);
 	NAME: setName(result, NAME#);
 	attributeValue: setValue(result, attributeValue#);
@@ -208,7 +230,7 @@ lexicalAlternative
 	: lexicalSequence ('|' lexicalSequence)*
 	;
 # --> (Expression result) {
-	ListBuilder builder;
+	ListBuilder<Expression, Alternative> builder;
 	#before: builder = createListBuilder();
 	lexicalSequence: addItem(builder, lexicalSequence#);
 	#after: result = getResult(builder);
@@ -218,7 +240,7 @@ lexicalSequence
 	: lexicalIteration+
 	;
 # --> (Expression result) {
-	ListBuilder builder;
+	ListBuilder<Expression, Sequence> builder;
 	#before: builder = createListBuilder();
 	lexicalIteration: addItem(builder, lexicalIteration#);
 	#after: result = getResult(builder);
@@ -228,8 +250,8 @@ lexicalIteration
 	: lexicalAtom operation
 	;
 # --> (Expression result) {
-	operation:: lexicalOperation(); 
-	#after: result = assembleIteration(lexicalOperation#, lexicalAtom#);
+	operation:: lexOp = lexicalOperation(); 
+	#after: result = assembleIteration(lexOp, lexicalAtom#);
 }
 	
 lexicalAtom

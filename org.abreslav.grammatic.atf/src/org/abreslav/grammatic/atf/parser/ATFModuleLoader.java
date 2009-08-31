@@ -97,8 +97,12 @@ public class ATFModuleLoader implements IATFModuleLoader {
 		} catch (RecognitionException e) {
 			myErrorHandler.reportError("Parsing Semantic module %s: %s", moduleName, e.getMessage());
 		} catch (RuntimeException e) {
-			String position = parser.getPositionString();
-			throw new IllegalArgumentException(String.format("%s: %s", position, e.getMessage()), e);
+			if (parser != null) {
+				String position = parser.getPositionString();
+				throw new IllegalArgumentException(String.format("%s: %s", position, e.getMessage()), e);
+			} else {
+				throw e;
+			}
 		}
 		throw new IllegalStateException();
 	}

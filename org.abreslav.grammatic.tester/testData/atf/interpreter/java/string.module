@@ -4,4 +4,5 @@
 
 #module string {
 	createString (String token) --> (String result);
+	null() --> (String result);
 }

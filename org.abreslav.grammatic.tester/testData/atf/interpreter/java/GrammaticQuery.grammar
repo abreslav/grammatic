@@ -4,16 +4,8 @@
 	'GrammaticGrammarTemplate.grammar'{lexicalAtomIndependent};
 
 ruleQueryContainer
-	: ruleQuery
+	: symbolQueryWithVar productionQuery* ';'
 	;
-
-ruleQuery
-	: symbolQueryWithVar definition ';'
-	;
-	
-definition
-	: productionQuery*
-	; 
 
 variablePrefix
 	: '$' NAME? '='
@@ -39,28 +31,16 @@ symbolReferenceQuery
 	;
 		
 productionQuery 
-	: variablePrefix? ruleOperation alternativeQuery
-	: ':' productionsWildcard
-	;
-
-productionsWildcard
-	: variablePrefix? '{...}'
+	: variablePrefix? (':' | '|:') alternativeQuery
+	: ':' variablePrefix? '{...}'
 	;
 	
-ruleOperation
-	: ':' | '|:'
-	;
-		
 expressionQuery
 	: alternativeQuery ';'
 	;
 	
 alternativeQuery
-	: sequenceQuery ('|' (sequenceQuery | alternativeWildcard))*
-	;
-
-alternativeWildcard
-	: variablePrefix? '...'
+	: sequenceQuery ('|' (sequenceQuery | (variablePrefix? '...')))*
 	;
 
 sequenceQuery
@@ -124,14 +104,9 @@ lexicalSequence
 	;
 	
 lexicalIteration
-	: lexicalAtom lexicalOperation
+	: lexicalAtom operation
 	;
 	
-lexicalOperation
-	: '*' | '+' | '?'
-	: #empty
-	;
-
 lexicalAtom
 	: lexicalAtomIndependent
 	: '[[' lexicalAlternative ']]'

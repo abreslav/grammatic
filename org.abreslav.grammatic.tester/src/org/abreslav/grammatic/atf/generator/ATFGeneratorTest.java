@@ -45,6 +45,7 @@ public class ATFGeneratorTest {
 		generate(sourceDir, targetDir, packageDir, "GrammaticMetadata");
 		generate(sourceDir, targetDir, packageDir, "GrammaticLexicalGrammar");
 		generate(sourceDir, targetDir, packageDir, "GrammaticGrammarTemplate");
+		generate(sourceDir, targetDir, packageDir, "GrammaticQuery");
 	}
 
 	private void generate(String sourceDir, String targetDir,

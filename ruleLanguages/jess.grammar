@@ -1,0 +1,230 @@
+// keywords are soft!!!
+// Consider '.' in names
+//   prohibited for slots and variables 
+WS : 0x0000--' ';
+NEWLINE : '\n' | '\r' ;
+INLINE_COMMENT : ';' [^ NEWLINE] NEWLINE ;
+MULTILINE_COMMENT : '/*' ([^ '*'] | '*' [^ '/'])* '*/' ;
+
+LETTER : 'a'--'z' | 'A'--'Z';
+DIGIT : '0'--'9';
+SYMBOL_START : LETTER | '*' | '=' | '+' | '/' | '<' | '>' | '-' | '_' | '#';
+VARIABLE_PART : SYMBOL_START | DIGIT ;
+SYMBOL_PART : VARIABLE_PART | '?' | '$';
+
+GLOBAL_VARIABLE : '?' '*' SYMBOL_PART* '*' ;
+
+VARIABLE : '?' SYMBOL_PART*;
+
+MULTIFIELD : '$' VARIABLE;
+
+SYMBOL : SYMBOL_START SYMBOL_PART*;
+NIL : 'nil';
+TRUE : 'TRUE';
+FALSE : 'FALSE';
+
+#import 'javaNumbers.grammar';
+//3 4. 5.643 5654L 6.0E4 1D
+
+STRING : '"' ('\' '"' | [^ '"'])* '"';
+
+nonVariableSymbol
+	: SYMBOL
+	: NIL
+	: TRUE
+	: FALSE
+	;
+
+variable
+	: VARIABLE
+	: GLOBAL_VARIABLE
+	;
+
+symbol
+	: nonVariableSymbol
+	: variable
+	: dottedVariable
+	: MULTIFIELD
+	;
+
+list 
+	: '(' expression* ')'
+	;
+
+expression
+	: list
+	: symbol
+	: number
+	: STRING
+	;
+
+defglobal
+	: '(' 'defglobal' (GLOBAL_VARIABLE '=' expression)+ ')'
+	;
+
+deffunction
+	: '(' 'deffunction' nonVariableSymbol STRING? '(' variable* MULTIFIELD? ')' expression* ')'
+	;
+
+boolean	
+	: TRUE | FALSE
+	;
+
+slotSpecific
+	: '(' 'slot-specific' boolean ')' // FALSE is default
+	;
+	
+backchainReactive
+	: '(' 'backchain-reactive' boolean ')' // FALSE is default
+	;
+	
+fromClass
+	: '(' 'from-class' nonVariableSymbol ')'
+	;
+	
+includeVariables
+	: '(' 'include-variables' boolean ')' // FLASE is default
+	;
+	
+ordered
+	: '(' 'ordered' boolean ')' // FALSE is default
+	;
+		
+templateDeclarations
+	: '(' 'declare' 
+        (slotSpecific |
+        backchainReactive |
+        fromClass |
+        includeVariables | 
+        ordered)*
+      ')'
+	;
+	
+slotKind
+	: 'slot' | 'multislot'
+	;
+
+type
+	: 'ANY' | 'INTEGER' | 'FLOAT' |
+      'NUMBER' | 'SYMBOL' | 'STRING' |
+      'LEXEME' | 'OBJECT' | 'LONG'
+    ; 
+    
+slotType
+	: '(' 'type' type ')' // ANY is default
+	;
+	
+defaultValue
+	: '(' 'default' expression ')' // nil or () is default | or the first allowed-value
+	;
+	
+defaultDynamic
+	: '(' 'default-dynamic' expression ')'
+	;
+	
+allowedValues
+	: '(' 'allowed-values' expression+ ')'
+	;
+	
+slot
+	: '(' slotKind nonVariableSymbol
+         (slotType |
+         defaultValue |
+     	 defaultDynamic |
+     	 allowedValues)*  
+      ')'
+    ;
+
+deftemplate
+	: '(' 
+		'deftemplate' nonVariableSymbol
+    	('extends' nonVariableSymbol)?
+    	STRING?
+    	templateDeclarations?
+    	slot* // forbidden if declared ordered
+      ')'
+	;
+
+salience
+	: '(' 'salience' expression ')' // type???
+	;
+
+autoFocus
+	: '(' 'auto-focus' boolean ')'
+	;
+	
+noLoop
+	: '(' 'no-loop' boolean ')'
+	;
+
+ruleDeclarations
+	: '(' 'declare' 
+			(salience |
+            nodeIndexHash |
+            autoFocus |
+            noLoop)*
+      ')'
+	;
+
+functionCall 
+	: '(' expression+ ')'
+	;
+
+defrule 
+	: '(' 'defrule' nonVariableSymbol
+    	STRING?
+    	ruleDeclarations?
+    	expression* // conditional element???
+    	'=>'
+    	functionCall* // it is a nonempty list! 
+      ')'
+	;
+
+nodeIndexHash
+	: '(' 'node-index-hash' expression ')' // integer??
+	;
+
+maxBackgroundRules
+	: '(' 'max-background-rules' expression')' // integer??
+	;
+
+queryDeclarations
+	: '(' 'declare' '(' 'variables' variable+ ')'
+			nodeIndexHash?
+        	maxBackgroundRules? 
+      ')'
+    ;
+
+defquery
+	: '(' 'defquery' nonVariableSymbol
+    	STRING?
+    	queryDeclarations?
+    	expression* // Any restrictions here?! 
+      ')'
+	;
+	
+moduleDeclarations
+	: '(' 'declare' autoFocus ')'
+	;	
+
+defmodule
+	: '(' 'defmodule' nonVariableSymbol
+    	STRING?
+    	moduleDeclarations?
+      ')'	
+	;
+
+statement
+	: expression
+	: defglobal
+	: deffunction
+	: deftemplate
+	: defrule
+	: deffacts
+	: defmodule
+	: defquery
+	;
+
+program
+	: statement*
+	;
