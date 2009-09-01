@@ -1,0 +1,65 @@
+#import {expression, boolean, nonVariableSymbol};
+
+allowedValues
+	: '(' 'allowed-values' expression+ ')'
+	;
+
+slotSpecific
+	: '(' 'slot-specific' boolean ')' // FALSE is default
+	;
+	
+backchainReactive
+	: '(' 'backchain-reactive' boolean ')' // FALSE is default
+	;
+	
+fromClass
+	: '(' 'from-class' nonVariableSymbol ')'
+	;
+	
+includeVariables
+	: '(' 'include-variables' boolean ')' // FLASE is default
+	;
+	
+ordered
+	: '(' 'ordered' boolean ')' // FALSE is default
+	;
+		
+type
+	: 'ANY' | 'INTEGER' | 'FLOAT' |
+      'NUMBER' | 'SYMBOL' | 'STRING' |
+      'LEXEME' | 'OBJECT' | 'LONG'
+    ; 
+    
+slotType
+	: '(' 'type' type ')' // ANY is default
+	;
+	
+defaultValue
+	: '(' 'default' expression ')' // nil or () is default | or the first allowed-value
+	;
+	
+defaultDynamic
+	: '(' 'default-dynamic' expression ')'
+	;
+	
+
+salience
+	: '(' 'salience' expression ')' // type???
+	;
+
+autoFocus
+	: '(' 'auto-focus' boolean ')'
+	;
+	
+noLoop
+	: '(' 'no-loop' boolean ')'
+	;
+
+
+nodeIndexHash
+	: '(' 'node-index-hash' expression ')' // integer??
+	;
+
+maxBackgroundRules
+	: '(' 'max-background-rules' expression')' // integer??
+	;

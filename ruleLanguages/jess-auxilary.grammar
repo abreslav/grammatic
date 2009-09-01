@@ -1,0 +1,31 @@
+nonVariableSymbol
+	: SYMBOL
+	: NIL
+	: TRUE
+	: FALSE
+	;
+	
+topLevelName
+	: (nonVariableSymbol '::')? nonVariableSymbol
+	;
+
+variable // ? emits new variable on each occurrence
+	: VARIABLE
+	: GLOBAL_VARIABLE
+	;
+
+symbol // move to the client?
+	: variable
+	: nonVariableSymbol
+	;
+
+dottedVariable // move to the client?
+	: variable ('.' (symbol))*
+
+boolean	
+	: TRUE | FALSE
+	;
+
+functionCall 
+	: '(' expression+ ')'
+	;

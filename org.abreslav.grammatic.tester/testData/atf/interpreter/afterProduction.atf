@@ -1,0 +1,18 @@
+// It reports wrong attribute to be not set upon reading
+
+x
+	: $a=atom
+	$var=: varPref atom
+	;
+[[
+some () --> (String result) {
+	a:: result = #();
+	var: result = b(atom#);
+}
+]]
+
+atom: ..;
+# --> (String r) { #after:r = x(); }
+
+varPref: ..;
+# {}

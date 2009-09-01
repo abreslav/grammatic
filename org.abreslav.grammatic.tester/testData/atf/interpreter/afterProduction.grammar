@@ -1,0 +1,7 @@
+x
+	: atom
+	: varPref atom
+	;
+	
+atom : #empty;
+varPref : #empty;

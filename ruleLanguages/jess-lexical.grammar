@@ -1,0 +1,28 @@
+WS : 0x0000--' ';
+NEWLINE : '\n' | '\r' ;
+INLINE_COMMENT : ';' [^ NEWLINE] NEWLINE ;
+MULTILINE_COMMENT : '/*' ([^ '*'] | '*' [^ '/'])* '*/' ;
+
+LETTER : 'a'--'z' | 'A'--'Z';
+DIGIT : '0'--'9';
+SYMBOL_START : LETTER | '*' | '=' | '+' | '/' | '<' | '>' | '-' | '_' | '#' | ':'; // ':' is not documented
+VARIABLE_PART : SYMBOL_START | DIGIT ;
+GLOBAL_VARIABLE_PART : VARIABLE_PART | '?' | '$';
+SYMBOL_PART : GLOBAL_VARIABLE_PART |'.';
+
+GLOBAL_VARIABLE : '?' '*' GLOBAL_VARIABLE_PART* '*' ;
+
+VARIABLE : '?' VARIABLE_PART*; // single '?' is a special case
+
+MULTIFIELD : '$' VARIABLE;
+
+SYMBOL : SYMBOL_START SYMBOL_PART*;
+
+NIL : 'nil';
+TRUE : 'TRUE';
+FALSE : 'FALSE';
+
+#import 'javaNumbers.grammar';
+//3 4. 5.643 5654L 6.0E4 1D
+
+STRING : '"' ('\' '"' | [^ '"'])* '"';

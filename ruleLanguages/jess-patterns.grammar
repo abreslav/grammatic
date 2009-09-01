@@ -1,0 +1,79 @@
+#import {VARIABLE, MULTIFIELD}, {functionCall};
+
+pattern
+	: '(' topLevelName (simplePattern | slotPattern)* ')'
+	// consider ordered facts
+	;
+
+patternBinding
+	: VARIABLE '->' pattern // conditionalElement?
+	;
+	
+test
+	: (VARIABLE | MULTIFIELD) // duplication
+	: literalValue // expression?
+	: ':' functionCall
+	: '=' functionCall
+	: '/' JAVA_REG_EXP '/'
+	: '~' test
+	; 
+	
+tests
+	: (VARIABLE | MULTIFIELD)? testExpression? // ambiguity: we cannot syntactically distinguish
+								// a variable which is bounded here from
+								// the one which is used here
+								// semantically advised parsing needed!
+	;
+	
+testExpression
+	: testMult ('|' testMult)*
+	;
+
+testMult
+	: testAtom ('&' testAtom)*
+	; 
+	
+testAtom
+	: test
+	: '(' testExpression ')' // ~ is forbidden for use before ()
+	;
+	
+conditionalElement
+	: conditionalElementBody 
+	: patternBinding
+	;
+	
+
+conditionalElementBody
+	: pattern
+	: '(' 'and' conditionalElement+ ')' // are bindings allowed here?
+	: '(' 'or' conditionalElement+ ')' // are bindings allowed here?
+	: '(' 'logical' conditionalElement+ ')' // are bindings allowed here? multiple?
+	: '(' 'forall' conditionalElement conditionalElement+ ')' // are bindings allowed here? patterns?
+	: '(' 'exists' conditionalElement ')' // are bindings allowed here?
+	: '(' 'not' conditionalElementBody ')' // no bindings; only local variables allowed
+	: '(' 'test' functionCall ')' // boolean result! same as no bindings; only local variables allowed
+	: '(' 'accumulate' ?! ')' // ???
+	: '(' 'unique' conditionalElement+ ')' // ignored
+	;
+	
+patternComparison
+	: '<' | '>' | '<=' | '>=' | '==' | '!=' | '<>'
+	;
+
+infixExpression
+	: infixConjunction ('||' infixConjunction)*
+	;
+	
+infixConjunction
+	: infixAtom ('&&' infixAtom)*	
+	;
+	
+infixAtom
+	: '(' infixExpression ')'
+	: expression patternComparison expression
+	;
+	
+simplePattern
+	: '{' infixExpression '}'
+	;

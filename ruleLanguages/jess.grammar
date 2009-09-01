@@ -1,99 +1,53 @@
+#import {STRING, MULTIFIELD, GLOBAL_VARIABLE}, {nonVariableSymbol, topLevelName, functionCall, dottedVariable},
+  {declarations :)};
+
 // keywords are soft!!!
-// Consider '.' in names
-//   prohibited for slots and variables 
-//   variables ? and $? emit a new variable on each occurrence 
-// a multifield is not a special kind of variable. When a multifield $?list is matched, it's the variable ?list that receives the value.
-// names may be preceded by MODULE_NAME::
 // Suport for (bind ?pt (new java.awt.Point))
-WS : 0x0000--' ';
-NEWLINE : '\n' | '\r' ;
-INLINE_COMMENT : ';' [^ NEWLINE] NEWLINE ;
-MULTILINE_COMMENT : '/*' ([^ '*'] | '*' [^ '/'])* '*/' ;
 
-LETTER : 'a'--'z' | 'A'--'Z';
-DIGIT : '0'--'9';
-SYMBOL_START : LETTER | '*' | '=' | '+' | '/' | '<' | '>' | '-' | '_' | '#';
-VARIABLE_PART : SYMBOL_START | DIGIT ;
-SYMBOL_PART : VARIABLE_PART | '?' | '$';
-
-GLOBAL_VARIABLE : '?' '*' SYMBOL_PART* '*' ;
-
-VARIABLE : '?' SYMBOL_PART*;
-
-MULTIFIELD : '$' VARIABLE;
-
-SYMBOL : SYMBOL_START SYMBOL_PART*;
-NIL : 'nil';
-TRUE : 'TRUE';
-FALSE : 'FALSE';
-
-#import 'javaNumbers.grammar';
-//3 4. 5.643 5654L 6.0E4 1D
-
-STRING : '"' ('\' '"' | [^ '"'])* '"';
-
-nonVariableSymbol
-	: SYMBOL
-	: NIL
-	: TRUE
-	: FALSE
+program
+	: statement*
 	;
 
-variable
-	: VARIABLE
-	: GLOBAL_VARIABLE
-	;
-
-symbol
-	: nonVariableSymbol
-	: variable
-	: dottedVariable
-	: MULTIFIELD
-	;
-
-list 
-	: '(' expression* ')'
+statement
+	: expression
+	: defmodule
+	: defglobal
+	: deftemplate
+	: defrule
+	: defquery
+	: deffacts
+	: deffunction
 	;
 
 expression
-	: list
-	: symbol
+	: variable
+	: topLevelName
 	: number
 	: STRING
+	: dottedVariable
+	: MULTIFIELD // $? emits new on each occurrence
+				 // a multifield is not a special kind of variable. 
+				 // When a multifield $?list is matched, it's the variable ?list that receives the value.
+	: '(' expression* ')' // list
 	;
+
+defmodule
+	: '(' 'defmodule' nonVariableSymbol
+    	STRING?
+    	moduleDeclarations?
+      ')'	
+	;
+	
+moduleDeclarations
+	: '(' 'declare' autoFocus ')'
+	;	
+
 
 defglobal
 	: '(' 'defglobal' (GLOBAL_VARIABLE '=' expression)+ ')'
 	;
 
-deffunction
-	: '(' 'deffunction' nonVariableSymbol STRING? '(' variable* MULTIFIELD? ')' expression* ')'
-	;
 
-boolean	
-	: TRUE | FALSE
-	;
-
-slotSpecific
-	: '(' 'slot-specific' boolean ')' // FALSE is default
-	;
-	
-backchainReactive
-	: '(' 'backchain-reactive' boolean ')' // FALSE is default
-	;
-	
-fromClass
-	: '(' 'from-class' nonVariableSymbol ')'
-	;
-	
-includeVariables
-	: '(' 'include-variables' boolean ')' // FLASE is default
-	;
-	
-ordered
-	: '(' 'ordered' boolean ')' // FALSE is default
-	;
-		
 templateDeclarations
 	: '(' 'declare' 
         (slotSpecific |
@@ -107,31 +61,9 @@ templateDeclarations
 slotKind
 	: 'slot' | 'multislot'
 	;
-
-type
-	: 'ANY' | 'INTEGER' | 'FLOAT' |
-      'NUMBER' | 'SYMBOL' | 'STRING' |
-      'LEXEME' | 'OBJECT' | 'LONG'
-    ; 
-    
-slotType
-	: '(' 'type' type ')' // ANY is default
-	;
-	
-defaultValue
-	: '(' 'default' expression ')' // nil or () is default | or the first allowed-value
-	;
-	
-defaultDynamic
-	: '(' 'default-dynamic' expression ')'
-	;
-	
-allowedValues
-	: '(' 'allowed-values' expression+ ')'
-	;
 	
 slot
-	: '(' slotKind nonVariableSymbol
+	: '(' slotKind nonVariableSymbol // check for dot absence in the name
          (slotType |
          defaultValue |
      	 defaultDynamic |
@@ -141,25 +73,14 @@ slot
 
 deftemplate
 	: '(' 
-		'deftemplate' nonVariableSymbol
-    	('extends' nonVariableSymbol)?
+		'deftemplate' topLevelName
+    	('extends' topLevelName)?
     	STRING?
     	templateDeclarations?
     	slot* // forbidden if declared ordered
       ')'
 	;
-
-salience
-	: '(' 'salience' expression ')' // type???
-	;
-
-autoFocus
-	: '(' 'auto-focus' boolean ')'
-	;
 	
-noLoop
-	: '(' 'no-loop' boolean ')'
-	;
 
 ruleDeclarations
 	: '(' 'declare' 
@@ -170,72 +91,8 @@ ruleDeclarations
       ')'
 	;
 
-functionCall 
-	: '(' expression+ ')'
-	;
-
-patternBinding
-	: VARIABLE '->' pattern // conditionalElement?
-	;
-	
-test
-	: (VARIABLE | MULTIFIELD) // duplication
-	: literalValue // expression?
-	: ':' functionCall
-	: '=' functionCall
-	: '/' JAVA_REG_EXP '/'
-	: '~' test
-	; 
-	
-tests
-	: (VARIABLE | MULTIFIELD)? testExpression? // ambiguity: we cannot syntactically distinguish
-								// a variable which is bounded here from
-								// the one which is used here
-								// semantically advised parsing needed!
-	;
-	
-testExpression
-	: testMult ('|' testMult)*
-	;
-
-testMult
-	: testAtom ('&' testAtom)*
-	; 
-	
-testAtom
-	: test
-	: '(' testExpression ')' // ~ is forbidden for use before ()
-	;
-	
-conditionalElement
-	: conditionalElementBody 
-	: patternBinding
-	;
-	
-
-conditionalElementBody
-	: pattern
-	: '(' 'and' conditionalElement+ ')' // are bindings allowed here?
-	: '(' 'or' conditionalElement+ ')' // are bindings allowed here?
-	: '(' 'logical' conditionalElement+ ')' // are bindings allowed here? multiple?
-	: '(' 'forall' conditionalElement conditionalElement+ ')' // are bindings allowed here? patterns?
-	: '(' 'exists' conditionalElement ')' // are bindings allowed here?
-	: '(' 'not' conditionalElementBody ')' // no bindings; only local variables allowed
-	: '(' 'test' functionCall ')' // boolean result! same as no bindings; only local variables allowed
-	: '(' 'accumulate' ?! ')' // ???
-	: '(' 'unique' conditionalElement+ ')' // ignored
-	;
-	
-patternComparison
-	: '<' | '>' | '<=' | '>=' | '==' | '!=' | '<>'
-	;
-
-patternConnective
-	: '&&' | '||'
-	;
-
 defrule 
-	: '(' 'defrule' nonVariableSymbol
+	: '(' 'defrule' topLevelName
     	STRING?
     	ruleDeclarations?
     	conditionalElement*
@@ -244,13 +101,6 @@ defrule
       ')'
 	;
 
-nodeIndexHash
-	: '(' 'node-index-hash' expression ')' // integer??
-	;
-
-maxBackgroundRules
-	: '(' 'max-background-rules' expression')' // integer??
-	;
 
 queryDeclarations
 	: '(' 'declare' '(' 'variables' variable+ ')'
@@ -260,35 +110,26 @@ queryDeclarations
     ;
 
 defquery
-	: '(' 'defquery' nonVariableSymbol
+	: '(' 'defquery' topLevelName
     	STRING?
     	queryDeclarations?
     	conditionalElement* 
       ')'
 	;
-	
-moduleDeclarations
-	: '(' 'declare' autoFocus ')'
-	;	
 
-defmodule
-	: '(' 'defmodule' nonVariableSymbol
-    	STRING?
-    	moduleDeclarations?
-      ')'	
+deffacts
+	: '(' 'deffacts' topLevelName
+		STRING?
+    	functionCall* // fact is not a function call but it has the same syntactical form
+    	              // if you count unordered facts 
+      ')'
 	;
 
-statement
-	: expression
-	: defglobal
-	: deffunction
-	: deftemplate
-	: defrule
-	: deffacts
-	: defmodule
-	: defquery
-	;
-
-program
-	: statement*
+deffunction
+	: '(' 'deffunction' 
+		nonVariableSymbol 
+		STRING? 
+		'(' variable* MULTIFIELD? ')' 
+		expression* 
+	  ')'
 	;
