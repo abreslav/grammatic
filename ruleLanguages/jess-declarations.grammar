@@ -34,12 +34,15 @@ slotType
 	: '(' 'type' type ')' // ANY is default
 	;
 	
-defaultValue
-	: '(' 'default' expression ')' // nil or () is default | or the first allowed-value
+default
+ // nil or () is default | or the first allowed-value
+ // allows a sequence only for multislots
+	: '(' 'default' expression+ ')'
 	;
 	
 defaultDynamic
-	: '(' 'default-dynamic' expression ')'
+ // allows a sequence only for multislots
+	: '(' 'default-dynamic' expression+ ')'
 	;
 	
 

@@ -21,14 +21,13 @@ statement
 
 expression
 	: variable
-	: topLevelName
+	: nonVariableSymbol
 	: number
 	: STRING
 	: dottedVariable
-	: MULTIFIELD // $? emits new on each occurrence
-				 // a multifield is not a special kind of variable. 
-				 // When a multifield $?list is matched, it's the variable ?list that receives the value.
-	: '(' expression* ')' // list
+	: functionCall
+	// NEGATIVE numbers are treated as numbers!
+	// LISTS??? -- are handled specially by functions :( 
 	;
 
 defmodule
@@ -65,7 +64,7 @@ slotKind
 slot
 	: '(' slotKind nonVariableSymbol // check for dot absence in the name
          (slotType |
-         defaultValue |
+         default |
      	 defaultDynamic |
      	 allowedValues)*  
       ')'
@@ -130,6 +129,9 @@ deffunction
 		nonVariableSymbol 
 		STRING? 
 		'(' variable* MULTIFIELD? ')' 
+			// $? emits new on each occurrence
+			// a multifield is not a special kind of variable. 
+			// When a multifield $?list is matched, it's the variable ?list that receives the value.
 		expression* 
 	  ')'
 	;

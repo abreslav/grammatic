@@ -27,5 +27,5 @@ boolean
 	;
 
 functionCall 
-	: '(' expression+ ')'
+	: '(' nonVariableSymbol expression* ')'
 	;

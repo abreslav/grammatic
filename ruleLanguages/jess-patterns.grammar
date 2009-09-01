@@ -1,21 +1,44 @@
 #import {VARIABLE, MULTIFIELD}, {functionCall};
 
+conditionalElement
+	: conditionalElementBody 
+	: patternBinding
+	;
+	
+conditionalElementBody
+	: bindable
+	: '(' 'and' conditionalElement+ ')'
+	: '(' 'or' conditionalElement+ ')'
+	: '(' 'logical' conditionalElement+ ')'
+	: '(' 'forall' conditionalElement conditionalElement+ ')'
+	: '(' 'exists' conditionalElement ')'
+	: '(' 'not' conditionalElementBody ')' // all variables are local
+	: '(' 'test' functionCall ')' // boolean result! all vars are local
+	: '(' 'unique' conditionalElement+ ')' // ignored
+	;
+
+bindable
+	: pattern
+	: '(' 'accumulate' functionCall functionCall expression conditionalElement ')' // ???
+	;
+
 pattern
 	: '(' topLevelName (simplePattern | slotPattern)* ')'
-	// consider ordered facts
+	: '(' topLevelName tests* ')' // ordered facts
 	;
 
 patternBinding
-	: VARIABLE '->' pattern // conditionalElement?
+	: VARIABLE '->' bindable // conditionalElement?
 	;
 	
 test
-	: (VARIABLE | MULTIFIELD) // duplication
-	: literalValue // expression?
+	: VARIABLE
+	: number | nonVariableSymbol // literal value
 	: ':' functionCall
 	: '=' functionCall
-	: '/' JAVA_REG_EXP '/'
 	: '~' test
+// unsupported
+//	: '/' JAVA_REG_EXP '/'
 	; 
 	
 tests
@@ -26,35 +49,20 @@ tests
 	;
 	
 testExpression
-	: testMult ('|' testMult)*
+	: testConjunction ('|' testConjunction)*
 	;
 
-testMult
+testConjunction
 	: testAtom ('&' testAtom)*
 	; 
 	
 testAtom
 	: test
-	: '(' testExpression ')' // ~ is forbidden for use before ()
+	//: '(' testExpression ')' // ~ is forbidden for use before ()
 	;
 	
-conditionalElement
-	: conditionalElementBody 
-	: patternBinding
-	;
-	
-
-conditionalElementBody
-	: pattern
-	: '(' 'and' conditionalElement+ ')' // are bindings allowed here?
-	: '(' 'or' conditionalElement+ ')' // are bindings allowed here?
-	: '(' 'logical' conditionalElement+ ')' // are bindings allowed here? multiple?
-	: '(' 'forall' conditionalElement conditionalElement+ ')' // are bindings allowed here? patterns?
-	: '(' 'exists' conditionalElement ')' // are bindings allowed here?
-	: '(' 'not' conditionalElementBody ')' // no bindings; only local variables allowed
-	: '(' 'test' functionCall ')' // boolean result! same as no bindings; only local variables allowed
-	: '(' 'accumulate' ?! ')' // ???
-	: '(' 'unique' conditionalElement+ ')' // ignored
+simplePattern
+	: '{' infixExpression '}'
 	;
 	
 patternComparison
@@ -71,9 +79,5 @@ infixConjunction
 	
 infixAtom
 	: '(' infixExpression ')'
-	: expression patternComparison expression
-	;
-	
-simplePattern
-	: '{' infixExpression '}'
+	: nonVariableSymbol patternComparison expression
 	;
