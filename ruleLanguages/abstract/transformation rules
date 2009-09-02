@@ -1,0 +1,71 @@
+what we have in abstract syntax:
+
+Simplistic inheritance (forbids any reuse of declarations, that's bad) 
+a
+	: b
+	: c
+	: d
+	;
+	
+Class definitions
+a
+	: b c d
+	;
+here the order is irrelevant
+items might be 
+  symbol references (pure or arbitrarily iterated)
+  literals (only iterated)
+  
+Enums
+a
+	: 'b'
+	: 'c'
+	: 'd'
+	;
+Only literals allowed
+
+
+------------------
+
+// delimiter insertion
+<e> ~ #lex <e> #lex
+<e> ~ <e> #lex
+<e> ~ #lex <e>
+
+// commutativity
+// AS: items are just assigned to structural features, which are randomly accessed
+<e1> <e2> ~ <e2> <e1>
+<a>* <b>* ~ (<a> | <b>)*
+// normal commutativity of alternatives and productions
+<a> | <b> ~ <b> | <a>
+a: <b> : <c> : {...} ~ a: <c> : <a> : {...}
+
+// strengthening bounds
+// if something was optional, concrete syntax may require it or throw away
+<a>? ~ <a>
+<a>? ~ #empty
+<a>* ~ <a>
+<a>* ~ <a>+
+<a>* ~ <a>? // ~ #empty
+<a> | <b> ~ <a>
+a : <b> : {...} ~ a : <b>
+a : <b> : <c> : r={...} ~ a : <b> : r={...}
+<e> #empty <e1> ~ <e> <e1> 
+"Symbol which is never referenced might be deleted"
+
+// inlining symbols 
+a ~ <b> | <c> | ... [a : <b> : <c> : ...] // inlining many productions as an alternative 
+
+// extracting rules
+"One may introduce a new rule which rhs is used somewhere"
+<e> ~ a [<e> : a]
+<e> ~ a{scheme(<e>)} [ stripAnnotations(<e>) : a ]// annotations might be left on a reference 
+
+// weakening bounds with "default" annotation
+<a> ~ <a>? {default: <a>}
+<a> ~ #empty {default: <a>} 
+<a>+ ~ <a>* {default: <a>+} 
+<a>+ ~ <a>? {default: <a>}
+
+// replacing symbol references with "lookup" annotation set
+a ~ <e> {key in : scope<value: a>}

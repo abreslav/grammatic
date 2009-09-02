@@ -96,7 +96,7 @@ defrule
     	ruleDeclarations?
     	conditionalElement*
     	'=>'
-    	functionCall* // it is a nonempty list! 
+    	functionCall* 
       ')'
 	;
 
@@ -119,9 +119,13 @@ defquery
 deffacts
 	: '(' 'deffacts' topLevelName
 		STRING?
-    	functionCall* // fact is not a function call but it has the same syntactical form
-    	              // if you count unordered facts 
+    	fact* 
       ')'
+	;
+
+fact
+	: '(' topLevelName ('(' nonVariableSymbol expression ')' )* ')'
+	: '(' topLevelName expression* ')' // ordered facts
 	;
 
 deffunction

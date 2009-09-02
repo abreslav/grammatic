@@ -1,0 +1,146 @@
+#declare scope MODULES:
+	nonVariableSymbol -> {
+		defmodule;
+		RULES: nonVariableSymbol -> defrule;
+		TEMPLATES: nonVariableSymbol -> deftemplate; 
+	}; 
+	
+#declare scope FUNCTIONS: nonVariableSymbol -> deffunction;
+
+#declare scope VARIABLES: VARIABLE;
+
+#declare scope GLOBAL_VARIABLES: GLOBAL_VARIABLE;
+
+program
+	: statement*
+	;
+
+statement
+	: expression
+	: defmodule
+	: defglobal
+	: deftemplate
+	: defrule
+	: defquery
+	: deffacts
+	: deffunction
+	;
+
+expression
+	: variable
+	: nonVariableSymbol
+	: number
+	: STRING
+	: dottedVariable
+	: functionCall
+	// NEGATIVE numbers are treated as numbers!
+	// LISTS??? -- are handled specially by functions :( 
+	;
+#inherit PARAMETERS from deffunction (optional);
+#resolve variable in (PARAMETERS || VARIABLES); // sequential lookup
+
+topLevelName
+	: ($module=nonVariableSymbol '::')? $name=nonVariableSymbol
+	;
+#key(MODULES; MODULES::RULES | MODULES::TEMPLATES)
+	($module("MAIN"); $name)
+	// default value
+	; 
+
+defmodule
+	: '(' 'defmodule' nonVariableSymbol
+    	STRING?
+    	moduleDeclarations?
+      ')'	
+	;
+add to MODULES; // implicit : find the only key and the only value
+
+	
+defglobal
+	: '(' 'defglobal' (GLOBAL_VARIABLE '=' expression)+ ')'
+	;
+#add to GLOBAL_VARIABLES;
+
+slot
+ // check for dot absence in the name
+	: '(' slotKind nonVariableSymbol
+         (slotType |
+         default |
+     	 defaultDynamic |
+     	 allowedValues)*  
+      ')'
+    ;
+#inherit scope SLOTS from deftemplate;
+#add (nonVariableSymbol -> slot) to SLOTS;
+
+deftemplate
+	: '(' 
+		'deftemplate' $this=topLevelName
+    	('extends' $parent=topLevelName)?
+    	STRING?
+    	templateDeclarations?
+    	slot* // forbidden if declared ordered
+      ')'
+	;
+#resolve $parent in MODULES::TEMPLATES;
+#add ($this -> deftemplate) to MODULES::TEMPLATES;
+#synthesize scope SLOTS: nonVariableSymbol -> slot;
+
+defrule 
+	: '(' 'defrule' topLevelName
+    	STRING?
+    	ruleDeclarations?
+    	conditionalElement*
+    	'=>'
+    	functionCall*
+      ')'
+	;
+#add (topLevelName -> defrule) to MODULE::RULES;
+
+defquery
+	: '(' 'defquery' topLevelName
+    	STRING?
+    	queryDeclarations?
+    	conditionalElement* 
+      ')'
+	;
+#add (topLevelName -> defquery) to MODULE::QUERIES;
+
+deffacts
+	: '(' 'deffacts' topLevelName
+		STRING?
+		fact* 
+      ')'
+	;
+#add (topLevelName -> deffacts) to MODULE::FACTS;
+
+fact
+	: '(' topLevelName ('(' nonVariableSymbol expression ')' )* ')'
+	: '(' topLevelName expression* ')' // ordered facts
+	;
+#resolve topLevelName in MODULE::TEMPLATES;
+#resolve nonVariableSymbol in topLevelName::SLOTS;
+
+deffunction
+	: '(' 'deffunction' 
+		nonVariableSymbol 
+		STRING? 
+		'(' variable* MULTIFIELD? ')' 
+			// $? emits new on each occurrence
+			// a multifield is not a special kind of variable. 
+			// When a multifield $?list is matched, it's the variable ?list that receives the value.
+		expression* 
+	  ')'
+	;
+#add to FUNCTIONS;
+#synthesize scope PARAMETERS: variable;
+#resolve variable in GLOBAL_VARIABLES;
+#add unresolved variable to PARAETERS;
+#add strip$(MULTIFIELD) to PARAMETERS; // <-- problem
+
+
+functionCall 
+	: '(' nonVariableSymbol expression* ')'
+	;
+#resolve nonVariableSymbol in FUNCITONS;
+	
