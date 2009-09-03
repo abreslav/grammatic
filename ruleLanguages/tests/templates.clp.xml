@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='US-ASCII'?>
+<rulebase xmlns='http://www.jessrules.com/JessML/1.0'>
+<module>
+  <name>X</name>
+</module>
+
+<template>
+  <name>X::multislots</name>
+  <multislot>
+    <name>a</name>
+  </multislot>
+  <multislot>
+    <name>b</name>
+  </multislot>
+  <multislot>
+    <name>c</name>
+    <type>STRING</type>
+  </multislot>
+  <multislot>
+    <name>d</name>
+    <value type='SYMBOL'>a</value>
+    
+    <value type='SYMBOL'>b</value>
+    
+    <funcall>
+      <name>+</name>
+      <value type='INTEGER'>1</value>
+      
+      <value type='VARIABLE'>*f*</value>
+      
+    </funcall>
+    
+  </multislot>
+  <multislot>
+    <name>e</name>
+    <value type='INTEGER'>3</value>
+    
+  </multislot>
+  <multislot>
+    <name>f</name>
+    <type>INTEGER</type>
+    <value type='SYMBOL'>x</value>
+    
+  </multislot>
+</template>
+
+<template>
+  <name>X::slots</name>
+  <slot>
+    <name>a</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>b</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>c</name>
+    <type>STRING</type>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>d</name>
+    <value type='SYMBOL'>a</value>
+    
+  </slot>
+  <slot>
+    <name>e</name>
+    <value type='INTEGER'>3</value>
+    
+  </slot>
+  <slot>
+    <name>e1</name>
+    <funcall>
+      <name>+</name>
+      <value type='INTEGER'>3</value>
+      
+      <value type='VARIABLE'>*x*</value>
+      
+    </funcall>
+    
+  </slot>
+  <slot>
+    <name>e2</name>
+    <funcall>
+      <name>+</name>
+      <value type='INTEGER'>3</value>
+      
+      <value type='VARIABLE'>*x*.x</value>
+      
+    </funcall>
+    
+  </slot>
+  <slot>
+    <name>f</name>
+    <type>INTEGER</type>
+    <value type='SYMBOL'>a</value>
+    
+  </slot>
+</template>
+
+<template>
+  <name>MAIN::slotsChild</name>
+  <extends>X::slots</extends>
+  <slot>
+    <name>a</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>b</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>c</name>
+    <type>STRING</type>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>d</name>
+    <value type='SYMBOL'>a</value>
+    
+  </slot>
+  <slot>
+    <name>e</name>
+    <value type='INTEGER'>3</value>
+    
+  </slot>
+  <slot>
+    <name>e1</name>
+    <funcall>
+      <name>+</name>
+      <value type='INTEGER'>3</value>
+      
+      <value type='VARIABLE'>*x*</value>
+      
+    </funcall>
+    
+  </slot>
+  <slot>
+    <name>e2</name>
+    <funcall>
+      <name>+</name>
+      <value type='INTEGER'>3</value>
+      
+      <value type='VARIABLE'>*x*.x</value>
+      
+    </funcall>
+    
+  </slot>
+  <slot>
+    <name>f</name>
+    <type>INTEGER</type>
+    <value type='SYMBOL'>a</value>
+    
+  </slot>
+</template>
+
+<template>
+  <name>X::templateDecls</name>
+  <properties>
+    <property>
+      <name>slot-specific</name>
+      <value type='SYMBOL'>TRUE</value>
+    </property>
+    <property>
+      <name>backchain-reactive</name>
+      <value type='SYMBOL'>TRUE</value>
+    </property>
+  </properties>
+</template>
+
+<template>
+  <name>X::fromClass</name>
+  <comment>$JAVA-OBJECT$ java.lang.Object</comment>
+  <properties>
+    <property>
+      <name>from-class</name>
+      <value type='SYMBOL'>java.lang.Object</value>
+    </property>
+    <property>
+      <name>slot-specific</name>
+      <value type='SYMBOL'>TRUE</value>
+    </property>
+  </properties>
+</template>
+
+<module>
+  <name>WOW</name>
+  <properties>
+    <property>
+      <name>auto-focus</name>
+      <value type='SYMBOL'>TRUE</value>
+    </property>
+  </properties>
+</module>
+
+</rulebase>

@@ -1,0 +1,80 @@
+rulebase
+	: startRuleBase statement* endRuleBase
+	;
+	
+module
+	: startModule simpleName comment? properties endModule
+	;
+	
+simpleName
+	: startName nonVariableSymbol endName
+	;
+	
+template
+	: startTemplate 
+		qualifiedName 
+		comment?
+		extends? 
+		properties?
+		slot*
+	  endTemplate
+	;
+	
+comment
+	: startComment text!!! endComment
+	;	
+
+qualifiedName
+	: startName topLevelName endName
+	;
+	
+extends
+	: startExtends qualifiedName endExtends
+	;
+	
+properties
+	: startProperties
+		property*
+	  endProperties
+	;
+	
+property
+	: startProperty
+		simpleName
+		value
+	  endProperty
+	;
+	
+slot
+	: startSlot 
+		simpleName 
+		type?
+		expression // default is nil of type SYMBOL
+	  endSlot
+	: startMultiSlot
+		simpleName 
+		type?
+		expression*
+	  endMultiSlot
+	;
+	
+value
+	: startVariable variable endVariable
+	: .. nonVariableSymbol ..
+	: .. number ..
+	: .. STRING ..
+	: .. dottedVariable ..
+	;
+	
+expression
+	: value
+	: functionCall
+	;
+	
+functionCall
+	: startFunctionCall
+		simpleName
+		expression*
+	  endFunctionCall
+	;
+	

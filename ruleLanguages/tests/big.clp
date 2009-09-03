@@ -1,9 +1,5 @@
 (defmodule BIG)
 
-(defmodule autofocus 
-	(declare (auto-focus TRUE))
-)
-
 (defglobal ?*x* = 5)
 
 ?*x*
@@ -16,7 +12,7 @@ xyz
 
 (bind ?x (new java.lang.Object))
 
-?x.class
+;?x.class
 
 (+ 1 2)
 
@@ -81,10 +77,12 @@ xyz
 	(printout t ?a crlf)
 )
 
-(defquery q
+(defquery BIG::q
 	(declare (variables ?v ?w))
 	(ord ?v ?w ?r)
 )
+
+;(defglobal ?*y* = (run-query* BIG::q 1 2))
 
 (deffacts some "asda"
 	(ord -3 d r)
@@ -96,7 +94,6 @@ xyz
 (assert (ord 1 2 3))
 (assert (ord 1 2 5))
 
-(defglobal ?*y* = (run-query* q 1 2))
 
 (defrule r
 	(ord $?)
@@ -141,6 +138,10 @@ xyz
 	(test (if (< 1 2) then (bind ?c 5) (return (< 1 2)) (printout t "ha" ?c crlf) else TRUE))
 	=>
 	(printout t x crlf)
+)
+
+(defmodule autofocuS
+	(declare (auto-focus FALSE))
 )
 
 (run)

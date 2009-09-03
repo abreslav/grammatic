@@ -1,0 +1,143 @@
+program
+	: statement*
+	;
+
+statement
+	: expression
+	: defmodule
+	: defglobal
+	: deftemplate
+	: defrule
+	: defquery
+	: deffacts
+	: deffunction
+	;
+
+expression // ???
+	: variable
+	: nonVariableSymbol
+	: number
+	: STRING
+	: dottedVariable
+	: functionCall
+	;
+
+namedAndCommented
+	: nonVariableSymbol STRING? 
+	;
+:: {inlineEverywhere}
+	
+defmodule
+	: namedAndCommented autoFocus?
+	;
+:: {
+	before = '(' 'defmodule'
+	after = ')'
+	extract[moduleDeclarations: '(' 'declare' autoFocus? ')']
+}
+	
+defglobal
+	: $body=(GLOBAL_VARIABLE expression)
+	;
+:: {
+	inline(defglobal)
+	inline(statement)
+	$iterated = introduce(+, $body) // it stays in alternative under *
+	$iterated.before = '(' 'defglobal'
+	$iterated.after = ')'
+	::program: ($statement)*; 
+	extract(statement: $statement);
+	extract(defglobal: $iterated);  	
+}
+ 
+slotKind
+	: 'slot'
+	: 'multislot'
+	;
+	
+slot
+	: slotKind nonVariableSymbol // check for dot absence in the name
+	  $declarations=(slotType*
+      default*
+      defaultDynamic*
+      allowedValues*)
+    ;
+:: {
+	before
+	after
+	mergeIntoAlternative(slotType*, default*, defaultDynamic*, allowedValues*)
+}
+
+moduleCitizen
+	: namedAndCommented 
+	  defmodule& 
+	;
+:: {inline(moduleCitizen)}
+
+deftemplate
+	: nonVariableSymbol STRING? // inlined module citizen and named and commented
+	  defmodule& 
+	  ($super=deftemplate&)? // super
+	  slotSpecific*
+      backchainReactive*
+      fromClass*
+      includeVariables* 
+      ordered*
+      slot* // forbidden if declared ordered
+	;
+:: {
+	before
+	after
+	representReference(defmodule&, $module=nonVariableSymbol -- key in MODULES)
+	$module.after = '::'
+	extract(topLevelName: $module '::' nonVariableSymbol)
+	$super.before = 'extends'
+	representReference($super, 
+		$superModule=nonVariableSymbol -- key in MODULES
+		$superName=nonVariableSymbol -- key in $superModule::TEMPLATES)
+	$superName.before = '::'
+	move(STRING?, slotSpecific?.before)
+	$declarations = mergeIntoAlternative(...)
+	replaceIteration(?, $declarations)
+	::$declarations == $body?
+	extract(templateDeclarations: $body)
+}
+
+defrule 
+	: moduleCitizen
+	  salience?
+	  nodeIndexHash?
+	  autoFocus?
+	  noLoop?
+	  conditionalElement*
+	  functionCall* 
+	;
+
+defquery
+	: moduleCitizen
+	  variable*
+	  nodeIndexHash?
+	  maxBackgroundRules? 
+	  conditionalElement* 
+	;
+
+deffacts
+	: moduleCitizen
+	  fact* 
+	;
+
+fact
+	: deftemplate&
+	  slotValue*
+	;
+	
+slotValue
+	: slot& expression
+	;
+
+deffunction
+	: namedAndCommented
+	  variable* 
+	  MULTIFIELD? 
+      expression* 
+	;

@@ -1,6 +1,12 @@
 program
 	: statement*
 	;
+:: {
+	before = '<rulebase' ... '>'
+	extract
+	after = '</ruelbase' '>'
+	extract
+}
 
 statement
 	: expression
@@ -21,6 +27,13 @@ expression // ???
 	: dottedVariable
 	: functionCall
 	;
+:: {
+	variable.before
+	variable.after
+	...
+	:: expression : functionCall : $rest={...};
+	extract(value: $rest)
+}
 
 namedAndCommented
 	: nonVariableSymbol STRING? 
@@ -29,6 +42,17 @@ namedAndCommented
 defmodule
 	: namedAndCommented autoFocus?
 	;
+:: { 
+	before
+	after
+	nonVariableSymbol.before
+	nonVariableSymbol.after
+	extract(simpleName: )
+	/// similar with comment !!! problem: quotes!
+	autoFocus?.before = startProperties
+	autoFocus?.after = endProperties
+	
+}
 	
 defglobal
 	: GLOBAL_VARIABLE expression

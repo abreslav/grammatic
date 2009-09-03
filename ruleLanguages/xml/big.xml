@@ -1,0 +1,1044 @@
+<?xml version='1.0' encoding='US-ASCII'?>
+<rulebase xmlns='http://www.jessrules.com/JessML/1.0'>
+<module>
+  <name>BIG</name>
+</module>
+
+<global>
+  <name>*x*</name>
+  <value type='INTEGER'>5</value>
+  
+</global>
+
+<funcall>
+  <name>bind</name>
+  <value type='VARIABLE'>x</value>
+  
+  <funcall>
+    <name>new</name>
+    <value type='SYMBOL'>java.lang.Object</value>
+    
+  </funcall>
+  
+</funcall>
+
+<funcall>
+  <name>+</name>
+  <value type='INTEGER'>1</value>
+  
+  <value type='INTEGER'>2</value>
+  
+</funcall>
+
+<template>
+  <name>BIG::simple</name>
+  <slot>
+    <name>x</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+</template>
+
+<template>
+  <name>BIG::pair</name>
+  <slot>
+    <name>x</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>y</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+</template>
+
+<template>
+  <name>BIG::complex</name>
+  <extends>BIG::simple</extends>
+  <slot>
+    <name>x</name>
+    <list>
+    </list>
+    
+  </slot>
+  <slot>
+    <name>x$?123</name>
+    <value type='SYMBOL'>nil</value>
+    
+  </slot>
+  <slot>
+    <name>y</name>
+    <type>INTEGER</type>
+    <value type='SYMBOL'>a</value>
+    
+  </slot>
+  <multislot>
+    <name>xy</name>
+    <value type='INTEGER'>1</value>
+    
+    <value type='INTEGER'>2</value>
+    
+    <value type='INTEGER'>3</value>
+    
+  </multislot>
+</template>
+
+<template>
+  <name>BIG::ord</name>
+  <comment>How to restrict an ordered template?</comment>
+  <multislot>
+    <name>__data</name>
+  </multislot>
+</template>
+
+<rule>
+  <name>BIG::rule</name>
+  <properties>
+    <property>
+      <name>salience</name>
+      <funcall>
+        <name>+</name>
+        <value type='INTEGER'>1</value>
+        
+        <value type='INTEGER'>1</value>
+        
+      </funcall>
+    </property>
+    <property>
+      <name>node-index-hash</name>
+      <value type='INTEGER'>123</value>
+    </property>
+  </properties>
+  <lhs>
+    <group>
+      <name>and</name>
+      <pattern>
+        <name>BIG::ord</name>
+        <slot>
+          <name>__data</name>
+          <test>
+            <type>eq</type>
+            <value type='MULTIVARIABLE'>list</value>
+            
+          </test>
+        </slot>
+      </pattern>
+    </group>
+  </lhs>
+  <rhs>
+    <funcall>
+      <name>printout</name>
+      <value type='SYMBOL'>t</value>
+      
+      <value type='VARIABLE'>list</value>
+      
+      <value type='SYMBOL'>crlf</value>
+      
+    </funcall>
+  </rhs>
+</rule>
+
+<rule>
+  <name>BIG::some</name>
+  <lhs>
+    <group>
+      <name>and</name>
+      <pattern>
+        <name>BIG::ord</name>
+        <slot>
+          <name>__data</name>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>a</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>&gt;</name>
+              <value type='VARIABLE'>a</value>
+              
+              <value type='INTEGER'>0</value>
+              
+            </funcall>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='MULTIVARIABLE'>_blank_mf0</value>
+            
+          </test>
+        </slot>
+      </pattern>
+    </group>
+  </lhs>
+  <rhs>
+    <funcall>
+      <name>printout</name>
+      <value type='SYMBOL'>t</value>
+      
+      <value type='VARIABLE'>a</value>
+      
+      <value type='SYMBOL'>crlf</value>
+      
+    </funcall>
+  </rhs>
+</rule>
+
+<query>
+  <name>BIG::q</name>
+  <arguments>
+    <argument>
+      <name>v</name>
+      <type>VARIABLE</type>
+    </argument>
+    <argument>
+      <name>w</name>
+      <type>VARIABLE</type>
+    </argument>
+  </arguments>
+  <lhs>
+    <group>
+      <name>and</name>
+      <pattern>
+        <name>BIG::ord</name>
+        <slot>
+          <name>__data</name>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>v</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>w</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>r</value>
+            
+          </test>
+        </slot>
+      </pattern>
+    </group>
+  </lhs>
+</query>
+
+<facts>
+  <name>BIG::some</name>
+  <comment>asda</comment>
+  <fact>
+    <name>BIG::ord</name>
+    <slot>
+      <name>__data</name>
+      <value type='INTEGER'>-3</value>
+      
+      <value type='SYMBOL'>d</value>
+      
+      <value type='SYMBOL'>r</value>
+      
+    </slot>
+  </fact>
+  <fact>
+    <name>BIG::ord</name>
+    <slot>
+      <name>__data</name>
+      <value type='INTEGER'>5</value>
+      
+      <value type='SYMBOL'>d</value>
+      
+      <value type='SYMBOL'>r</value>
+      
+    </slot>
+  </fact>
+  <fact>
+    <name>BIG::simple</name>
+    <slot>
+      <name>x</name>
+      <value type='INTEGER'>5</value>
+      
+    </slot>
+  </fact>
+</facts>
+
+<funcall>
+  <name>reset</name>
+</funcall>
+
+<funcall>
+  <name>assert</name>
+  <fact>
+    <name>BIG::ord</name>
+    <slot>
+      <name>__data</name>
+      <value type='INTEGER'>1</value>
+      
+      <value type='INTEGER'>2</value>
+      
+      <value type='INTEGER'>3</value>
+      
+    </slot>
+  </fact>
+  
+</funcall>
+
+<funcall>
+  <name>assert</name>
+  <fact>
+    <name>BIG::ord</name>
+    <slot>
+      <name>__data</name>
+      <value type='INTEGER'>1</value>
+      
+      <value type='INTEGER'>2</value>
+      
+      <value type='INTEGER'>5</value>
+      
+    </slot>
+  </fact>
+  
+</funcall>
+
+<rule>
+  <name>BIG::r</name>
+  <lhs>
+    <group>
+      <name>and</name>
+      <pattern>
+        <name>BIG::ord</name>
+        <slot>
+          <name>__data</name>
+          <test>
+            <type>eq</type>
+            <value type='MULTIVARIABLE'>_blank_mf1</value>
+            
+          </test>
+        </slot>
+      </pattern>
+    </group>
+  </lhs>
+  <rhs>
+    <funcall>
+      <name>while</name>
+      <funcall>
+        <name>call</name>
+        <value type='VARIABLE'>*y*</value>
+        
+        <value type='SYMBOL'>next</value>
+        
+      </funcall>
+      
+      <funcall>
+        <name>printout</name>
+        <value type='SYMBOL'>t</value>
+        
+        <value type='STRING'>note </value>
+        
+        <funcall>
+          <name>call</name>
+          <value type='VARIABLE'>*y*</value>
+          
+          <value type='SYMBOL'>getString</value>
+          
+          <value type='SYMBOL'>r</value>
+          
+        </funcall>
+        
+        <value type='SYMBOL'>crlf</value>
+        
+      </funcall>
+      
+    </funcall>
+    <funcall>
+      <name>printout</name>
+      <value type='SYMBOL'>t</value>
+      
+      <value type='VARIABLE'>*y*</value>
+      
+      <value type='SYMBOL'>crlf</value>
+      
+    </funcall>
+  </rhs>
+</rule>
+
+<rule>
+  <name>BIG::simplePatterns</name>
+  <lhs>
+    <group>
+      <name>and</name>
+      <pattern>
+        <name>BIG::simple</name>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>__synth2</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>&gt;</name>
+              <value type='VARIABLE'>__synth2</value>
+              
+              <value type='INTEGER'>2</value>
+              
+            </funcall>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::simple</name>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>__synth3</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>and</name>
+              <funcall>
+                <name>&gt;</name>
+                <value type='VARIABLE'>__synth3</value>
+                
+                <value type='INTEGER'>2</value>
+                
+              </funcall>
+              
+              <funcall>
+                <name>or</name>
+                <funcall>
+                  <name>&lt;</name>
+                  <value type='VARIABLE'>__synth3</value>
+                  
+                  <value type='INTEGER'>3</value>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>&gt;</name>
+                  <value type='VARIABLE'>__synth3</value>
+                  
+                  <value type='INTEGER'>2</value>
+                  
+                </funcall>
+                
+              </funcall>
+              
+            </funcall>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::simple</name>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>__synth4</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>&gt;</name>
+              <value type='VARIABLE'>__synth4</value>
+              
+              <value type='INTEGER'>2</value>
+              
+            </funcall>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='INTEGER'>5</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>x</value>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::simple</name>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>__synth5</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>&lt;</name>
+              <value type='VARIABLE'>__synth5</value>
+              
+              <funcall>
+                <name>+</name>
+                <value type='INTEGER'>1</value>
+                
+                <value type='VARIABLE'>x1</value>
+                
+              </funcall>
+              
+            </funcall>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='INTEGER'>5</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>x1</value>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::pair</name>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>x</value>
+            
+          </test>
+        </slot>
+        <slot>
+          <name>y</name>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>x</value>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::pair</name>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>x</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>x1</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>eq*</name>
+              <value type='VARIABLE'>x</value>
+              
+              <funcall>
+                <name>+</name>
+                <value type='INTEGER'>1</value>
+                
+                <value type='INTEGER'>1</value>
+                
+              </funcall>
+              
+            </funcall>
+            
+          </test>
+          <test>
+            <type>neq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>&lt;</name>
+              <value type='VARIABLE'>x</value>
+              
+              <value type='INTEGER'>1</value>
+              
+            </funcall>
+            
+          </test>
+        </slot>
+        <slot>
+          <name>y</name>
+          <test>
+            <type>eq</type>
+            <value type='VARIABLE'>x</value>
+            
+          </test>
+        </slot>
+      </pattern>
+    </group>
+  </lhs>
+  <rhs>
+  </rhs>
+</rule>
+
+<rule>
+  <name>BIG::bindings</name>
+  <lhs>
+    <group>
+      <name>and</name>
+      <pattern>
+        <name>BIG::pair</name>
+        <binding>fact</binding>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>x</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>or</name>
+              <funcall>
+                <name>eq</name>
+                <value type='INTEGER'>2</value>
+                
+                <value type='VARIABLE'>x</value>
+                
+              </funcall>
+              
+              <funcall>
+                <name>eq</name>
+                <value type='INTEGER'>1</value>
+                
+                <value type='VARIABLE'>x</value>
+                
+              </funcall>
+              
+            </funcall>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::pair</name>
+        <binding>fact1</binding>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>_blank_6</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>or</name>
+              <funcall>
+                <name>and</name>
+                <funcall>
+                  <name>eq</name>
+                  <value type='VARIABLE'>x</value>
+                  
+                  <value type='VARIABLE'>_blank_6</value>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>eq</name>
+                  <value type='INTEGER'>2</value>
+                  
+                  <value type='VARIABLE'>_blank_6</value>
+                  
+                </funcall>
+                
+              </funcall>
+              
+              <funcall>
+                <name>eq</name>
+                <value type='INTEGER'>1</value>
+                
+                <value type='VARIABLE'>_blank_6</value>
+                
+              </funcall>
+              
+            </funcall>
+            
+          </test>
+        </slot>
+      </pattern>
+      <pattern>
+        <name>BIG::pair</name>
+        <binding>fact2</binding>
+        <slot>
+          <name>x</name>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <value type='VARIABLE'>_blank_7</value>
+            
+          </test>
+          <test>
+            <type>eq</type>
+            <conjunction>and</conjunction>
+            <funcall>
+              <name>or</name>
+              <funcall>
+                <name>and</name>
+                <funcall>
+                  <name>eq</name>
+                  <value type='VARIABLE'>x</value>
+                  
+                  <value type='VARIABLE'>_blank_7</value>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>eq</name>
+                  <value type='INTEGER'>2</value>
+                  
+                  <value type='VARIABLE'>_blank_7</value>
+                  
+                </funcall>
+                
+              </funcall>
+              
+              <funcall>
+                <name>eq</name>
+                <value type='INTEGER'>1</value>
+                
+                <value type='VARIABLE'>_blank_7</value>
+                
+              </funcall>
+              
+            </funcall>
+            
+          </test>
+        </slot>
+      </pattern>
+      <group>
+        <name>not</name>
+        <group>
+          <name>and</name>
+          <pattern>
+            <name>BIG::pair</name>
+            <binding>a</binding>
+            <slot>
+              <name>x</name>
+              <test>
+                <type>eq</type>
+                <conjunction>and</conjunction>
+                <value type='VARIABLE'>_blank_8</value>
+                
+              </test>
+              <test>
+                <type>eq</type>
+                <conjunction>and</conjunction>
+                <funcall>
+                  <name>or</name>
+                  <funcall>
+                    <name>and</name>
+                    <funcall>
+                      <name>eq</name>
+                      <value type='VARIABLE'>x</value>
+                      
+                      <value type='VARIABLE'>_blank_8</value>
+                      
+                    </funcall>
+                    
+                    <funcall>
+                      <name>eq</name>
+                      <value type='INTEGER'>2</value>
+                      
+                      <value type='VARIABLE'>_blank_8</value>
+                      
+                    </funcall>
+                    
+                  </funcall>
+                  
+                  <funcall>
+                    <name>eq</name>
+                    <value type='INTEGER'>1</value>
+                    
+                    <value type='VARIABLE'>_blank_8</value>
+                    
+                  </funcall>
+                  
+                </funcall>
+                
+              </test>
+            </slot>
+          </pattern>
+          <group>
+            <name>not</name>
+            <pattern>
+              <name>BIG::pair</name>
+              <binding>b</binding>
+              <slot>
+                <name>x</name>
+                <test>
+                  <type>eq</type>
+                  <conjunction>and</conjunction>
+                  <value type='VARIABLE'>_blank_9</value>
+                  
+                </test>
+                <test>
+                  <type>eq</type>
+                  <conjunction>and</conjunction>
+                  <funcall>
+                    <name>or</name>
+                    <funcall>
+                      <name>and</name>
+                      <funcall>
+                        <name>eq</name>
+                        <value type='VARIABLE'>x</value>
+                        
+                        <value type='VARIABLE'>_blank_9</value>
+                        
+                      </funcall>
+                      
+                      <funcall>
+                        <name>eq</name>
+                        <value type='INTEGER'>2</value>
+                        
+                        <value type='VARIABLE'>_blank_9</value>
+                        
+                      </funcall>
+                      
+                    </funcall>
+                    
+                    <funcall>
+                      <name>eq</name>
+                      <value type='INTEGER'>1</value>
+                      
+                      <value type='VARIABLE'>_blank_9</value>
+                      
+                    </funcall>
+                    
+                  </funcall>
+                  
+                </test>
+              </slot>
+            </pattern>
+          </group>
+        </group>
+      </group>
+      <group>
+        <name>not</name>
+        <pattern>
+          <name>BIG::pair</name>
+          <binding>xy</binding>
+          <slot>
+            <name>x</name>
+            <test>
+              <type>eq</type>
+              <conjunction>and</conjunction>
+              <value type='VARIABLE'>_blank_10</value>
+              
+            </test>
+            <test>
+              <type>eq</type>
+              <conjunction>and</conjunction>
+              <funcall>
+                <name>or</name>
+                <funcall>
+                  <name>and</name>
+                  <funcall>
+                    <name>eq</name>
+                    <value type='VARIABLE'>x</value>
+                    
+                    <value type='VARIABLE'>_blank_10</value>
+                    
+                  </funcall>
+                  
+                  <funcall>
+                    <name>eq</name>
+                    <value type='INTEGER'>223</value>
+                    
+                    <value type='VARIABLE'>_blank_10</value>
+                    
+                  </funcall>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>eq</name>
+                  <value type='INTEGER'>111</value>
+                  
+                  <value type='VARIABLE'>_blank_10</value>
+                  
+                </funcall>
+                
+              </funcall>
+              
+            </test>
+          </slot>
+        </pattern>
+      </group>
+    </group>
+  </lhs>
+  <rhs>
+    <funcall>
+      <name>printout</name>
+      <value type='SYMBOL'>t</value>
+      
+      <value type='VARIABLE'>xy</value>
+      
+    </funcall>
+  </rhs>
+</rule>
+
+<rule>
+  <name>BIG::notbindings</name>
+  <lhs>
+    <group>
+      <name>and</name>
+      <group>
+        <name>not</name>
+        <pattern>
+          <name>BIG::pair</name>
+          <binding>xy</binding>
+          <slot>
+            <name>x</name>
+            <test>
+              <type>eq</type>
+              <conjunction>and</conjunction>
+              <value type='VARIABLE'>x</value>
+              
+            </test>
+            <test>
+              <type>eq</type>
+              <conjunction>and</conjunction>
+              <funcall>
+                <name>or</name>
+                <funcall>
+                  <name>eq</name>
+                  <value type='INTEGER'>223</value>
+                  
+                  <value type='VARIABLE'>x</value>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>eq</name>
+                  <value type='INTEGER'>111</value>
+                  
+                  <value type='VARIABLE'>x</value>
+                  
+                </funcall>
+                
+              </funcall>
+              
+            </test>
+          </slot>
+        </pattern>
+      </group>
+      <group>
+        <name>and</name>
+        <pattern>
+          <name>MAIN::initial-fact</name>
+        </pattern>
+        <pattern>
+          <name>test</name>
+          <slot>
+            <name>__data</name>
+            <test>
+              <type>eq</type>
+              <conjunction>and</conjunction>
+              <funcall>
+                <name>if</name>
+                <funcall>
+                  <name>&lt;</name>
+                  <value type='INTEGER'>1</value>
+                  
+                  <value type='INTEGER'>2</value>
+                  
+                </funcall>
+                
+                <value type='SYMBOL'>then</value>
+                
+                <funcall>
+                  <name>bind</name>
+                  <value type='VARIABLE'>c</value>
+                  
+                  <value type='INTEGER'>5</value>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>return</name>
+                  <funcall>
+                    <name>&lt;</name>
+                    <value type='INTEGER'>1</value>
+                    
+                    <value type='INTEGER'>2</value>
+                    
+                  </funcall>
+                  
+                </funcall>
+                
+                <funcall>
+                  <name>printout</name>
+                  <value type='SYMBOL'>t</value>
+                  
+                  <value type='STRING'>ha</value>
+                  
+                  <value type='VARIABLE'>c</value>
+                  
+                  <value type='SYMBOL'>crlf</value>
+                  
+                </funcall>
+                
+                <value type='SYMBOL'>else</value>
+                
+                <value type='SYMBOL'>TRUE</value>
+                
+              </funcall>
+              
+            </test>
+          </slot>
+        </pattern>
+      </group>
+    </group>
+  </lhs>
+  <rhs>
+    <funcall>
+      <name>printout</name>
+      <value type='SYMBOL'>t</value>
+      
+      <value type='SYMBOL'>x</value>
+      
+      <value type='SYMBOL'>crlf</value>
+      
+    </funcall>
+  </rhs>
+</rule>
+
+<module>
+  <name>autofocuS</name>
+</module>
+
+<funcall>
+  <name>run</name>
+</funcall>
+
+</rulebase>

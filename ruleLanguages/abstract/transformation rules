@@ -1,5 +1,7 @@
 what we have in abstract syntax:
 
+Symbol references might be annotated with & to denote a cross-reference 
+
 Simplistic inheritance (forbids any reuse of declarations, that's bad) 
 a
 	: b
@@ -27,15 +29,19 @@ Only literals allowed
 
 ------------------
 
+"Productions of form 'a: a' may be deleted"
+
 // delimiter insertion
 <e> ~ #lex <e> #lex
 <e> ~ <e> #lex
 <e> ~ #lex <e>
+!!! problem with enums !!! #lex ~ #lex // even if they are diffferent
 
 // commutativity
 // AS: items are just assigned to structural features, which are randomly accessed
 <e1> <e2> ~ <e2> <e1>
-<a>* <b>* ~ (<a> | <b>)*
+<a>* <b>* ~=~ (<a> | <b>)*
+<a>? <b>? ~=~ (<a> | <b>)?
 // normal commutativity of alternatives and productions
 <a> | <b> ~ <b> | <a>
 a: <b> : <c> : {...} ~ a: <c> : <a> : {...}
@@ -53,11 +59,40 @@ a : <b> : <c> : r={...} ~ a : <b> : r={...}
 <e> #empty <e1> ~ <e> <e1> 
 "Symbol which is never referenced might be deleted"
 
+// weakening bounds for free
+(<a> | <b>)? ~ (<a> | <b>?)?
+(<a> | <b>)* ~ (<a> | <b>*)*
+(<a> | <b>)* ~ (<a> | <b>+)*
+(<a> | <b>)* ~ (<a> | <b>?)*
+(<a> | <b>)+ ~ (<a> | <b>+)+
+<a>? ~=~ <a>??
+<a>* ~=~ <a>**
+<a>+ ~=~ <a>++
+<a>* ~=~ <a>*?
+
+<a>* ~=~ <a>?* [<a> is not a symbol reference!] //otherwise we break feature multiplicity
+<a>* ~=~ <a>+? [<a> is not a symbol reference!]
+<a>* ~=~ <a>+* [<a> is not a symbol reference!]
+
+// composition rules
+// !!! NOTE: these rules work in both directions
+<a>? <b>? ~=~ (<a> <b>)?
+<a>* <b>* ~=~ (<a> <b>)*
+<a>+ <b>+ ~=~ (<a> <b>)+
+<pre> (<a> | <b>) <post> ~=~ (<pre> <a> <post> | <pre> <b> <post)
+
+<a> <a>+ ~= <a>+
+<a> <a>* ~= <a>+
+
+// decomposition rules
+<a>+ ~ <a> <a>*
+
 // inlining symbols 
 a ~ <b> | <c> | ... [a : <b> : <c> : ...] // inlining many productions as an alternative 
 
 // extracting rules
 "One may introduce a new rule which rhs is used somewhere"
+"If an alternative a body of a production, it may be turned into many productions"
 <e> ~ a [<e> : a]
 <e> ~ a{scheme(<e>)} [ stripAnnotations(<e>) : a ]// annotations might be left on a reference 
 

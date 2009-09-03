@@ -50,10 +50,10 @@ defglobal
 templateDeclarations
 	: '(' 'declare' 
         (slotSpecific |
-        backchainReactive |
-        fromClass |
-        includeVariables | 
-        ordered)*
+        backchainReactive | // no fromClass
+        fromClass | 
+        includeVariables | // only for fromClass
+        ordered)* // no fromClass
       ')'
 	;
 	
