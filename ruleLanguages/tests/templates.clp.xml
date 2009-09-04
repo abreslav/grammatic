@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='US-ASCII'?>
 <rulebase xmlns='http://www.jessrules.com/JessML/1.0'>
+<global>
+  <name>*g*</name>
+  <value type='INTEGER'>123</value>
+  
+</global>
+
 <module>
   <name>X</name>
 </module>
+
+<global>
+  <name>*k*</name>
+  <value type='INTEGER'>124</value>
+  
+</global>
 
 <template>
   <name>X::multislots</name>

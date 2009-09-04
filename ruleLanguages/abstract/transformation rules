@@ -30,6 +30,13 @@ Only literals allowed
 ------------------
 
 "Productions of form 'a: a' may be deleted"
+"We can change lexical form of tokens: 
+	e.g. replace STRING with something delimited differently
+	we'll need to prove that what's available from the new form
+	was allowed by the old form
+	=> we need a specification for 'skip' characters in tokens
+	e.g. STRING: '"'{skip} .. '"'{skip} 
+"  
 
 // delimiter insertion
 <e> ~ #lex <e> #lex
@@ -90,9 +97,13 @@ a : <b> : <c> : r={...} ~ a : <b> : r={...}
 // inlining symbols 
 a ~ <b> | <c> | ... [a : <b> : <c> : ...] // inlining many productions as an alternative 
 
+// Adding alternatives/productions
+<a> ~=~ <a> | <a>
+a |: <b> ~=~ a |: <b> |: <b>
+
 // extracting rules
 "One may introduce a new rule which rhs is used somewhere"
-"If an alternative a body of a production, it may be turned into many productions"
+"If an alternative is a body of a production, it may be turned into many productions"
 <e> ~ a [<e> : a]
 <e> ~ a{scheme(<e>)} [ stripAnnotations(<e>) : a ]// annotations might be left on a reference 
 

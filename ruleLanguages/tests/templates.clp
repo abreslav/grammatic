@@ -1,4 +1,8 @@
+(defglobal ?*g* = 123)
+
 (defmodule X)
+
+(defglobal ?*k* = 124)
 
 (deftemplate multislots
 	(multislot a)

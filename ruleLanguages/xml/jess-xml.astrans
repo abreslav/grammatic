@@ -48,9 +48,15 @@ defmodule
 	nonVariableSymbol.before
 	nonVariableSymbol.after
 	extract(simpleName: )
-	/// similar with comment !!! problem: quotes!
-	autoFocus?.before = startProperties
-	autoFocus?.after = endProperties
+	STRING.before = startComment
+	STRING.after = endComment
+	STRING.changeLexicalForm = text /// !!! this is nontrivial!
+	autoFocus.before = 
+		startProperties 
+			startProperty 
+				startName 'auto-focus' endName
+				startSymbolValue
+	autoFocus.after = endSymbolValue endProperty endProperties
 	
 }
 
@@ -72,6 +78,15 @@ slot
       defaultDynamic*
       allowedValues*)
     ;
+:: {
+	duplicateProduction($a, $b)
+	$a::slotKind.instead = 'slot' // this is an enum value!!! 
+	// it can be replaced while in ENUM by startSlot and endSlot can be added as meaningless token
+	// on the other hand, if we need different classes, we have to present two nonterminals
+	// in XSD they have two elements of the same type... 
+	$b::slotKind.instead = 'multislot'
+	...
+}
 
 moduleCitizen
 	: namedAndCommented 
@@ -79,7 +94,9 @@ moduleCitizen
 	;
 
 deftemplate
-	: moduleCitizen
+	: nonVariableSymbol 
+	  STRING? 
+	  defmodule&
 	  ($super=deftemplate&)? // super
 	  slotSpecific?
       backchainReactive?
@@ -88,6 +105,19 @@ deftemplate
       ordered?
       slot* // forbidden if declared ordered
 	;
+:: {
+	before
+	after
+	representReference(defmodule&, $module=nonVariableSymbol -- key in MODULES)
+	nonVariableSymbol.move = $module.after   
+	$module.after = '::'
+	STRING?.mode = nonVariableSymbol.after
+	representReference($super, 
+		$superModule=nonVariableSymbol -- key in MODULES
+		$superName=nonVariableSymbol -- key in $superModule::TEMPLATES)
+	...
+	
+}
 
 defrule 
 	: moduleCitizen

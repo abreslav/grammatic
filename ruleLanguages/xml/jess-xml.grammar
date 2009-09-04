@@ -3,7 +3,16 @@ rulebase
 	;
 	
 module
-	: startModule simpleName comment? properties endModule
+	: startModule simpleName comment? moduleProperties endModule
+	;
+	
+moduleProperties
+	: startProperties 
+			startProperty 
+				startName 'auto-focus' endName
+				startSymbolValue boolean endSymbolValue 
+			endProperty 
+	  endProperties
 	;
 	
 simpleName
@@ -15,7 +24,7 @@ template
 		qualifiedName 
 		comment?
 		extends? 
-		properties?
+		templateProperties
 		slot*
 	  endTemplate
 	;
