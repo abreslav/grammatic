@@ -10,129 +10,46 @@
 
 <a>?{else: <s>} <-> (<a> | #empty {<s>})
 <a>*{else: <s>} <-> (<a>+ | #empty {<s>})
---a? -> a? | #e
-// a? -> (a | #e) -> (a | a | #e | #e) -> (a? | a | #e) -> (a? | #e)
 
-// delimiter insertion
---<e> ~ #lex <e> #lex
---<e> ~ <e> #lex
---<e> ~ #lex <e>
 #lex{!enumliteral} ~ #empty
-// problem with enums !!! #lex ~ #lex // even if they are different
 
-// commutativity
-// AS: items are just assigned to structural features, which are randomly accessed
 !!! order of appending !!!
 <e1> <e2> ~ <e2> <e1>
 <a>* <b>* ~=~ (<a> | <b>)*
-// a* | b* | #e -> (a a+ | b b+ | #e) -> ????
---<a>? <b>? ~=~ (<a> | <b>)?
-// a? b? -> a? (b? | #e) -> a? b? | a? -> a? | b? | #e -> (a | b | #e) -> (a | b)? 
 
-// normal commutativity of alternatives and productions
 <a> | <b> ~ <b> | <a>
---a: <b> : <c> : {...} ~ a: <c> : <a> : {...}
 
-// strengthening bounds
-// if something was optional, concrete syntax may require it or throw away
---<a>? ~ <a>
---<a>?{else: <s>} ~ #empty
---<a>* ~ <a>
---<a>* ~ <a>+
---<a>* ~ <a>? // ~ #empty
 <a>* -> <a>* <a>+ 
 <a> | <b> ~ <a>
 <a> -> <a> | <b> {no annotations, ever!}
---a : <b> : {...} ~ a : <b>
---a : <b> : <c> : r={...} ~ a : <b> : r={...}
 #empty ~ /* nothing */ 
 
-// weakening bounds for free
----(<a> | <b>)? ~ (<a> | <b>?)?
-// (a | b)? -> (a | b) | #empty -> a | b | #empty | #empty -> (a | b?)?
 (<a> | <b>)* ~=~ (<a> | <b>*)*
 (<a> | <b>)* ~=~ (<a> | <b>+)*
 (<a> | <b>)* ~=~ (<a> | <b>?)*
 (<a> | <b>)+ ~=~ (<a> | <b>+)+
---<a>? ~=~ <a>??
-// a? -> a | #e -> a | #e | #e -> a??
 <a>* ~=~ <a>**
 <a>+ ~=~ <a>++
---<a>* ~=~ <a>*?
-// a* -> a* | #e -> a*?
 
 <a>* ~=~ <a>?*//otherwise we break feature multiplicity
---<a>* ~=~ <a>+?
-// a* -> a+ | #e -> a+?
 <a>* ~=~ <a>+*
 
-// composition rules
-// !!! NOTE: these rules work in both directions
---<a>? <b>? ~=~ (<a> <b>)?
-// a? b? -> a? (b | #e) -> a? b | a? -> a b | a | #e -> a b | #e -> (a b)?
 <a>* <b>* ~=~ (<a> <b>)*
 <a>+ <b>+ ~=~ (<a> <b>)+
 <pre> (<a> | <b>) <post> ~=~ (<pre> <a> <post> | <pre> <b> <post)
 
 <a> <a>+ ~=~ <a>+
---<a> <a>* ~=~ <a>+
-// a a* -> a (a+ | #e) -> a a+ -> a+ 
 
----// decomposition rules
----<a>+ ~ <a> <a>*
-
-// inlining symbols 
---"If an alternative is a body of a production, it may be turned into many productions"
 a <-> <b> | <c> | ... [a : <b> : <c> : ...] // inlining many productions as an alternative 
 
-// Adding alternatives/productions
 <a> ~=~ <a> | <a>
---a |: <b> ~=~ a |: <b> |: <b>
 
-// extracting rules
 "One may introduce a new rule which rhs is used somewhere"
 <e> ~ a [<e> : a]
 <e> ~ a{scheme(<e>)} [ stripAnnotations(<e>) : a ]// annotations might be left on a reference 
 
-// weakening bounds with "default" annotation
 <a> ~ #empty {default: <a>} 
---<a> ~ <a>? {default: <a>}
-// a -> a | a -> a | #empty {default: <a>} -> a?{default: <a>}
---<a>+ ~ <a>* {default: <a>+}
-// a+ -> a+ | a+ -> a+ | a -> a+ | #e {def: <a>} -> a* {def} 
---<a>+ ~ <a>? {default: <a>}
 
-// replacing symbol references with "lookup" annotation set
 a ~ <e> {key in : scope<value: a>}
 
 <a>* <-> (<a> | #e)*
-
--------------------------------------------
-
-what we have in abstract syntax:
-
-Symbol references might be annotated with & to denote a cross-reference 
-
-Simplistic inheritance (forbids any reuse of declarations, that's bad) 
-a
-	: b
-	: c
-	: d
-	;
-	
-Class definitions
-a
-	: b c d
-	;
-here the order is irrelevant
-items might be 
-  symbol references (pure or arbitrarily iterated)
-  literals (only iterated)
-  
-Enums
-a
-	: 'b'
-	: 'c'
-	: 'd'
-	;
-Only literals allowed
