@@ -1,0 +1,13 @@
+for Grammar metamodel
+
+ATF +
+
+class FeatureAssignment extends Statement {
+	ATFAttribute receiver;
+	StructuralFeature feature;
+	( ATFAttribute | String ) value;
+	boolean? onlyOnce;
+	FeatureAssignment? next; 
+}
+
+// + Scope declaration/usage/keys
