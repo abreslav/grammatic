@@ -1,53 +1,103 @@
 program
-	: statement*
+	@program : Program
+	: statement{program.statements+=#}*
 	;
 
 statement
-	: expression
-	: defmodule
-	: defglobal
-	: deftemplate
-	: defrule
-	: defquery
-	: deffacts
-	: deffunction
+	@statement : Statement
+	: expression{..}
+	: defmodule{statement=#}
+	: defglobal{..}
+	: deftemplate{..}
 	;
 
-expression // ???
-	: variable
-	: nonVariableSymbol
-	: number
-	: STRING
-	: dottedVariable
-	: functionCall
+STRING : '"'{skip} ('\'{skip} '"' | [^ '"'])* '"'{skip};
+
+boolean {instanceType: boolean}
+	: TRUE{true}
+	: FALSE{false}
 	;
 
-namedAndCommented
-	: nonVariableSymbol STRING? 
-	;
-:: {inlineEverywhere}
-	
 defmodule
-	: namedAndCommented autoFocus?
+	@module : Module
+	$=: nonVariableSymbol{module.name=#} 
+	  STRING{module.comment=#}? 
+	  boolean{module.autoFocus=#}?
 	;
 :: {
 	before = '(' 'defmodule'
 	after = ')'
-	extract[moduleDeclarations: '(' 'declare' autoFocus? ')']
+	boolean.before = '(' 'auto-focus'
+	boolean.after = ')'
 }
-	
+/* Result
+defmodule
+	@module : Module
+	: '(' 'defmodule' 
+		nonVariableSymbol{module.name=#} 
+		STRING{module.comment=#}? 
+		('(' 'auto-focus' boolean{module.autoFocus=#} ')')?
+	;
+*/
+
 defglobal
-	: $body=(GLOBAL_VARIABLE expression)
+	@global : Global
+	: $body=(GLOBAL_VARIABLE{global.name=#} expression{global.value=#})
 	;
 :: {
-	inline(defglobal)
-	inline(statement)
-	$iterated = introduce(+, $body) // it stays in alternative under *
-	$iterated.before = '(' 'defglobal'
-	$iterated.after = ')'
-	::program: ($statement)*; 
-	extract(statement: $statement);
-	extract(defglobal: $iterated);  	
+	[3.2] inline(defglobal); [7] delete(defglobal)
+	statement
+		: (@global : Global;
+			GLOBAL_VARIABLE{global.name=#} expression{global.value=#}
+		  ){statement=#}
+		: {...}
+		;
+	[3.2] inline(statement); [7] delete(statement)
+	program
+		: (expression | defmodule | deftemplate 
+		   | $body=(GLOBAL_VARIABLE expression)){program.statements+=#}*
+		;
+	[prop. 8] approx, there are some more steps
+	/// SOMETHING MUST PREVENT US FROM SKIPPING THIS STEP
+	///   Actually it is assigning the same variable twice (the variable is omitted here)
+	/// DOUBTS IF THIS COULD BE DONE AUTOMATICALLY
+	///   And we would like to hide most annotations from the user 
+	program
+		: (expression{program.statements+=#} | defmodule{program.statements+=#} | deftemplate{program.statements+=#} 
+		   | $body=(GLOBAL_VARIABLE expression){program.statements+=#})*
+		;
+	[prop. 7] $iterated = introduce(+, $body) // it stays in alternative under *
+	program
+		: (expression | defmodule | deftemplate 
+		   | $iterated=((GLOBAL_VARIABLE expression){program.statements+=#}+))*
+		;
+	[4.1 + ???] $iterated.before = '(' 'defglobal'
+	[4.1 + ???] $iterated.after = ')'
+	... '(' 'defglobal' (GLOBAL_VARIABLE expression)+ ')'...
+	[3.2 + introduce new] ::program: ($statement)*; extract(statement: $statement);
+	statement{(program)}
+		: expression | defmodule | deftemplate | $iterated=((GLOBAL_VARIABLE expression){program.statements+=#}+)
+		;
+	[2.2] verticalize(statement)
+	statement{(program)}
+		: expression 
+		: defmodule 
+		: deftemplate 
+		: $iterated=('(' 'defglobal' (GLOBAL_VARIABLE expression){program.statements+=#}+ ')')
+		;
+	[3.2 + introduce new] extract(defglobal: $iterated);  	
+	statement{(program)}
+		: expression 
+		: defmodule 
+		: deftemplate 
+		: defglobal{(program)}
+		;
+	defglobal{(program)}
+		: '(' 'defglobal' 
+			(@global : Global;
+				GLOBAL_VARIABLE{global.name=#} expression{global.value=#}
+			){program.statements+=#}+ ')'
+		;
 }
  
 slotKind
@@ -67,12 +117,6 @@ slot
 	after
 	mergeIntoAlternative(slotType*, default*, defaultDynamic*, allowedValues*)
 }
-
-moduleCitizen
-	: namedAndCommented 
-	  defmodule& 
-	;
-:: {inline(moduleCitizen)}
 
 deftemplate
 	: nonVariableSymbol STRING? // inlined module citizen and named and commented
@@ -102,42 +146,3 @@ deftemplate
 	::$declarations == $body?
 	extract(templateDeclarations: $body)
 }
-
-defrule 
-	: moduleCitizen
-	  salience?
-	  nodeIndexHash?
-	  autoFocus?
-	  noLoop?
-	  conditionalElement*
-	  functionCall* 
-	;
-
-defquery
-	: moduleCitizen
-	  variable*
-	  nodeIndexHash?
-	  maxBackgroundRules? 
-	  conditionalElement* 
-	;
-
-deffacts
-	: moduleCitizen
-	  fact* 
-	;
-
-fact
-	: deftemplate&
-	  slotValue*
-	;
-	
-slotValue
-	: slot& expression
-	;
-
-deffunction
-	: namedAndCommented
-	  variable* 
-	  MULTIFIELD? 
-      expression* 
-	;
