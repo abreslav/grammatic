@@ -100,38 +100,111 @@ defglobal
 		;
 }
  
+type
+	: 'ANY'{enumliteral} | 'INTEGER'{enumliteral} | 'FLOAT' |
+      'NUMBER' | 'SYMBOL' | 'STRING' |
+      'LEXEME' | 'OBJECT' | 'LONG'
+    ;
+ 
 slotKind
-	: 'slot'
-	: 'multislot'
+	: 'slot'{enumliteral}
+	: 'multislot'{enumliteral}
 	;
 	
 slot
-	: slotKind nonVariableSymbol // check for dot absence in the name
-	  $declarations=(slotType*
-      default*
-      defaultDynamic*
-      allowedValues*)
+	@slot : Slot;
+	$=: slotKind{slot.slotKind=#}
+	  nonVariableSymbol{slot.name=#}
+	  type{slot.type=#}?{slot.?type=#}
+      expression{slot.default=#}?
+      expression{slot.defaultDynamic=#}?
+      expression{slot.allowedValues+=#}*
     ;
 :: {
-	before
-	after
-	mergeIntoAlternative(slotType*, default*, defaultDynamic*, allowedValues*)
+	[4.1 + ...] before = '('
+	[4.1 + ...] after = ')'
+	[4.6] convertToPermPart(type)
+	... type{slot.?!type=#}+?{slot.?type=#} ...
+	[prop. 9] ... type{slot.?!type=#}*{slot.?type=#} ...
+	-- " --
+	...
+	  type{slot.?!type=#}*{slot.?type=#}
+      expression{slot.?!default=#}*
+      expression{slot.?!defaultDynamic=#}*
+      expression{slot.allowedValues+=#}*
+    [prop. 4] introduce *
+    ... expression{slot.allowedValues+=#}** ...
+    [prop. 6] * -> +
+    ... expression{slot.allowedValues+=#}+* ...
+    [prop. 15] A+ -> A A+
+    ... ( expression{slot.allowedValues+=#} expression{slot.allowedValues+=#}+)* ...
+!!!!! BAD THING! We address annotations directly (
+    [5.3] {A} -> {A?!}
+    ... ( expression{slot.?!allowedValues+=#} expression{slot.allowedValues+=#}+)* ...
+    [4.1 + ...] before, after
+	...
+	  ('(' 'type' type{slot.?!type=#} ')')*{slot.?type=#}
+      ('(' 'default' expression{slot.?!default=#} ')')*
+      ('(' 'default-dynamic' expression{slot.?!defaultDynamic=#} ')')*
+      ('(' 'allowed-values' expression{slot.?!allowedValues+=#} expression{slot.allowedValues+=#}+ ')')*
+	[prop 10.] join into alt
+	... (
+	  ('(' 'type' type{slot.?!type=#} ')'){slot.?type=#} |
+      ('(' 'default' expression{slot.?!default=#} ')') |
+      ('(' 'default-dynamic' expression{slot.?!defaultDynamic=#} ')') |
+      ('(' 'allowed-values' expression{slot.?!allowedValues+=#} expression{slot.allowedValues+=#}+ ')')
+    )* ...
+    // add ?
+    // add 'declare'
+	
 }
 
 deftemplate
-	: nonVariableSymbol STRING? // inlined module citizen and named and commented
-	  defmodule& 
-	  ($super=deftemplate&)? // super
-	  slotSpecific*
-      backchainReactive*
-      fromClass*
-      includeVariables* 
-      ordered*
-      slot* // forbidden if declared ordered
+	: nonVariableSymbol{template.name=#} 
+	  STRING{template.comment=#}?
+	  defmodule{template.module=#}
+	  deftemplate{template.super=#}?
+	  boolean{template.slotSpecific=#}?
+      boolean(template.backchainReactive=#}?
+      nonVariableSymbol{template.fromClass=#}?
+      boolean{template.includeVariables=#}? 
+      slot{template.slots+=#}*
 	;
 :: {
-	before
-	after
+	[4.1 + ...] 
+	... '(' 'ordered' TRUE ')' | '(' 'ordered' FALSE ')' ...
+	... slot{template.slots+=#}? slot{template.slots+=#}* ...
+	... orT sl? sl* | orF sl? sl* ...
+	... orT sl? | orF sl* ...
+	... orT sl | orf sl* ...
+	... orT \e {__data} | orf sl* ...
+	now we have two alternatives: for ordered and unordered sets :)
+	
+	---
+	
+	[4.4] defmodule {synth scope TEMPLATES: nonVariableSymbol -> Template}
+	[4.4] defmodule {synth scope THIS_MODULE: Template}
+	[4.4] deftemplate {inherit scope TEMPLATES = defmodule::TEMPLATES}
+	[4.4] deftemplate {inherit scope THIS_MODULE = defmodule::THIS_MODULE}
+	[4.4] introduce key
+    ... (nonVariableSymbol{key in MODULES}{template.module=#})?{template.module=THIS_MODULE()} ...
+    
+	[4.4] deftemplate{template.super=#}?
+	... (nonVariableSymbol{$M = MODULES(#)} '::' nonVariableSymbol{$T = #})
+		{$M(T)}
+		{template.super=#}    
+
+	... (
+			(nonVariableSymbol{$M = MODULES(#)})?
+				{? $M = THIS_MODULE()}
+			'::' 
+			nonVariableSymbol{$T = #}
+		)
+		{$M.TEMPLATES(T)}
+		{template.super=#}    
+	
+	
+	[4.1 + ...] before after
 	representReference(defmodule&, $module=nonVariableSymbol -- key in MODULES)
 	$module.after = '::'
 	extract(topLevelName: $module '::' nonVariableSymbol)

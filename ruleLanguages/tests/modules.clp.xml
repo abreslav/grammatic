@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='US-ASCII'?>
+<rulebase xmlns='http://www.jessrules.com/JessML/1.0'>
+<template>
+  <name>MAIN::XXX</name>
+</template>
+
+<module>
+  <name>MOD</name>
+</module>
+
+<template>
+  <name>MOD::T</name>
+</template>
+
+<template>
+  <name>MOD::A</name>
+  <extends>MOD::T</extends>
+</template>
+
+</rulebase>
