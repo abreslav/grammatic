@@ -141,6 +141,7 @@ public class ATFAspectGenerator implements IEcoreGeneratorTrace {
 				ATFMetadata.SEMANTIC_MODULE, createCrossReferenceValue(module));
 		
 		FunctionSignature signature = AtfFactory.eINSTANCE.createFunctionSignature();
+		myFunctions.put(eClassifier, signature);
 		signature.setName(symbol.getName());
 		signature.getOutputAttributes().add(result);
 		myWritableAspect.setAttribute(symbol, ATFMetadata.ATF_NAMESPACE, 

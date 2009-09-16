@@ -31,5 +31,6 @@ public class Main {
 		EPackage ePackage = generator.generateEcore(grammar, new MetadataProvider(aspect));
 		ResourceLoader resourceLoader = new ResourceLoader(".");
 		resourceLoader.save("examples/model/jess.as.ecore", ePackage);
+		System.out.println("over");
 	}
 }
