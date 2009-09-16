@@ -1,0 +1,56 @@
+{
+	ePackageName = 'jess';
+	ePackageNsURI = 'http:///grammatic.googlecode.com/2009/Examples/Jess/0.1';
+	ePackageNsPrefix = 'jess';
+}
+
+LETTER {lexical; fragment}
+	: 'a'--'z' | 'A'--'Z' | '_'
+	;
+	
+DIGIT {lexical; fragment}
+	: '0'--'9'
+	;
+
+NAME {lexical}
+	: LETTER (LETTER | DIGIT)*
+	; 
+	
+boolean {enum}
+	: 'true'
+	: 'false'
+	;
+
+template {class}
+	: NAME{name=name} 
+	  NAME{name=extends}? 
+	  boolean{name=slotSpecific}?
+	  slot{name=slots}*
+	;
+	
+slot {abstract; class}
+	: singleSlot
+	: multiSlot
+	;
+	
+singleSlot {class}
+	: NAME{name=name}
+	  slotType{name=type)?	  	    
+	;
+	
+multiSlot {class}
+	: NAME{name=name}
+	  slotType{name=type)?	  	    
+	;
+
+slotType {enum}
+	: 'ANY'
+	: 'INTEGER'
+	: 'FLOAT'
+    : 'NUMBER'
+    : 'SYMBOL' 
+    : 'STRING'
+    : 'LEXEME' 
+    : 'OBJECT' 
+    : 'LONG'
+    ; 

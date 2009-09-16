@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.grammar.template.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.metadata.aspects.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.interpreter"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.parser"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.query.variables"/>
+	<classpathentry kind="var" path="EMF_COMMON"/>
+	<classpathentry kind="var" path="EMF_ECORE"/>
+	<classpathentry kind="var" path="EMF_ECORE_XMI_PLUGIN"/>
+	<classpathentry kind="var" path="ANTLR_RUNTIME" sourcepath="/ANTLR_RUNTIME_SRC"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
