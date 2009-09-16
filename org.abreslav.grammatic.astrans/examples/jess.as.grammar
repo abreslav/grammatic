@@ -5,11 +5,11 @@
 }
 
 LETTER {lexical; fragment}
-	: 'a'--'z' | 'A'--'Z' | '_'
+	: ['a'--'z' 'A'--'Z' '_']
 	;
 	
 DIGIT {lexical; fragment}
-	: '0'--'9'
+	: ['0'--'9']
 	;
 
 NAME {lexical}
@@ -17,8 +17,8 @@ NAME {lexical}
 	; 
 	
 boolean {enum}
-	: 'true'
 	: 'false'
+	: 'true'
 	;
 
 template {class}
@@ -35,12 +35,12 @@ slot {abstract; class}
 	
 singleSlot {class}
 	: NAME{name=name}
-	  slotType{name=type)?	  	    
+	  slotType{name=type}?	  	    
 	;
 	
 multiSlot {class}
 	: NAME{name=name}
-	  slotType{name=type)?	  	    
+	  slotType{name=type}?	  	    
 	;
 
 slotType {enum}

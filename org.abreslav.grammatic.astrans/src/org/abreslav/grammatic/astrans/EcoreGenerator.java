@@ -1,10 +1,10 @@
 package org.abreslav.grammatic.astrans;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.Iteration;
@@ -35,8 +35,8 @@ public class EcoreGenerator {
 		return new EcoreGenerator();
 	}
 	
-	private final Map<Symbol, EDataType> myDataTypes = new HashMap<Symbol, EDataType>();
-	private final Map<Symbol, EClass> myClasses = new HashMap<Symbol, EClass>();
+	private final Map<Symbol, EDataType> myDataTypes = EMFProxyUtil.customHashMap();
+	private final Map<Symbol, EClass> myClasses = EMFProxyUtil.customHashMap();
 	
 	private EcoreGenerator() {
 	}
@@ -115,13 +115,13 @@ public class EcoreGenerator {
 	private void processIteration(EClass eClass,
 			IMetadataProvider metadataProvider, Expression expression) {
 		if (false == expression instanceof Iteration) {
-			createStructuralFeature(eClass, expression, metadataProvider, 0, 1);
+			createStructuralFeature(eClass, expression, metadataProvider, 1, 1);
 			return;
 		}
 		Iteration iteration = (Iteration) expression;
 		createStructuralFeature(
 				eClass, 
-				expression, 
+				iteration.getExpression(), 
 				metadataProvider, 
 				iteration.getLowerBound(), 
 				iteration.getUpperBound());				
@@ -130,7 +130,7 @@ public class EcoreGenerator {
 	private void createStructuralFeature(EClass eClass, Expression expression,
 			IMetadataProvider metadataProvider, int lower, int upper) {
 		if (false == expression instanceof SymbolReference) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(expression.getClass().getCanonicalName());
 		}
 		SymbolReference ref = (SymbolReference) expression;
 		IMetadataStorage referenceMetadata = MetadataStorage.getMetadataStorage(ref, metadataProvider);
@@ -141,18 +141,17 @@ public class EcoreGenerator {
 		if (targetDataType != null) {
 			EAttribute attribute = EcoreFactory.eINSTANCE.createEAttribute();
 			attribute.setEType(targetDataType);
-			eClass.getEAttributes().add(attribute);
 			feature = attribute;
 		} else {
 			EClass tragetClass = myClasses.get(targetSymbol);
 			EReference reference = EcoreFactory.eINSTANCE.createEReference();
 			reference.setEType(tragetClass);
-			eClass.getEReferences().add(reference);
 			feature = reference;
 		}
 		initializeStructuralFeature(feature, featureDescriptor);
 		feature.setLowerBound(lower);
 		feature.setUpperBound(upper);
+		eClass.getEStructuralFeatures().add(feature);
 	}
 
 	private void initializeStructuralFeature(EStructuralFeature attribute,
