@@ -31,14 +31,20 @@ import org.eclipse.emf.ecore.EcorePackage;
 
 public class EcoreGenerator {
 
-	public static EcoreGenerator create() {
-		return new EcoreGenerator();
+	public static EcoreGenerator create(IEcoreGeneratorTrace trace) {
+		return new EcoreGenerator(trace);
+	}
+	
+	public static EcoreGenerator createWithNoTrace() {
+		return new EcoreGenerator(IEcoreGeneratorTrace.NONE);
 	}
 	
 	private final Map<Symbol, EDataType> myDataTypes = EMFProxyUtil.customHashMap();
 	private final Map<Symbol, EClass> myClasses = EMFProxyUtil.customHashMap();
+	private final IEcoreGeneratorTrace myTrace;
 	
-	private EcoreGenerator() {
+	private EcoreGenerator(IEcoreGeneratorTrace trace) {
+		myTrace = trace;
 	}
 	
 	public EPackage generateEcore(Grammar grammar, IMetadataProvider metadataProvider) {
@@ -50,9 +56,11 @@ public class EcoreGenerator {
 			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, metadataProvider);
 			if (symbolMetadata.isPresent("lexical")
 					&& !symbolMetadata.isPresent("fragment")) {
+				myTrace.symbolToString(symbol);
 				myDataTypes.put(symbol, EcorePackage.eINSTANCE.getEString());
 			} else if (symbolMetadata.isPresent("enum")) {
 				EEnum eEnum = createEnum(symbol, metadataProvider);
+				myTrace.symbolToEnum(symbol, eEnum);
 				classifier = eEnum;
 				myDataTypes.put(symbol, eEnum);
 			} else if (symbolMetadata.isPresent("class")) {
@@ -73,7 +81,10 @@ public class EcoreGenerator {
 			} else {
 				fillInClass(eClass, symbol, metadataProvider);
 			}
+			myTrace.symbolToClass(symbol, eClass);
 		}
+		
+		myTrace.grammarToPackage(grammar, ePackage);
 		
 		return ePackage;
 	}
@@ -152,6 +163,7 @@ public class EcoreGenerator {
 		feature.setLowerBound(lower);
 		feature.setUpperBound(upper);
 		eClass.getEStructuralFeatures().add(feature);
+		myTrace.symbolReferenceToFeature(ref, feature);
 	}
 
 	private void initializeStructuralFeature(EStructuralFeature attribute,
@@ -175,6 +187,7 @@ public class EcoreGenerator {
 			literal.setLiteral(stringExp.getValue());
 			literal.setValue(value);
 			eEnum.getELiterals().add(literal);
+			myTrace.symbolReferenceToEnumLiteral(stringExp, literal);
 			value++;
 		}
 		return eEnum;

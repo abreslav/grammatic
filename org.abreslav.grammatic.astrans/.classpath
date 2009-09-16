@@ -15,5 +15,6 @@
 	<classpathentry kind="var" path="EMF_ECORE"/>
 	<classpathentry kind="var" path="EMF_ECORE_XMI_PLUGIN"/>
 	<classpathentry kind="var" path="ANTLR_RUNTIME" sourcepath="/ANTLR_RUNTIME_SRC"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

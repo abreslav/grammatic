@@ -1,0 +1,78 @@
+LETTER : #token(fragment); 
+DIGIT : #token(fragment); 
+NAME : #token;
+WS : #token(whitespace);  
+	
+boolean
+	: 'false'
+	: 'true'
+	;
+# --> (Boolean result) {
+	'false': result = Jess.Boolean_false();
+	'true': result = Jess.Boolean_true();
+}
+
+template
+	: $name=NAME 
+	  ($extends=NAME)? 
+	  boolean?
+	  slot*
+	;
+# --> (Template result) {
+	#before: result = Jess.new_Template();
+	name: Jess.setName_Template(result, name#);
+	extends: Jess.setExtends_Template(result, extends#);
+	boolean: Jess.setSlotSpecific_Template(result, boolean#);
+	slot: Jess.setAddSlot_Template(result, slot#);
+}
+	
+slot
+	: singleSlot
+	: multiSlot
+	;
+# --> (Slot result) {
+	singleSlot:: result = #();
+	multiSlot:: result = #();
+} 
+	
+singleSlot
+	: NAME
+	  slotType?	  	    
+	;
+# --> (SingleSlot result) {
+	NAME: Jess.setName_SingleSlot(result, NAME#);
+	slotType : Jess.setType_SingleSlot(result, Name#);
+}
+	
+multiSlot {class}
+	: NAME{name=name}
+	  slotType{name=type}?	  	    
+	;
+# --> (MultiSlot result) {
+	NAME: Jess.setName_MultiSlot(result, NAME#);
+	slotType : Jess.setType_MultiSlot(result, Name#);
+}
+	
+
+slotType
+	: 'ANY'
+	: 'INTEGER'
+	: 'FLOAT'
+    : 'NUMBER'
+    : 'SYMBOL' 
+    : 'STRING'
+    : 'LEXEME' 
+    : 'OBJECT' 
+    : 'LONG'
+    ;
+# --> (SlotType result) {
+	'ANY': result = Jess.slotType_ANY():
+	'INTEGER'...
+	'FLOAT'
+    'NUMBER'
+    'SYMBOL' 
+    'STRING'
+    'LEXEME' 
+    'OBJECT' 
+    'LONG'
+}
