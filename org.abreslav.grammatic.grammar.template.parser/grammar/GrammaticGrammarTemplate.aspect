@@ -13,6 +13,7 @@
 		import org.abreslav.grammatic.grammar.Production;
 		import org.abreslav.grammatic.grammar.Symbol;
 		import org.abreslav.grammatic.grammar.template.grammarTemplate.IterationTemplate;
+		import org.abreslav.grammatic.metadata.TupleValue;
 		import org.eclipse.emf.ecore.EClass;
 	}};
 }
@@ -23,7 +24,7 @@ grammar
 			Grammar grammar_();
 		}};
 	]]
-	: ..
+	: .. 
 	;
 	
 lexicalAtomIndependent
@@ -48,7 +49,10 @@ defaultTemplate
 			Grammar defaultTemplate();
 		}};
 	]]
-	: ..
+	: metadata? ..
+	[[
+		metadata.call = {{attributeList()}};
+	]]
 	;
 	
 templateApplication
@@ -135,7 +139,10 @@ templateBody
 			TemplateBody<Grammar> templateBody();
 		}};
 	]]
-	: ..
+	: .. metadata? ..
+	[[
+		metadata.call = {{metadata(#result)}};
+	]]
 	;
 
 rule

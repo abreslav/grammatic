@@ -18,7 +18,7 @@ templateLibrary
 	;
 	
 defaultTemplate
-	: rule*
+	: metadata? rule*
 	;
 	
 templateApplication
@@ -54,7 +54,7 @@ templateParameter
 	;
 
 templateBody
-	: '{' rule* '}'
+	: '{' metadata? rule* '}'
 	;
 
 rule

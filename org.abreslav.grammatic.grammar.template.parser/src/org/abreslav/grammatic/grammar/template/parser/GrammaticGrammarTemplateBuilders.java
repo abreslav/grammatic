@@ -18,6 +18,9 @@ import org.abreslav.grammatic.grammar.template.grammarTemplate.IterationTemplate
 import org.abreslav.grammatic.grammar.template.grammarTemplate.ProductionTemplate;
 import org.abreslav.grammatic.grammar.template.grammarTemplate.SequenceTemplate;
 import org.abreslav.grammatic.grammar.template.grammarTemplate.SymbolTemplate;
+import org.abreslav.grammatic.metadata.Attribute;
+import org.abreslav.grammatic.metadata.TupleValue;
+import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
 import org.abreslav.grammatic.parser.util.ListBuilder;
 import org.abreslav.grammatic.template.ObjectContainer;
 import org.abreslav.grammatic.template.ParameterReference;
@@ -107,12 +110,12 @@ public class GrammaticGrammarTemplateBuilders implements
 	public IDefaultTemplateBuilder getDefaultTemplateBuilder() {
 		return new IDefaultTemplateBuilder() {
 			
-			private Grammar myGrammar;
+			private GrammarTemplate myGrammar;
 
 			@Override
 			public void init() {
 				myCurrentTemplateName = "<default>";
-				myGrammar = GrammarFactory.eINSTANCE.createGrammar();
+				myGrammar = GrammarTemplateFactory.eINSTANCE.createGrammarTemplate();
 			}
 			
 			@Override
@@ -123,12 +126,24 @@ public class GrammaticGrammarTemplateBuilders implements
 			
 			@Override
 			public void rule(TemplateBody<Symbol> rule) {
-				myGrammar.getSymbols().add(unwrap(myInstantiator.instantiateTemplateBody(rule)));
+				myGrammar.getSymbols().add(rule);
 			}
 			
 			@Override
 			public Grammar getResult() {
-				return myGrammar;
+				return unwrap(myInstantiator.instantiateTemplateBody(myGrammar));
+			}
+
+			@Override
+			public void attributeList(TupleValue attributeList) {
+				IWritableAspect writableAspect = myParsingContext.getWritableAspectForTemplates();
+				for (Attribute attribute : attributeList.getAttributes()) {
+					writableAspect.setAttribute(myGrammar, 
+							attribute.getNamespace(), 
+							attribute.getName(), 
+							attribute.getValue());
+				}
+				
 			}
 			
 		};
@@ -434,22 +449,22 @@ public class GrammaticGrammarTemplateBuilders implements
 
 			@Override
 			public void init() {
-				myGrammarTemplate = GrammarTemplateFactory.eINSTANCE.createGrammarTemplate();
 			}
 			
 			@Override
 			public void release() {
 				myGrammarTemplate = null;
 			}
+			
+			@Override
+			public TemplateBody<Grammar> createResult() {
+				myGrammarTemplate = GrammarTemplateFactory.eINSTANCE.createGrammarTemplate();
+				return myGrammarTemplate;
+			}
 
 			@Override
 			public void rule(TemplateBody<Symbol> rule) {
 				myGrammarTemplate.getSymbols().add(rule);
-			}
-			
-			@Override
-			public TemplateBody<Grammar> getResult() {
-				return myGrammarTemplate;
 			}
 
 		};
