@@ -15,7 +15,6 @@ import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addAttribu
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addContainedValueToSymbolAttribute;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addCrossReferencedValue;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.addMapEnty;
-import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.createCrossReferencesValue;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.getAttribute;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.getGrammarAssignment;
 import static org.abreslav.grammatic.atf.parser.AspectDefinitionUtils.getSymbolAttribute;
@@ -54,6 +53,7 @@ import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
 import org.abreslav.grammatic.metadata.aspectdef.AspectdefFactory;
 import org.abreslav.grammatic.metadata.aspectdef.AssignmentRule;
 import org.abreslav.grammatic.metadata.aspectdef.GrammarAssignment;
+import org.abreslav.grammatic.metadata.util.MetadataUtils;
 import org.abreslav.grammatic.query.ProductionQuery;
 import org.abreslav.grammatic.query.Query;
 import org.abreslav.grammatic.query.QueryContainer;
@@ -677,7 +677,7 @@ public class ATFBuilders implements IATFBuilders {
 			public void labelDefinition(List<Attribute> labelList,
 					Statement statement) {
 				for (Attribute attribute : labelList) {
-					attribute.setValue(createCrossReferencesValue(statement));
+					attribute.setValue(MetadataUtils.createCrossReferenceValue(statement));
 				}
 			}
 

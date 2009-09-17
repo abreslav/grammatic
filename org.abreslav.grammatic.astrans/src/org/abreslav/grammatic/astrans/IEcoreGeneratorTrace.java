@@ -49,15 +49,26 @@ public interface IEcoreGeneratorTrace {
 		@Override
 		public void symbolToWhitespace(Symbol symbol) {
 		}
+
+		@Override
+		public void symbolReferenceToSubclass(SymbolReference symbolReference,
+				Symbol symbol, EClass superclass, EClass subclass) {
+		}
 		
 	};
 
 	void grammarToPackage(Grammar grammar, EPackage pack);
+	// called before any symbolReferenceToFeature of this class, class might be incomplete, "abstract" is set correctly
 	void symbolToClass(Symbol symbol, EClass eClass);
 	void symbolToString(Symbol symbol);
 	void symbolToFragment(Symbol symbol);
 	void symbolToWhitespace(Symbol symbol);
+	// called before any symbolReferenceToEnumLiteral, enum might be incomplete
 	void symbolToEnum(Symbol symbol, EEnum eEnum);
+	// called after symbolToClass
 	void symbolReferenceToFeature(SymbolReference symbolReference, EStructuralFeature feature);
+	// called after symbolToClass
+	void symbolReferenceToSubclass(SymbolReference symbolReference, Symbol symbol, EClass superclass, EClass subclass);
+	// called after symbolToEnum
 	void symbolReferenceToEnumLiteral(StringExpression stringExpression, EEnumLiteral literal);
 }

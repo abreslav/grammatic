@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.abreslav.grammatic.astrans.descriptors.EPackageDescriptor;
+import org.abreslav.grammatic.astrans.descriptors.EStructuralFeatureDescriptor;
 import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Grammar;
@@ -40,7 +42,7 @@ public class EcoreGenerator {
 	}
 	
 	private final Map<Symbol, EDataType> myDataTypes = EMFProxyUtil.customHashMap();
-	private final Map<Symbol, EClass> myClasses = EMFProxyUtil.customHashMap();
+	private final Map<Symbol, EClass> myClasses = EMFProxyUtil.customLinkedHashMap();
 	private final IEcoreGeneratorTrace myTrace;
 	
 	private EcoreGenerator(IEcoreGeneratorTrace trace) {
@@ -61,12 +63,14 @@ public class EcoreGenerator {
 			} else if (symbolMetadata.isPresent("enum")) {
 				EEnum eEnum = createEnum(symbol, metadataProvider);
 				myTrace.symbolToEnum(symbol, eEnum);
+				fillInEnum(symbol, eEnum);
 				classifier = eEnum;
 				myDataTypes.put(symbol, eEnum);
 			} else if (symbolMetadata.isPresent("class")) {
 				EClass eClass = createClassForSymbol(symbol, symbolMetadata);
 				classifier = eClass;
 				myClasses.put(symbol, eClass);
+				myTrace.symbolToClass(symbol, eClass);
 			}
 			if (classifier != null) {
 				ePackage.getEClassifiers().add(classifier);
@@ -81,7 +85,6 @@ public class EcoreGenerator {
 			} else {
 				fillInClass(eClass, symbol, metadataProvider);
 			}
-			myTrace.symbolToClass(symbol, eClass);
 		}
 		
 		myTrace.grammarToPackage(grammar, ePackage);
@@ -101,6 +104,7 @@ public class EcoreGenerator {
 				throw new IllegalArgumentException();
 			}
 			subclass.getESuperTypes().add(eClass);
+			myTrace.symbolReferenceToSubclass(reference, symbol, eClass, subclass);
 		}
 	}
 
@@ -174,6 +178,10 @@ public class EcoreGenerator {
 	private EEnum createEnum(Symbol symbol, IMetadataProvider metadataProvider) {
 		EEnum eEnum = EcoreFactory.eINSTANCE.createEEnum();
 		eEnum.setName(JavaUtils.applyTypeNameConventions(symbol.getName()));
+		return eEnum;
+	}
+
+	private void fillInEnum(Symbol symbol, EEnum eEnum) {
 		int value = 0;
 		for (Production production : symbol.getProductions()) {
 			Expression expression = production.getExpression();
@@ -190,7 +198,6 @@ public class EcoreGenerator {
 			myTrace.symbolReferenceToEnumLiteral(stringExp, literal);
 			value++;
 		}
-		return eEnum;
 	}
 
 	private EClass createClassForSymbol(Symbol symbol, IMetadataStorage symbolMetadata) {

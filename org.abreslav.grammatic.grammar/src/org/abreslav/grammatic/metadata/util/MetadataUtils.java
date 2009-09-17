@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.abreslav.grammatic.metadata.Attribute;
+import org.abreslav.grammatic.metadata.AttributeValue;
+import org.abreslav.grammatic.metadata.CrossReferenceValue;
+import org.abreslav.grammatic.metadata.MetadataFactory;
 import org.abreslav.grammatic.metadata.Value;
 import org.abreslav.grammatic.metadata.aspects.manager.IMetadataProvider;
 import org.eclipse.emf.ecore.EObject;
@@ -25,5 +28,24 @@ public class MetadataUtils {
 		return metadata;
 	}
 	
+	public static CrossReferenceValue createCrossReferenceValue(EObject object) {
+		CrossReferenceValue value = MetadataFactory.eINSTANCE.createCrossReferenceValue();
+		value.getValues().add(object);
+		return value;
+	}
+	
+	public static AttributeValue createAttributeValue(
+			Object object) {
+		AttributeValue value = MetadataFactory.eINSTANCE.createAttributeValue();
+		value.getValues().add(object);
+		return value;
+	}
+
+	public static AttributeValue createAttributeValue(
+			Collection<?> object) {
+		AttributeValue value = MetadataFactory.eINSTANCE.createAttributeValue();
+		value.getValues().addAll(object);
+		return value;
+	}
 	
 }

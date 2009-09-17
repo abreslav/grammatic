@@ -1,10 +1,15 @@
 package org.abreslav.grammatic.astrans;
 
+import static org.abreslav.grammatic.metadata.util.MetadataUtils.createAttributeValue;
+import static org.abreslav.grammatic.metadata.util.MetadataUtils.createCrossReferenceValue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.abreslav.grammatic.astrans.semantics.SymbolSemanticalDescriptor;
+import org.abreslav.grammatic.astrans.semantics.TokenDescriptor;
 import org.abreslav.grammatic.atf.ATFAttribute;
 import org.abreslav.grammatic.atf.ATFAttributeAssignment;
 import org.abreslav.grammatic.atf.ATFAttributeReference;
@@ -18,26 +23,25 @@ import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.StringExpression;
 import org.abreslav.grammatic.grammar.Symbol;
 import org.abreslav.grammatic.grammar.SymbolReference;
-import org.abreslav.grammatic.metadata.AttributeValue;
-import org.abreslav.grammatic.metadata.CrossReferenceValue;
 import org.abreslav.grammatic.metadata.MetadataFactory;
 import org.abreslav.grammatic.metadata.Namespace;
+import org.abreslav.grammatic.metadata.aspects.manager.IMetadataProvider;
 import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
+import org.abreslav.grammatic.metadata.util.IMetadataStorage;
+import org.abreslav.grammatic.metadata.util.MetadataStorage;
 import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 
-public class ATFAspectGenerator implements IEcoreGeneratorTrace {
+public class ATFAspectGenerator {
 
-	public static ATFAspectGenerator create(IWritableAspect writableAspect) {
-		return new ATFAspectGenerator(writableAspect);
+	public static void generate(Grammar grammar, IMetadataProvider metadataProvider, IWritableAspect writableAspect) {
+		new ATFAspectGenerator(writableAspect).generate(grammar, metadataProvider);
 	}
 	
 	private final IWritableAspect myWritableAspect;
@@ -47,18 +51,30 @@ public class ATFAspectGenerator implements IEcoreGeneratorTrace {
 	private final Map<EClassifier, FunctionSignature> myFunctions = new HashMap<EClassifier, FunctionSignature>();
 	private final Map<EClassifier, ATFAttribute> myResults = new HashMap<EClassifier, ATFAttribute>();
 	private final Set<Symbol> myTokens = EMFProxyUtil.customHashSet();
-	
+
 	private ATFAspectGenerator(IWritableAspect writableAspect) {
 		myWritableAspect = writableAspect;
 	}
-
-	@Override
-	public void grammarToPackage(Grammar grammar, EPackage pack) {
-		// Nothing
+	
+	public void generate(Grammar grammar, IMetadataProvider metadataProvider) {
+		for (Symbol symbol : grammar.getSymbols()) {
+			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, metadataProvider);
+			TokenDescriptor tokenDescriptor = TokenDescriptor.read(symbolMetadata);
+			if (tokenDescriptor != null) {
+				if (tokenDescriptor.isFragment()) {
+					symbolToFragment(symbol);
+				} else if (tokenDescriptor.isWhitespace()) {
+					symbolToWhitespace(symbol);
+				} else {
+					symbolToToken(symbol);
+				}
+			} else {
+				SymbolSemanticalDescriptor descriptor = SymbolSemanticalDescriptor.read(symbolMetadata);
+			}
+		}
 	}
 
-	@Override
-	public void symbolReferenceToFeature(SymbolReference symbolReference,
+	private void symbolReferenceToFeature(SymbolReference symbolReference,
 			EStructuralFeature feature) {
 		EClass eClass = feature.getEContainingClass();
 		FunctionSignature setter = mySetterFunctions.get(feature);
@@ -88,8 +104,7 @@ public class ATFAspectGenerator implements IEcoreGeneratorTrace {
 				ATFMetadata.AFTER, createCrossReferenceValue(statement));
 	}
 	
-	@Override
-	public void symbolReferenceToEnumLiteral(StringExpression stringExpression,
+	private void symbolReferenceToEnumLiteral(StringExpression stringExpression,
 			EEnumLiteral literal) {
 		ATFAttributeAssignment statement = AtfFactory.eINSTANCE.createATFAttributeAssignment();
 
@@ -101,31 +116,26 @@ public class ATFAspectGenerator implements IEcoreGeneratorTrace {
 				ATFMetadata.AFTER, createCrossReferenceValue(statement));
 	}
 
-	@Override
-	public void symbolToClass(Symbol symbol, EClass eClass) {
-		SemanticModule module = createSetterModule(symbol, eClass);
-		putSymbolMetadata(symbol, eClass, module);
+	private void symbolToClass(Symbol symbol, SymbolSemanticalDescriptor descriptor) {
+		SemanticModule module = createSetterModule(symbol, descriptor);
+		putSymbolMetadata(symbol, descriptor, module);
 	}
 
-	@Override
-	public void symbolToEnum(Symbol symbol, EEnum eEnum) {
+	private void symbolToEnum(Symbol symbol, EEnum eEnum) {
 		SemanticModule module = createEnumModule(symbol, eEnum);
 		putSymbolMetadata(symbol, eEnum, module);
 	}
 
-	@Override
-	public void symbolToString(Symbol symbol) {
+	private void symbolToToken(Symbol symbol) {
 		markAsToken(symbol);
 	}
 
-	@Override
-	public void symbolToFragment(Symbol symbol) {
+	private void symbolToFragment(Symbol symbol) {
 		markAsToken(symbol);
 		addTokenClass(symbol, "fragment");
 	}
 
-	@Override
-	public void symbolToWhitespace(Symbol symbol) {
+	private void symbolToWhitespace(Symbol symbol) {
 		markAsToken(symbol);
 		addTokenClass(symbol, "whitespace");
 	}
@@ -198,20 +208,6 @@ public class ATFAspectGenerator implements IEcoreGeneratorTrace {
 		SemanticModule module = AtfFactory.eINSTANCE.createSemanticModule();
 		module.setName(symbolName);
 		return module;
-	}
-
-	private CrossReferenceValue createCrossReferenceValue(
-			EObject feature) {
-		CrossReferenceValue value = MetadataFactory.eINSTANCE.createCrossReferenceValue();
-		value.getValues().add(feature);
-		return value;
-	}
-	
-	private AttributeValue createAttributeValue(
-			Object object) {
-		AttributeValue value = MetadataFactory.eINSTANCE.createAttributeValue();
-		value.getValues().add(object);
-		return value;
 	}
 
 	private ATFAttribute createAttribute(EClassifier eClassifier, String name) {

@@ -1,0 +1,50 @@
+namespace Semantics {
+
+	class Symbol {
+		inputAttributes : Attribute*;
+		outputAttributes : Attribute*;
+		
+		token : #presence;
+		fragment : #presence;
+		whitespace : #presence;
+	}
+	
+	class Expression {
+		//before
+		declaredAttributes: Attribute*;
+		// after
+		assignments: Assignment*;
+	}
+	
+	class SymbolReference {
+		assignedTo : Reference*;
+		arguments : Attribute*;
+	}
+
+}
+
+class Attribute {
+	name : String;
+	type : EClassifier;
+}
+
+abstract class Reference {
+	value : Attribute;
+}
+
+class FeatureReference extends Assignment {
+	feature : EStructuralFeature;
+	onlyIfUnset : boolean;
+	assertUnset : boolean [default true];
+}
+
+class AttributeReference extends Assignment {
+}
+
+abstract class Assignment {
+}
+
+class EnumLiteralAssignment {
+	variable : Attribute;
+	literal : EEnumLiteral;
+}

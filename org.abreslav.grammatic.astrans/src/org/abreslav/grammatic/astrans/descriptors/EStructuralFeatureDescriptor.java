@@ -1,4 +1,4 @@
-package org.abreslav.grammatic.astrans;
+package org.abreslav.grammatic.astrans.descriptors;
 
 import org.abreslav.grammatic.metadata.util.IMetadataStorage;
 

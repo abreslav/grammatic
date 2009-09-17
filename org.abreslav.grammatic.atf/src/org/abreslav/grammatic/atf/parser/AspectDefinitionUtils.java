@@ -107,12 +107,6 @@ public class AspectDefinitionUtils {
 		value.getValues().add(object);
 	}
 	
-	/*package*/ static CrossReferenceValue createCrossReferencesValue(EObject object) {
-		CrossReferenceValue value = MetadataFactory.eINSTANCE.createCrossReferenceValue();
-		value.getValues().add(object);
-		return value;
-	}
-	
 	/*package*/ static VariableDefinition getSymbolVariable(
 			AssignmentRule assignmentRule) {
 		RuleQuery query = (RuleQuery) assignmentRule.getQueryContainer().getQuery();

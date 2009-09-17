@@ -1,8 +1,10 @@
 import java.io.File;
 import java.io.IOException;
 
-import org.abreslav.grammatic.astrans.ATFAspectGenerator;
 import org.abreslav.grammatic.astrans.EcoreGenerator;
+import org.abreslav.grammatic.astrans.SemanticsAspectGenerator;
+import org.abreslav.grammatic.atf.interpreter.ATFPostProcessor;
+import org.abreslav.grammatic.atf.java.parser.JavaTypeSystemBuilder;
 import org.abreslav.grammatic.emfutils.ResourceLoader;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
@@ -10,9 +12,11 @@ import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
 import org.abreslav.grammatic.metadata.aspects.AspectsFactory;
 import org.abreslav.grammatic.metadata.aspects.MetadataAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.AspectWriter;
+import org.abreslav.grammatic.metadata.aspects.manager.IMetadataProvider;
 import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.MetadataProvider;
 import org.abreslav.grammatic.utils.FileLocator;
+import org.abreslav.grammatic.utils.IErrorHandler;
 import org.antlr.runtime.RecognitionException;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -21,16 +25,34 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, RecognitionException {
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
+		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
 		Grammar grammar = GrammarParserUtils.parseGrammar(
 				"jess.as.grammar", 
 				new FileLocator(new File("examples")), 
-				AspectWriter.createWritableAspect(aspect), 
+				writableAspect, 
 				IGrammarLoadHandler.NONE);
-		IWritableAspect atfWritableAspect = AspectWriter.createWritableAspect(aspect);
-		EcoreGenerator generator = EcoreGenerator.create(ATFAspectGenerator.create(atfWritableAspect));
+
+		MetadataAspect semanticalAspect = AspectsFactory.eINSTANCE.createMetadataAspect();
+		IWritableAspect semWritableAspect = AspectWriter.createWritableAspect(semanticalAspect);
+		EcoreGenerator generator = EcoreGenerator.create(SemanticsAspectGenerator.create(semWritableAspect));
 		EPackage ePackage = generator.generateEcore(grammar, new MetadataProvider(aspect));
+		
+		generateATF(grammar, semWritableAspect, new MetadataProvider(semanticalAspect));
+		
 		ResourceLoader resourceLoader = new ResourceLoader(".");
 		resourceLoader.save("examples/model/jess.as.ecore", ePackage);
+		
 		System.out.println("over");
+	}
+
+	private static void generateATF(Grammar grammar, IWritableAspect writableAspect, IMetadataProvider metadataProvider) {
+		ATFPostProcessor<RuntimeException> postProcessor = new ATFPostProcessor<RuntimeException>();
+		JavaTypeSystemBuilder typeSystemBuilder = new JavaTypeSystemBuilder();
+		postProcessor.process(
+				grammar, 
+				typeSystemBuilder.getStringType(), 
+				metadataProvider, 
+				writableAspect, 
+				IErrorHandler.EXCEPTION);
 	}
 }
