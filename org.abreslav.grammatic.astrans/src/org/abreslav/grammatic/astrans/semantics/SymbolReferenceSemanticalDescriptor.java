@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.abreslav.grammatic.grammar.SymbolReference;
 import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
+import org.abreslav.grammatic.metadata.util.IMetadataStorage;
 
 public class SymbolReferenceSemanticalDescriptor {
 
@@ -26,8 +27,21 @@ public class SymbolReferenceSemanticalDescriptor {
 				ASSIGNED_TO, createAttributeValue(descriptor.getAssignedTo()));
 		writableAspect.setAttribute(symbolReference, SemanticalMetadata.SEMANTICAL_NAMESPACE, 
 				ARGUMENTS, createAttributeValue(descriptor.getArguments()));
-	}	
+	}		
 	
+	public static SymbolReferenceSemanticalDescriptor read(IMetadataStorage symbolMetadata) {
+		SymbolReferenceSemanticalDescriptor descriptor = create(ExpressionSemanticalDescriptor.read(symbolMetadata));
+		List<SemanticalReference> assignedTo = symbolMetadata.readObjects(ASSIGNED_TO);
+		if (assignedTo != null) {
+			descriptor.getAssignedTo().addAll(assignedTo);
+		}
+		List<SemanticalAttribute> arguments = symbolMetadata.readObjects(ARGUMENTS);
+		if (arguments != null) {
+			descriptor.getArguments().addAll(arguments);
+		}
+		return descriptor;
+	}
+
 	private final List<SemanticalReference> myAssignedTo = new ArrayList<SemanticalReference>(0);
 	private final List<SemanticalAttribute> myArguments = new ArrayList<SemanticalAttribute>(0);
 	private final ExpressionSemanticalDescriptor myExpressionSemanticalDescriptor;

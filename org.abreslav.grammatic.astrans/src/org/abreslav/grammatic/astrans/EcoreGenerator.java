@@ -56,10 +56,15 @@ public class EcoreGenerator {
 		for (Symbol symbol : grammar.getSymbols()) {
 			EClassifier classifier = null;
 			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, metadataProvider);
-			if (symbolMetadata.isPresent("lexical")
-					&& !symbolMetadata.isPresent("fragment")) {
-				myTrace.symbolToString(symbol);
-				myDataTypes.put(symbol, EcorePackage.eINSTANCE.getEString());
+			if (symbolMetadata.isPresent("lexical")) {
+				if (symbolMetadata.isPresent("fragment")) {
+					myTrace.symbolToFragment(symbol);
+				} else if (symbolMetadata.isPresent("whitespace")) {
+					myTrace.symbolToWhitespace(symbol);
+				} else {
+					myTrace.symbolToString(symbol);
+					myDataTypes.put(symbol, EcorePackage.eINSTANCE.getEString());
+				}
 			} else if (symbolMetadata.isPresent("enum")) {
 				EEnum eEnum = createEnum(symbol, metadataProvider);
 				myTrace.symbolToEnum(symbol, eEnum);

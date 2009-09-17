@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 
+import org.abreslav.grammatic.astrans.ATFAspectGenerator;
 import org.abreslav.grammatic.astrans.EcoreGenerator;
 import org.abreslav.grammatic.astrans.SemanticsAspectGenerator;
 import org.abreslav.grammatic.atf.interpreter.ATFPostProcessor;
@@ -37,7 +38,8 @@ public class Main {
 		EcoreGenerator generator = EcoreGenerator.create(SemanticsAspectGenerator.create(semWritableAspect));
 		EPackage ePackage = generator.generateEcore(grammar, new MetadataProvider(aspect));
 		
-		generateATF(grammar, semWritableAspect, new MetadataProvider(semanticalAspect));
+		MetadataAspect atfAspect = AspectsFactory.eINSTANCE.createMetadataAspect();
+		generateATF(grammar, atfAspect, new MetadataProvider(semanticalAspect));
 		
 		ResourceLoader resourceLoader = new ResourceLoader(".");
 		resourceLoader.save("examples/model/jess.as.ecore", ePackage);
@@ -45,14 +47,15 @@ public class Main {
 		System.out.println("over");
 	}
 
-	private static void generateATF(Grammar grammar, IWritableAspect writableAspect, IMetadataProvider metadataProvider) {
+	private static void generateATF(Grammar grammar, MetadataAspect aspect, IMetadataProvider metadataProvider) {
+		ATFAspectGenerator.generate(grammar, metadataProvider, AspectWriter.createWritableAspect(aspect));
 		ATFPostProcessor<RuntimeException> postProcessor = new ATFPostProcessor<RuntimeException>();
 		JavaTypeSystemBuilder typeSystemBuilder = new JavaTypeSystemBuilder();
 		postProcessor.process(
 				grammar, 
 				typeSystemBuilder.getStringType(), 
-				metadataProvider, 
-				writableAspect, 
+				new MetadataProvider(aspect), 
+				AspectWriter.createWritableAspect(aspect), 
 				IErrorHandler.EXCEPTION);
 	}
 }

@@ -34,6 +34,12 @@ public class MetadataUtils {
 		return value;
 	}
 	
+	public static CrossReferenceValue createCrossReferenceValue(Collection<? extends EObject> object) {
+		CrossReferenceValue value = MetadataFactory.eINSTANCE.createCrossReferenceValue();
+		value.getValues().addAll(object);
+		return value;
+	}
+	
 	public static AttributeValue createAttributeValue(
 			Object object) {
 		AttributeValue value = MetadataFactory.eINSTANCE.createAttributeValue();

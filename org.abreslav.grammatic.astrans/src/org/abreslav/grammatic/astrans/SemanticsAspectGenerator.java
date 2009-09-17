@@ -76,15 +76,17 @@ public class SemanticsAspectGenerator implements IEcoreGeneratorTrace {
 
 	@Override
 	public void symbolToString(Symbol symbol) {
-		TokenDescriptor.write(symbol, myWritableAspect);
+		TokenDescriptor.write(symbol, TokenDescriptor.create(), myWritableAspect);
 	}
 
 	@Override
 	public void symbolToWhitespace(Symbol symbol) {		
+		TokenDescriptor.write(symbol, TokenDescriptor.create(false, true), myWritableAspect);
 	}
 	
 	@Override
 	public void symbolToFragment(Symbol symbol) {		
+		TokenDescriptor.write(symbol, TokenDescriptor.create(true, false), myWritableAspect);
 	}
 
 	private void processClassifierSymbol(Symbol symbol, EClassifier eClass) {

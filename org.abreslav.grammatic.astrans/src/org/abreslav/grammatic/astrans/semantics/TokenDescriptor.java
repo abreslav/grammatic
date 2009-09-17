@@ -10,6 +10,14 @@ public class TokenDescriptor {
 	private static final String FRAGMENT = "fragment";
 	private static final String WHITESPACE = "whitespace";
 
+	public static TokenDescriptor create() {
+		return new TokenDescriptor(false, false);
+	}
+	
+	public static TokenDescriptor create(boolean fragment, boolean whitespace) {
+		return new TokenDescriptor(fragment, whitespace);
+	}
+	
 	public static void write(Symbol symbol, TokenDescriptor descriptor, IWritableAspect writableAspect) {
 		writableAspect.setAttribute(symbol, SemanticalMetadata.SEMANTICAL_NAMESPACE, TOKEN, null);
 		if (descriptor.isFragment()) {
