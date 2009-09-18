@@ -48,7 +48,6 @@ import org.abreslav.grammatic.metadata.util.MetadataStorage;
 import org.abreslav.grammatic.metadata.util.MetadataUtils;
 import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.abreslav.grammatic.utils.INull;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
@@ -73,7 +72,8 @@ public class ATFAspectGenerator {
 	private final Set<Symbol> myTokens = EMFProxyUtil.customHashSet();
 
 	private final Map<EClassifier, SemanticModule> myModules = new HashMap<EClassifier, SemanticModule>();
-	private final Map<EClassifier, FunctionSignature> myClassConstructors = new HashMap<EClassifier, FunctionSignature>();
+//	private final Map<EClassifier, FunctionSignature> myClassConstructors = new HashMap<EClassifier, FunctionSignature>();
+	private final Map<EClassifier, FunctionSignature> myEnsureCreations = new HashMap<EClassifier, FunctionSignature>();
 	private final Map<EStructuralFeature, FunctionSignature> mySetterFunctions = new HashMap<EStructuralFeature, FunctionSignature>();
 	private final Map<EEnumLiteral, FunctionSignature> myLiteralConstructors = new HashMap<EEnumLiteral, FunctionSignature>();
 
@@ -113,10 +113,14 @@ public class ATFAspectGenerator {
 	}
 
 	private void processProductions(Symbol symbol, IMetadataProvider metadataProvider) {
+		if (myTokens.contains(symbol)) {
+			return;
+		}
 		Namespace namespace = myNamespaces.get(symbol);
 		for (Production production : symbol.getProductions()) {
 			// TODO Constructors :: declaredAttributes
 			Expression expression = production.getExpression();
+			addEnsureCreation(symbol, expression, namespace);
 			processExpression(expression, namespace, metadataProvider);
 		}
 	}
@@ -265,6 +269,49 @@ public class ATFAspectGenerator {
 		addTokenClass(symbol, "whitespace");
 	}
 
+
+	private void addEnsureCreation(Symbol symbol, Expression expression, Namespace namespace) {
+		myWritableAspect.setAttribute(expression, namespace, 
+				ATFMetadata.AFTER, createCrossReferenceValue(createEnsureCreationCall(symbol)));
+	}
+
+	private Statement createEnsureCreationCall(Symbol symbol) {
+		FunctionCall call = createFunctionCall(getEnsureCreation(symbol));
+		ATFAttribute resultAttribute = getResultAttribute(symbol);
+		call.getArguments().add(createAttributeReference(resultAttribute));
+		
+		ATFAttributeAssignment assignment = AtfFactory.eINSTANCE.createATFAttributeAssignment();
+		assignment.getLeftSide().add(createAttributeReference(resultAttribute));
+		assignment.setRightSide(call);
+		return assignment;
+	}
+
+	private FunctionSignature getEnsureCreation(Symbol symbol) {
+		ATFAttribute resultAttribute = getResultAttribute(symbol);
+		EGenericType resultGType = (EGenericType) resultAttribute.getType();
+		EClassifier resultType = resultGType.getEClassifier();
+		FunctionSignature signature = myEnsureCreations.get(resultType);
+		if (signature == null) {
+			
+			signature = AtfFactory.eINSTANCE.createFunctionSignature();
+			signature.setName("ensure" + JavaUtils.applyTypeNameConventions(resultType.getName()));
+			signature.getInputAttributes().add(createAttribute(resultType, "object"));
+			signature.getOutputAttributes().add(createAttribute(resultType, "result"));
+			
+			SemanticModule module = getSemanticModule(resultType);
+			module.getFunctions().add(signature);
+			myEnsureCreations.put(resultType, signature);
+		}
+		return signature;
+	}
+
+	private ATFAttribute getResultAttribute(Symbol symbol) {
+		// ugly hack
+		FunctionSignature functionSignature = myFunctions.get(symbol);
+		ATFAttribute resultAttribute = functionSignature.getOutputAttributes().get(0);
+		return resultAttribute;
+	}
+
 	private FunctionSignature getSetter(EStructuralFeature eStructuralFeature) {
 		FunctionSignature signature = mySetterFunctions.get(eStructuralFeature);
 		if (signature == null) {
@@ -274,6 +321,7 @@ public class ATFAspectGenerator {
 			
 			signature.getInputAttributes().add(createAttribute(eStructuralFeature.getEContainingClass(), "value"));
 			signature.getInputAttributes().add(createAttribute(eStructuralFeature.getEType(), eStructuralFeature.getName()));
+			signature.getOutputAttributes().add(createAttribute(eStructuralFeature.getEContainingClass(), "result"));
 			
 			SemanticModule module = getSemanticModule(eStructuralFeature.getEContainingClass());
 			module.getFunctions().add(signature);
@@ -298,17 +346,17 @@ public class ATFAspectGenerator {
 		return signature;
 	}
 	
-	private FunctionSignature getClassConstructor(EClass eClass) {
-		FunctionSignature signature = myClassConstructors.get(eClass);
-		if (signature == null) {
-			signature = AtfFactory.eINSTANCE.createFunctionSignature();
-			signature.setName("create" + JavaUtils.applyTypeNameConventions(eClass.getName()));
-			signature.getOutputAttributes().add(createAttribute(eClass, "result"));
-			getSemanticModule(eClass).getFunctions().add(signature);
-			myClassConstructors.put(eClass, signature);
-		}
-		return signature;
-	}
+//	private FunctionSignature getClassConstructor(EClass eClass) {
+//		FunctionSignature signature = myClassConstructors.get(eClass);
+//		if (signature == null) {
+//			signature = AtfFactory.eINSTANCE.createFunctionSignature();
+//			signature.setName("create" + JavaUtils.applyTypeNameConventions(eClass.getName()));
+//			signature.getOutputAttributes().add(createAttribute(eClass, "result"));
+//			getSemanticModule(eClass).getFunctions().add(signature);
+//			myClassConstructors.put(eClass, signature);
+//		}
+//		return signature;
+//	}
 
 	private SemanticModule getSemanticModule(EClassifier classifier) {
 		SemanticModule module = myModules.get(classifier);
@@ -360,7 +408,10 @@ public class ATFAspectGenerator {
 		FunctionCall call = createFunctionCall(signature);
 		call.getArguments().add(createAttributeReference(transformAttribute(reference.getVariable())));
 		call.getArguments().add(createAttributeReference(attribute));
-		return call;
+		ATFAttributeAssignment assignment = AtfFactory.eINSTANCE.createATFAttributeAssignment();
+		assignment.getLeftSide().add(createAttributeReference(transformAttribute(reference.getVariable())));
+		assignment.setRightSide(call);
+		return assignment;
 	}
 
 	private Statement createLiteralAssignment(
