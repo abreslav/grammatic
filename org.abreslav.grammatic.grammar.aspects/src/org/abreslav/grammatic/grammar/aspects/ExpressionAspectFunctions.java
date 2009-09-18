@@ -135,17 +135,35 @@ public class ExpressionAspectFunctions implements IGrammarAspectFunctions<Expres
 			int index = expressions.indexOf(main);
 			// mergeOrWrapIntoSequence may reparent exp:
 			expressions.set(index, PLACEHOLDER);
-			Expression expressionToAdd = mergeOrWrapIntoSequence(first, second);
+			Expression expressionToAdd = mergeOrWrapIntoSequence(main, first, second);
 			expressions.set(index, expressionToAdd);
 		} else {
 			EStructuralFeature containingFeature = main.eContainingFeature();
-			Expression expressionToAdd = mergeOrWrapIntoSequence(first, second);
+			Expression expressionToAdd = mergeOrWrapIntoSequence(main, first, second);
 			container.eSet(containingFeature, expressionToAdd);
 		}
 	}
 
-	private Expression mergeOrWrapIntoSequence(Expression exp, Expression after) {
+	private Expression mergeOrWrapIntoSequence(Expression original, Expression exp, Expression after) {
 		// NOTE: This is _guaranteed_ to reparent exp or after!
+		// We must not throw original away
+		if (exp == original) {
+			return mergeOrWrapIntoSequence(exp, after);
+		} else {
+			// after == original
+			if (false == after instanceof Sequence) {
+				return mergeOrWrapIntoSequence(exp, after);
+			}
+			Sequence afterSequence = (Sequence) after;
+			SequencePartAspectFunctions.insertIntoSequence(
+					afterSequence.getExpressions(), 
+					0, 
+					exp);
+			return after;
+		}
+	}
+
+	private Expression mergeOrWrapIntoSequence(Expression exp, Expression after) {
 		if (exp instanceof Sequence) {
 			Sequence seq = (Sequence) exp;
 			List<Expression> expressions = seq.getExpressions();

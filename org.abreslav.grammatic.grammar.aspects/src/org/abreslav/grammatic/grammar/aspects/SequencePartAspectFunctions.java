@@ -69,7 +69,7 @@ public class SequencePartAspectFunctions implements IGrammarAspectFunctions<List
 	private void insert(List<Expression> subject, int subjectIndex,
 			Expression addition, int targetShift) {
 		Expression last = subject.get(subjectIndex);
-		EList<Expression> expressions = getSequence(subject).getExpressions();
+		List<Expression> expressions = getSequence(subject).getExpressions();
 		int index = expressions.indexOf(last);
 		insertIntoSequence(expressions, index + targetShift, addition);
 	}

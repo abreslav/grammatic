@@ -14,8 +14,12 @@ import org.abreslav.grammatic.atf.java.parser.JavaTypeSystemBuilder;
 import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.emfutils.ResourceLoader;
 import org.abreslav.grammatic.grammar.Grammar;
+import org.abreslav.grammatic.grammar.aspects.GrammarAspectInterpreter;
 import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
+import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
+import org.abreslav.grammatic.metadata.aspectdef.interpreter.AspectDefinitionInterpreter;
+import org.abreslav.grammatic.metadata.aspectdef.parser.AspectDefinitionParser;
 import org.abreslav.grammatic.metadata.aspects.AspectsFactory;
 import org.abreslav.grammatic.metadata.aspects.MetadataAspect;
 import org.abreslav.grammatic.metadata.aspects.manager.AspectWriter;
@@ -33,9 +37,10 @@ public class Main {
 	public static void main(String[] args) throws IOException, RecognitionException {
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
+		FileLocator fileLocator = new FileLocator(new File("examples"));
 		Grammar grammar = GrammarParserUtils.parseGrammar(
 				"jess.as.grammar", 
-				new FileLocator(new File("examples")), 
+				fileLocator, 
 				writableAspect, 
 				IGrammarLoadHandler.NONE);
 
@@ -44,6 +49,10 @@ public class Main {
 		EcoreGenerator generator = EcoreGenerator.create(SemanticsAspectGenerator.create(semWritableAspect));
 		EPackage ePackage = generator.generateEcore(grammar, new MetadataProvider(aspect));
 		
+		AspectDefinition aspectDefinition = AspectDefinitionParser.parseAspectDefinition("jess.as.aspect", fileLocator);
+		GrammarAspectInterpreter.applyGrammarAspect(grammar, aspectDefinition);
+//		AspectDefinitionInterpreter.runDefinition(aspectDefinition, grammar, IMetadataProvider.EMPTY, writableAspect, IErrorHandler.EXCEPTION);
+
 		MetadataAspect atfAspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		generateATF(grammar, atfAspect, new MetadataProvider(semanticalAspect));
 		

@@ -1,3 +1,7 @@
+// Bugs
+sequenceBeforeAndAfterTest
+	: 'a' 'b' 'b';
+	
 // Many
 
 manySingle : 'a' 'a' 'b' 'b' 'a' 'b' 'a';

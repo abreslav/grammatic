@@ -1,5 +1,15 @@
 #import 'more.grammar'{a, b, c};
 
+	
+// Bugs
+sequenceBeforeAndAfterTest
+	: $=('a' 'b' 'b')
+[[
+	before = <<'x' 'y'>>;
+	after = <<'z'>>;
+]]
+	;
+	
 // Many
 
 manySingle 
@@ -91,9 +101,9 @@ intoIterationSequenceAfterNonSequenceTest
 // Before
 
 beforeSequenceTest
-	: $=..
+	: $=('a' 'b' 'c')
 [[
-	before = <<'x'>>;
+	before = <<'x' 'y'>>;
 ]]
 	;
 	
@@ -484,4 +494,3 @@ attribute
 		rest.after = <<')'>>;
 	]]
 	;
-	

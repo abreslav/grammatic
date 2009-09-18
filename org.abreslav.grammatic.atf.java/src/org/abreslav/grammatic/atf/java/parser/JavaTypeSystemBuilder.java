@@ -22,6 +22,7 @@ import org.abreslav.grammatic.parsingutils.resolve.ResolvingDomain;
 import org.abreslav.grammatic.parsingutils.resolve.ResolvingDomain.ISubjectStubFactory;
 import org.abreslav.grammatic.utils.CustomHashSet;
 import org.abreslav.grammatic.utils.IHashingStrategy;
+import org.abreslav.grammatic.utils.Stack;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;

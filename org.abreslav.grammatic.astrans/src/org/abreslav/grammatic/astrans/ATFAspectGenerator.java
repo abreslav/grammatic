@@ -156,9 +156,11 @@ public class ATFAspectGenerator {
 				}
 				
 				featureAssignments.addAll(expressionAfter(object, metadata));
-				myWritableAspect.setAttribute(object, namespace, 
-						ATFMetadata.AFTER, createCrossReferenceValue(createBlock(featureAssignments)));
-
+				if (!featureAssignments.isEmpty()) {
+					myWritableAspect.setAttribute(object, namespace, 
+							ATFMetadata.AFTER, createCrossReferenceValue(createBlock(featureAssignments)));
+				}
+				
 				myWritableAspect.setAttribute(object, namespace, 
 						ATFMetadata.ASSIGNED_TO_ATTRIBUTES, createCrossReferenceValue(atfAssignedTo));
 				
@@ -183,8 +185,10 @@ public class ATFAspectGenerator {
 				List<Statement> afterStatements = expressionAfter(object,
 						metadataStorage);
 				
-				myWritableAspect.setAttribute(object, namespace, 
-						ATFMetadata.AFTER, createCrossReferenceValue(createBlock(afterStatements)));
+				if (!afterStatements.isEmpty()) {
+					myWritableAspect.setAttribute(object, namespace, 
+							ATFMetadata.AFTER, createCrossReferenceValue(createBlock(afterStatements)));
+				}
 				return INull.NULL;
 			}
 

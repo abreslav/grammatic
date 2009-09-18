@@ -1,4 +1,4 @@
-package org.abreslav.grammatic.atf.java.parser;
+package org.abreslav.grammatic.utils;
 
 import java.util.ArrayList;
 import java.util.List;
