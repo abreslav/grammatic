@@ -130,11 +130,6 @@ public class ATFAspectGenerator {
 		new ExpressionTraverser() {
 			public INull caseSymbolReference(SymbolReference object) {
 				Symbol symbol = object.getSymbol();
-				if (myTokens.contains(symbol)) {
-					myWritableAspect.setAttribute(object, namespace, 
-							ATFMetadata.ASSOCIATED_WITH_TOKEN, null);
-					return null; // fall trough
-				} 
 				
 				IMetadataStorage metadata = MetadataStorage.getMetadataStorage(object, metadataProvider);
 				SymbolReferenceSemanticalDescriptor descriptor = SymbolReferenceSemanticalDescriptor.read(metadata);
@@ -150,6 +145,7 @@ public class ATFAspectGenerator {
 						ATFAttribute attribute = createAttribute(feature.getEType(), feature.getName());
 						atfAssignedTo.add(createAttributeReference(attribute));
 						featureAssignments.add(createSetterCall(reference, attribute));
+						System.out.println(reference.getVariable().getName() + "." + reference.getFeature().getName() + " = " + attribute.getName());
 					} else {
 						throw new IllegalArgumentException();
 					}
@@ -160,10 +156,16 @@ public class ATFAspectGenerator {
 					myWritableAspect.setAttribute(object, namespace, 
 							ATFMetadata.AFTER, createCrossReferenceValue(createBlock(featureAssignments)));
 				}
-				
+
 				myWritableAspect.setAttribute(object, namespace, 
 						ATFMetadata.ASSIGNED_TO_ATTRIBUTES, createCrossReferenceValue(atfAssignedTo));
 				
+				if (myTokens.contains(symbol)) {
+					myWritableAspect.setAttribute(object, namespace, 
+							ATFMetadata.ASSOCIATED_WITH_TOKEN, null);
+					return INull.NULL;
+				} 
+
 				List<ATFAttributeReference> arguments = new ArrayList<ATFAttributeReference>();
 				for (SemanticalAttribute semanticalAttribute : descriptor.getArguments()) {
 					arguments.add(createAttributeReference(transformAttribute(semanticalAttribute)));
