@@ -1,11 +1,17 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 
 import org.abreslav.grammatic.astrans.ATFAspectGenerator;
 import org.abreslav.grammatic.astrans.EcoreGenerator;
 import org.abreslav.grammatic.astrans.SemanticsAspectGenerator;
+import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.interpreter.ATFPostProcessor;
+import org.abreslav.grammatic.atf.java.antlr.generator.ATFGeneratorFrontend;
 import org.abreslav.grammatic.atf.java.parser.JavaTypeSystemBuilder;
+import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.emfutils.ResourceLoader;
 import org.abreslav.grammatic.grammar.Grammar;
 import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
@@ -47,8 +53,9 @@ public class Main {
 		System.out.println("over");
 	}
 
-	private static void generateATF(Grammar grammar, MetadataAspect aspect, IMetadataProvider metadataProvider) {
-		ATFAspectGenerator.generate(grammar, metadataProvider, AspectWriter.createWritableAspect(aspect));
+	private static void generateATF(Grammar grammar, MetadataAspect aspect, IMetadataProvider metadataProvider) throws FileNotFoundException, IOException {
+		HashMap<SemanticModule, SemanticModuleDescriptor> moduleDescriptors = new HashMap<SemanticModule, SemanticModuleDescriptor>();
+		ATFAspectGenerator.generate(grammar, metadataProvider, AspectWriter.createWritableAspect(aspect), moduleDescriptors);
 		ATFPostProcessor<RuntimeException> postProcessor = new ATFPostProcessor<RuntimeException>();
 		JavaTypeSystemBuilder typeSystemBuilder = new JavaTypeSystemBuilder();
 		postProcessor.process(
@@ -57,5 +64,13 @@ public class Main {
 				new MetadataProvider(aspect), 
 				AspectWriter.createWritableAspect(aspect), 
 				IErrorHandler.EXCEPTION);
+		ATFGeneratorFrontend.INSTANCE.generateCode(
+				"./", 
+				"./", 
+				"grammar", 
+				aspect, 
+				moduleDescriptors, 
+				grammar, 
+				Collections.<Grammar>emptySet());
 	}
 }

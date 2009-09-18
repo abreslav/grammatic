@@ -177,7 +177,7 @@ public class ATFToANTLR {
 			}
 			myProcessedSemanticModules.add(semanticModule);
 			SemanticModuleDescriptor descriptor = semanticModuleDescriptors.get(semanticModule);
-			String pack = (String) descriptor.getOptions().get("modulePackage");
+			String pack = (String) descriptor.getOptions().get(ANTLRMetadata.MODULE_PACKAGE);
 			createModuleImplementationAndFields(semanticModule, pack, moduleImplementations, moduleVariables);
 		}
 	}

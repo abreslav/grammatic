@@ -17,5 +17,6 @@
 	<classpathentry kind="var" path="ANTLR_RUNTIME" sourcepath="/ANTLR_RUNTIME_SRC"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf.java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.abreslav.grammatic.atf.java.antlr.generator"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -4,6 +4,7 @@ import static org.abreslav.grammatic.metadata.util.MetadataUtils.createAttribute
 import static org.abreslav.grammatic.metadata.util.MetadataUtils.createCrossReferenceValue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import org.abreslav.grammatic.atf.FunctionSignature;
 import org.abreslav.grammatic.atf.SemanticModule;
 import org.abreslav.grammatic.atf.Statement;
 import org.abreslav.grammatic.atf.interpreter.ExpressionTraverser;
+import org.abreslav.grammatic.atf.java.antlr.generator.atf2antlr.ANTLRMetadata;
+import org.abreslav.grammatic.atf.parser.SemanticModuleDescriptor;
 import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Expression;
 import org.abreslav.grammatic.grammar.Grammar;
@@ -42,6 +45,7 @@ import org.abreslav.grammatic.metadata.aspects.manager.IMetadataProvider;
 import org.abreslav.grammatic.metadata.aspects.manager.IWritableAspect;
 import org.abreslav.grammatic.metadata.util.IMetadataStorage;
 import org.abreslav.grammatic.metadata.util.MetadataStorage;
+import org.abreslav.grammatic.metadata.util.MetadataUtils;
 import org.abreslav.grammatic.parsingutils.JavaUtils;
 import org.abreslav.grammatic.utils.INull;
 import org.eclipse.emf.ecore.EClass;
@@ -54,11 +58,15 @@ import org.eclipse.emf.ecore.EcoreFactory;
 
 public class ATFAspectGenerator {
 
-	public static void generate(Grammar grammar, IMetadataProvider metadataProvider, IWritableAspect writableAspect) {
-		new ATFAspectGenerator(writableAspect).generate(grammar, metadataProvider);
+	public static void generate(Grammar grammar, 
+			IMetadataProvider metadataProvider, 
+			IWritableAspect writableAspect, Map<SemanticModule, SemanticModuleDescriptor> moduleDescriptors) {
+		new ATFAspectGenerator(writableAspect, moduleDescriptors).generate(grammar, metadataProvider);
 	}
 	
 	private final IWritableAspect myWritableAspect;
+	private final Map<SemanticModule, SemanticModuleDescriptor> myModuleDescriptors;
+	
 	private final Map<Symbol, Namespace> myNamespaces = EMFProxyUtil.customHashMap();
 	private final Map<Symbol, FunctionSignature> myFunctions = EMFProxyUtil.customHashMap();
 	private final Map<SemanticalAttribute, ATFAttribute> myAttributes = new HashMap<SemanticalAttribute, ATFAttribute>();
@@ -69,11 +77,17 @@ public class ATFAspectGenerator {
 	private final Map<EStructuralFeature, FunctionSignature> mySetterFunctions = new HashMap<EStructuralFeature, FunctionSignature>();
 	private final Map<EEnumLiteral, FunctionSignature> myLiteralConstructors = new HashMap<EEnumLiteral, FunctionSignature>();
 
-	private ATFAspectGenerator(IWritableAspect writableAspect) {
+	private ATFAspectGenerator(IWritableAspect writableAspect, Map<SemanticModule, SemanticModuleDescriptor> moduleDescriptors) {
 		myWritableAspect = writableAspect;
+		myModuleDescriptors = moduleDescriptors;
 	}
 	
 	public void generate(Grammar grammar, IMetadataProvider metadataProvider) {
+		myWritableAspect.setAttribute(grammar, ATFMetadata.ATF_NAMESPACE, 
+				ATFMetadata.TYPE_SYSTEM_OPTIONS, MetadataUtils.createTupleValue(
+						MetadataUtils.createAttribute(null, ANTLRMetadata.GRAMMAR_NAME, MetadataUtils.createStringValue("<grammar name>")),
+						MetadataUtils.createAttribute(null, ANTLRMetadata.GRAMMAR_PACKAGE, MetadataUtils.createStringValue("<grammar pack>"))
+				));
 		List<Symbol> symbols = grammar.getSymbols();
 		for (Symbol symbol : symbols) {
 			IMetadataStorage symbolMetadata = MetadataStorage.getMetadataStorage(symbol, metadataProvider);
@@ -137,6 +151,7 @@ public class ATFAspectGenerator {
 					}
 				}
 				
+				featureAssignments.addAll(expressionAfter(object, metadata));
 				myWritableAspect.setAttribute(object, namespace, 
 						ATFMetadata.AFTER, createCrossReferenceValue(createBlock(featureAssignments)));
 
@@ -156,13 +171,23 @@ public class ATFAspectGenerator {
 						ATFMetadata.ASSOCIATED_FUNCTION, createCrossReferenceValue(myFunctions.get(symbol)));
 				myWritableAspect.setAttribute(object, namespace, 
 						ATFMetadata.ASSOCIATED_NAMESPACE, createCrossReferenceValue(myNamespaces.get(symbol)));
-				return null; // fall through
+				return INull.NULL; // fall through
 			}
 
 			public INull caseExpression(Expression object) {
-				// definedAttributes
 				IMetadataStorage metadataStorage = MetadataStorage.getMetadataStorage(object, metadataProvider);
-				ExpressionSemanticalDescriptor descriptor = ExpressionSemanticalDescriptor.read(metadataStorage);
+				List<Statement> afterStatements = expressionAfter(object,
+						metadataStorage);
+				
+				myWritableAspect.setAttribute(object, namespace, 
+						ATFMetadata.AFTER, createCrossReferenceValue(createBlock(afterStatements)));
+				return INull.NULL;
+			}
+
+			private List<Statement> expressionAfter(Expression object,
+					final IMetadataStorage metadata) {
+				// definedAttributes
+				ExpressionSemanticalDescriptor descriptor = ExpressionSemanticalDescriptor.read(metadata);
 				List<Statement> afterStatements = new ArrayList<Statement>();
 				for (SemanticalAssignment semanticalAssignment : descriptor.getAssignments()) {
 					if (semanticalAssignment instanceof EnumLiteralAssignment) {
@@ -172,10 +197,7 @@ public class ATFAspectGenerator {
 						throw new IllegalArgumentException();
 					}
 				}
-				
-				myWritableAspect.setAttribute(object, namespace, 
-						ATFMetadata.AFTER, createCrossReferenceValue(createBlock(afterStatements)));
-				return INull.NULL;
+				return afterStatements;
 			}
 			
 		}.doSwitch(expression);
@@ -294,6 +316,10 @@ public class ATFAspectGenerator {
 			module = AtfFactory.eINSTANCE.createSemanticModule();
 			module.setName(classifier.getName() + "Module");
 			myModules.put(classifier, module);
+			myModuleDescriptors.put(module, new SemanticModuleDescriptor(
+					module.getName() + ".generated", 
+					module, 
+					Collections.singletonMap(ANTLRMetadata.MODULE_PACKAGE, "<module.pack>")));
 		}
 		return module;
 	}

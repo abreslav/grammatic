@@ -6,6 +6,7 @@ import org.abreslav.grammatic.astrans.semantics.EnumLiteralAssignment;
 import org.abreslav.grammatic.astrans.semantics.ExpressionSemanticalDescriptor;
 import org.abreslav.grammatic.astrans.semantics.SemanticalAttribute;
 import org.abreslav.grammatic.astrans.semantics.SemanticalAttributeReference;
+import org.abreslav.grammatic.astrans.semantics.SemanticalFeatureReference;
 import org.abreslav.grammatic.astrans.semantics.SymbolReferenceSemanticalDescriptor;
 import org.abreslav.grammatic.astrans.semantics.SymbolSemanticalDescriptor;
 import org.abreslav.grammatic.astrans.semantics.TokenDescriptor;
@@ -57,7 +58,12 @@ public class SemanticsAspectGenerator implements IEcoreGeneratorTrace {
 	public void symbolReferenceToFeature(SymbolReference symbolReference,
 			EStructuralFeature feature) {
 		SymbolReferenceSemanticalDescriptor refDescriptor = SymbolReferenceSemanticalDescriptor.create();
-		refDescriptor.getAssignedTo().add(new SemanticalAttributeReference(myResults.get(feature.getEContainingClass())));
+		refDescriptor.getAssignedTo().add(new SemanticalFeatureReference(
+				myResults.get(feature.getEContainingClass()),
+				feature,
+				false,
+				!feature.isMany()
+		));
 		SymbolReferenceSemanticalDescriptor.write(refDescriptor, symbolReference, myWritableAspect);
 	}
 
