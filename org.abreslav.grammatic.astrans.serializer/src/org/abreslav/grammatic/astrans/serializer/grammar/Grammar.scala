@@ -26,9 +26,9 @@ case class LexicalExpression(expression : Expression) extends LexicalDefinition
 
 case class AnnotatedExpression(
     expression : Expression, 
-    objectDeclarations : Seq[Attribute],
-    afterAssignments : Seq[Assignment],
-    afterOptionals : Seq[OptionalAssignment]
+    objectDeclarations : List[Attribute],
+    afterAssignments : List[Assignment],
+    afterOptionals : List[OptionalAssignment]
   ) extends Expression
 
 case class AnnotatedSymbolReference(
