@@ -31,12 +31,32 @@ object GrammarUtils {
     	  case ExpressionBuilder(expr) => Sequence(expr :: right.expression :: Nil)
         })
 
+    def apply (afterAssignments : Assignment*)(afterOptionals : OptionalAssignment*) : ExpressionBuilder = 
+      ExpressionBuilder(AnnotatedExpression(expression, Nil, afterAssignments, afterOptionals))
+      
+//    def apply (afterAssignments : Assignment*) : ExpressionBuilder = 
+//  	  ExpressionBuilder(AnnotatedExpression(expression, Nil, afterAssignments, Nil))
+    	  
   }
   
+  case class SymbolReferenceBuilder(val reference : AbstractSymbolReference) extends ExpressionBuilder(reference) {
+    def apply(attributes : Attribute*) = ExpressionBuilder(AnnotatedSymbolReference(reference, null, attributes)) 
+  } 
+  
   def empty() = ExpressionBuilder(Empty())
-  implicit def symbolToRef(s : scala.Symbol) : ExpressionBuilder = new ExpressionBuilder(SymbolReference_(s))
+  implicit def symbolToRef(s : scala.Symbol) = new SymbolReferenceBuilder(SymbolReference_(s))
   implicit def stringToStringExpr(s : String) : ExpressionBuilder = new ExpressionBuilder(StringExpression(s))
   implicit def exprBuilderToExpr(builder : ExpressionBuilder) : Expression = builder.expression
+  
+  class CallBuilder(val attribute : Attribute) {
+    def === (expBuilder : ExpressionBuilder) = expBuilder match {
+      case ExpressionBuilder(AnnotatedSymbolReference(ref, null, attrs)) => ExpressionBuilder(AnnotatedSymbolReference(ref, AttributeReference(attribute), attrs))
+      case SymbolReferenceBuilder(ref) => ExpressionBuilder(AnnotatedSymbolReference(ref, AttributeReference(attribute), Nil))
+      case _ => throw new IllegalArgumentException()
+    }
+  }
+  
+  implicit def attributeToCallBuilder(attribute : Attribute) = new CallBuilder(attribute)
   
   class GrammarBuilder {
     private var productions : Map[scala.Symbol, List[Expression]] = Map()
@@ -47,7 +67,7 @@ object GrammarUtils {
       var symbolMap : Map[String, Symbol] = Map() 
       for (symbol <- dirtySymbols; name = symbol.name)
         symbolMap += name -> symbol
-      dirtySymbols.map(Translator.resolveNames(_, symbolMap)).toList
+      dirtySymbols.map(Translator.resolveNames(_, symbolMap)).toList 
     }
     
 	class SymbolBuilder(val name : scala.Symbol, val grammarBuilder : GrammarBuilder) {
@@ -69,13 +89,26 @@ object GrammarUtils {
   def grammar (name : String) (builder : => GrammarBuilder) = Grammar(builder.symbolList) 
 }
 
-class Experiment {
+object Experiment {
+  import org.eclipse.emf.ecore.EClass 
+  import org.eclipse.emf.ecore.EStructuralFeature
+  import org.eclipse.emf.ecore.EEnumLiteral
+  
   import GrammarUtils._
+  import ReferenceBuilder._
   {
     grammar ("Test") {
       val v = new GrammarBuilder()
       import v._
-      'sum ::= 'mult - ("+" - 'mult).* 
+      
+      val Sum : EClass = null
+      val children : EStructuralFeature = null
+      val sum_result = Attribute('result, Sum)
+      val sum_object = Attribute('this, Sum)
+      val mult_result = Attribute('this, Sum)
+      'sum ::= ((mult_result === 'mult){sum_object->children += mult_result}() 
+                - ("+" - 'mult{sum_object->children += mult_result}()).*())
+                {sum_result := sum_object}()
       'mult ::= 'factor | 'factor - "*" - 'mult
       'factor ::= "(" - 'sum - ")" | 'NUM
       'NUM ::= "1" - empty;

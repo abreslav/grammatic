@@ -1,0 +1,24 @@
+abstract syntax
+
+abstract class Expr
+case class Mult(left : Expr, right : Expr) extends Expr 
+case class Sum(exprs : Expr*) extends Expr 
+case class Num(value : Int) extends Expr
+
+reflective definitions
+
+object ExprFeatures {
+  def multLeft(obj : Mult) : Expr = obj.left
+  def multRight(obj : Mult) : Expr = obj.right
+  def sumExprs(obj : Sum) : Seq[Expr] = obj.exprs
+  def numValue(obj : Num) : Expr = obj.value
+}
+
+concrete syntax
+
+sum ::= [result=]mult | [this:Sum]([exprs+=]mult ('+' [exprs+=]mult)+)[result=this]
+  -> Expr
+mult ::= [result=]factor | [this : Mult]([left=]factor '*' [right=]mult)[result=this]
+  -> Expr
+factor ::= '(' [result=]sum ')' | [this:Num][value=]NUM[result=this]
+  -> Expr

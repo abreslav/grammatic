@@ -7,8 +7,9 @@ final case class Symbol(name : String, var productions : List[Production])
 final case class Production(body : Expression)
 
 sealed abstract class Expression
-case class SymbolReference(symbol : Symbol) extends Expression
-private case class SymbolReference_(var symbol : scala.Symbol) extends Expression 
+abstract class AbstractSymbolReference extends Expression
+case class SymbolReference(symbol : Symbol) extends AbstractSymbolReference
+private case class SymbolReference_(var symbol : scala.Symbol) extends AbstractSymbolReference
 case class Empty() extends Expression
 case class Iteration(
     val expression : Expression,
@@ -31,6 +32,6 @@ case class AnnotatedExpression(
   ) extends Expression
 
 case class AnnotatedSymbolReference(
-    symbolReference : SymbolReference, 
+    symbolReference : AbstractSymbolReference, 
     assignedTo : Reference, 
-    arguments : Attribute) extends Expression
+    arguments : Seq[Attribute]) extends Expression

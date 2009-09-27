@@ -4,26 +4,26 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 trait Context {
-	def apply(semanticalAttribute : SemanticalAttribute) : EObject
-	def setAttribute(semanticalAttribute : SemanticalAttribute, value : EObject) : Context
+	def apply(semanticalAttribute : Attribute) : EObject
+	def setAttribute(semanticalAttribute : Attribute, value : EObject) : Context
 	def apply(obj : EObject, feature : EStructuralFeature) : (Option[EObject], Context)
 	def print(string : String) : Context
 	def print(strings : String*) : Context = {
 	  strings.foldLeft(this)((cont, str) => cont.print(str));
-	}
+	} 
 }
 
 object Context {
   import scala.collection.immutable.Queue
   private class ContextImpl(
-      private val environment : Map[SemanticalAttribute, EObject],
+      private val environment : Map[Attribute, EObject],
       private val collectionEnvironment : Map[(EObject, EStructuralFeature), Int],
 	  private val output : Queue[String]  
     ) extends Context {
     
-    override def apply(semanticalAttribute : SemanticalAttribute) : EObject = environment(semanticalAttribute)
+    override def apply(semanticalAttribute : Attribute) : EObject = environment(semanticalAttribute)
     
-	override def setAttribute(semanticalAttribute : SemanticalAttribute, value : EObject) : Context = {
+	override def setAttribute(semanticalAttribute : Attribute, value : EObject) : Context = {
       new ContextImpl(
         environment + (semanticalAttribute -> value),
         collectionEnvironment,

@@ -4,12 +4,27 @@ class Matcher {
   
   type Continuation = Context => Boolean
 
-  def empty(context : Context) = true
+  def declareObjects(
+    context : Context,
+    objectDeclarations : Seq[Attribute]) : Context = null
+
+  def applyAssignments(
+    context : Context,
+    afterAssignments : Seq[Assignment], 
+    afterOptionals : Seq[OptionalAssignment]) : Context = null 
+  
   
   def matchExpression(expression : Expression, context : Context, continuation : Continuation) : Boolean = {
     expression match {
       case Alternative(list) => matchAlternative(list, context, continuation)
       case Sequence(list) => matchSequence(list, context, continuation)
+      case AnnotatedExpression(expr, decls, after, afterOpt) => {
+        // check against decls
+        
+        matchExpression(expr, context, 
+          // pass modified context ot the cont
+          cntxt => continuation(applyAssignments(context, after, afterOpt)))
+      }
       case _ => false
     }
   }
