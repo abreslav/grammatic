@@ -31,7 +31,7 @@ object GrammarUtils {
     	  case ExpressionBuilder(expr) => Sequence(expr :: right.expression :: Nil)
         })
 
-    def apply (afterAssignments : Assignment*)(afterOptionals : OptionalAssignment*) = expression match { 
+    def apply (afterAssignments : Seq[Assignment], afterOptionals : OptionalAssignment*) = expression match { 
       case AnnotatedExpression(e, oD, aA, aO) 
         => ExpressionBuilder(AnnotatedExpression(expression, oD, aA ::: afterAssignments.toList, aO ::: afterOptionals.toList))
       case e => ExpressionBuilder(AnnotatedExpression(e, Nil, afterAssignments.toList, afterOptionals.toList))
@@ -54,6 +54,7 @@ object GrammarUtils {
   implicit def symbolToRef(s : scala.Symbol) = new SymbolReferenceBuilder(SymbolReference_(s))
   implicit def stringToStringExpr(s : String) : ExpressionBuilder = new ExpressionBuilder(StringExpression(s))
   implicit def exprBuilderToExpr(builder : ExpressionBuilder) : Expression = builder.expression
+  implicit def assignmentToSeq(assignment : Assignment) = assignment :: Nil
   
   class CallBuilder(val attribute : Attribute) {
     def === (expBuilder : ExpressionBuilder) = expBuilder match {
@@ -110,12 +111,24 @@ object Experiment {
       
       val Sum : EClass = null
       val children : EStructuralFeature = null
+      val Mult : EClass = null
+      val left : EStructuralFeature = null
+      val right : EStructuralFeature = null
+      val Num : EClass = null
+      val value : EStructuralFeature = null
+      
       val sum_result = Attribute('result, Sum)
       val sum_object = Attribute('this, Sum)
       val mult_result = Attribute('this, Sum)
-      'sum ::= sum_object -: ((mult_result === 'mult){sum_object->children += mult_result}() 
-                - ("+" - 'mult{sum_object->children += mult_result}()).*())
-                {sum_result := sum_object}()
+      'sum ::= (sum_object -: (
+        (mult_result==='mult){
+          sum_object->children+=mult_result
+        } - 
+          ("+" - (mult_result==='mult){
+            sum_object->children+=mult_result
+          }).*)){
+    	  sum_result := sum_object
+        }
       'mult ::= 'factor | ('factor - "*" - 'mult)
       'factor ::= "(" - 'sum - ")" | 'NUM
       'NUM ::= "1" - empty;

@@ -14,11 +14,60 @@ object ExprFeatures {
   def numValue(obj : Num) : Expr = obj.value
 }
 
-concrete syntax
+concrete syntax (prioritized by hand)
 
-sum ::= [result=]mult | [this:Sum]([exprs+=]mult ('+' [exprs+=]mult)+)[result=this]
+sum ::= [this:Sum]([this.exprs+=]mult ('+' [this.exprs+=]mult)+)[result=this] | [result=]mult
   -> Expr
-mult ::= [result=]factor | [this : Mult]([left=]factor '*' [right=]mult)[result=this]
+mult ::= [this : Mult]([this.left=]factor '*' [this.right=]mult)[result=this] | [result=]factor
   -> Expr
-factor ::= '(' [result=]sum ')' | [this:Num][value=]NUM[result=this]
+factor ::= [this:Num][this.value=]NUM[result=this] | '(' [result=]sum ')'
   -> Expr
+ 
+Example 
+ 
+2 * (1 + 3)
+
+Mult(
+  Num(2)
+  Sum(
+    Num(1), 
+    Num(3)
+  )
+)
+
+{result=Mult(...)}
+match sum:
+  first alt:
+    (...)[result=this] --> check result's type: Sum does not match,
+      reject
+  second alt:
+    result=... --> check type, Expr matches, go into
+      it's a call, {result = result}, match mult:
+        (...)[result=this] --> check result's type: Mult matches
+          {this = result}
+          go into
+          this.left=factor, this.left is Num(2), check the type: Expr matches
+          match factor {result = this.left}:
+            (...)[result=this] --> check type, Num matches, {this=result} go into
+              this.value=NUM: check type, it's primitive, token matches, output this.value => 2
+          '*' => *
+          this.right=mult, check type, Expr matches, 
+            match mult {result = this.right}
+              first alt: type does not match : Sum
+              second alt: type matches : Expr, 
+                match factor {result = result}: 
+                  first alt does not match: type Sum
+                  second alt: type matches
+                    => (
+                    match sum {result=result}
+                     (...)[result=this], type Sum matches, {this = result} go into
+                       this.exprs+=mult: type Expr matches, match mult {result = Num(1)} => 1
+                       match (...)+ it's obligatory:
+                         => '+'
+                         this.exprs=mult: collection has one more element, match mult {result=Num(3)} => 3
+                           => '+'
+                           this.exprs=mult: collection does not have more elements, discard
+                    => )
+                           
+result: 2*(1+3)
+                                 
