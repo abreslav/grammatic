@@ -4,9 +4,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 trait Context {
-	def apply(semanticalAttribute : Attribute) : EObject
-	def setAttribute(semanticalAttribute : Attribute, value : EObject) : Context
-	def apply(obj : EObject, feature : EStructuralFeature) : (Option[EObject], Context)
+	def apply(semanticalAttribute : Attribute) : AnyRef
+	def setAttribute(semanticalAttribute : Attribute, value : AnyRef) : Context
+	def apply(obj : EObject, feature : EStructuralFeature) : (Option[AnyRef], Context)
 	def print(string : String) : Context
 	def print(strings : String*) : Context = {
 	  strings.foldLeft(this)((cont, str) => cont.print(str))
@@ -16,14 +16,14 @@ trait Context {
 object Context {
   import scala.collection.immutable.Queue
   private class ContextImpl(
-      private val environment : Map[Attribute, EObject],
-      private val collectionEnvironment : Map[(EObject, EStructuralFeature), Int],
+      private val environment : Map[Attribute, AnyRef],
+      private val collectionEnvironment : Map[(AnyRef, EStructuralFeature), Int],
 	  private val output : Queue[String]  
     ) extends Context {
     
-    override def apply(semanticalAttribute : Attribute) : EObject = environment(semanticalAttribute)
+    override def apply(semanticalAttribute : Attribute) : AnyRef = environment(semanticalAttribute)
     
-	override def setAttribute(semanticalAttribute : Attribute, value : EObject) : Context = {
+	override def setAttribute(semanticalAttribute : Attribute, value : AnyRef) : Context = {
       new ContextImpl(
         environment + ((semanticalAttribute, value)),
         collectionEnvironment,
@@ -31,21 +31,17 @@ object Context {
       )	  
 	}
  
-    override def apply(obj : EObject, feature : EStructuralFeature) : (Option[EObject], Context) = {
+    override def apply(obj : EObject, feature : EStructuralFeature) : (Option[AnyRef], Context) = {
 	  if (!feature.isMany())
         throw new IllegalArgumentException();
       
-      val values = obj.eGet(feature).asInstanceOf[java.util.List[EObject]] 
-      val index = if (collectionEnvironment.contains(obj, feature))
-          collectionEnvironment(obj, feature)
-        else 
-          0
-        ;
-      if (values.size <= index)
+      val values = obj.eGet(feature).asInstanceOf[java.util.List[AnyRef]] 
+      val index = collectionEnvironment.getOrElse((obj, feature), 0)
+    
+      if (index >= values.size)
         (None, this)
       else
-        (
-          Some(values.get(index)),
+        (Some(values.get(index)),
           new ContextImpl(
             environment, 
             collectionEnvironment + ((obj, feature) -> (index + 1)), 

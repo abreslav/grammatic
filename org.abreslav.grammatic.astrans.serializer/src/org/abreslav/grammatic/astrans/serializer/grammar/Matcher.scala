@@ -1,13 +1,14 @@
 package org.abreslav.grammatic.astrans.serializer.grammar
 
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EObject
 
 class Matcher {
   
   type Continuation = Context => Boolean
 
-  def checkObjectType(obj : EObject, eClass : EClass) = eClass.isInstance(obj)
+  def checkObjectType(obj : AnyRef, eClassifier : EClassifier) = eClassifier.isInstance(obj)
   
   def declareObjects(
     context : Context,
@@ -17,13 +18,16 @@ class Matcher {
     context : Context,
     afterAssignments : Seq[Assignment], 
     afterOptionals : Seq[OptionalAssignment]) : Option[Context] = {
-      // !!! Consider EAttributes!!!
+
       var result = context
+      
       for (assignment <- afterAssignments.reverse) {
+        
         val (attr, obj) = assignment match {
           case AttributeAssignment(AttributeReference(attr), value) => (attr, result(attr))
+          
           case AttributeAssignment(FeatureReference(attr, feature), value) => {
-            val obj = result(attr)
+            val obj = result(attr).asInstanceOf[EObject]
             if (!feature.getEContainingClass().isInstance(obj))
               return None
             if (feature.isMany) {

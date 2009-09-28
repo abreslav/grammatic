@@ -65,7 +65,8 @@ object GrammarUtils {
         => ExpressionBuilder(AnnotatedSymbolReference(ref, AttributeReference(attribute) :: Nil, attrs))
       case SymbolReferenceBuilder(ref) 
         => ExpressionBuilder(AnnotatedSymbolReference(ref, AttributeReference(attribute) :: Nil, Nil))
-      case _ => throw new IllegalArgumentException()
+      case ExpressionBuilder(AnnotatedExpression(ref : AbstractSymbolReference, Nil, aA, oA)) 
+        => ExpressionBuilder(AnnotatedExpression(AnnotatedSymbolReference(ref, AttributeReference(attribute) :: Nil, Nil), Nil, aA, oA))
     }
   }
   
@@ -121,7 +122,7 @@ object GrammarUtils {
 }
 
 object Experiment {
-  import org.eclipse.emf.ecore.EClass 
+//  import org.eclipse.emf.ecore.EClass 
   import org.eclipse.emf.ecore.EStructuralFeature
   import org.eclipse.emf.ecore.EEnumLiteral
   import org.eclipse.emf.ecore.EcoreFactory
@@ -148,28 +149,49 @@ object Experiment {
   import ReferenceBuilder._
   val theGrammar = grammar ("Test") {
       new GrammarBuilder() {
-	      val Sum : EClass = EClass("Sum")
-	      val children : EStructuralFeature = EReference("children")
-	      val Mult : EClass = EClass("Mult")
-	      val left : EStructuralFeature = EReference("left")
-	      val right : EStructuralFeature = EReference("right")
-	      val Num : EClass = EClass("Num")
-	      val value : EStructuralFeature = EReference("value")
+    	  val Expr = EClass("Expr")
+	      val Sum = EClass("Sum")
+	      val children = EReference("children")
+	      val Mult = EClass("Mult")
+	      val left = EReference("left")
+	      val right = EReference("right")
+	      val Num = EClass("Num")
+	      val value = EReference("value")
 	      
-	      val sum_result = Attribute('result, Sum)
-	      val sum_object = Attribute('sum_this, Sum)
-	      val mult_result = Attribute('mult_results, Sum)
-	      'sum -> (sum_result) ::= (sum_object -: (
-	        (mult_result==='mult){
-	          sum_object->children+=mult_result
+	      val result = Attribute('result, Expr)
+	      val tmp = Attribute('mult_results, Expr)
+	      
+          val s_this = Attribute('this, Sum)
+          val m_this = Attribute('this, Mult)
+          val n_this = Attribute('this, Num)
+          val v = Attribute('value, null)
+       
+	      'sum -> result ::= (s_this -: (
+	        (tmp==='mult){
+	          s_this->children += tmp
 	        } - 
-	          ("+" - (mult_result==='mult){
-	            sum_object->children+=mult_result
+	          ("+" - (tmp==='mult){
+	            s_this->children += tmp
 	          }).*)){
-	    	  sum_result := sum_object
+	    	  result := s_this
 	        }
-	      'mult -> mult_result ::= ('factor - "*" - 'mult) | 'factor
-	      'factor -> () ::= "(" - 'sum - ")" | 'NUM
+       
+	      'mult -> result ::= m_this -: (
+	        (tmp==='factor){
+	          m_this->left := tmp
+	        }  - "*" - (tmp==='mult{
+	          m_this->right := tmp
+	        })){
+	          result := m_this
+	        } | result==='factor
+       
+	      'factor -> result ::= "(" - (result==='sum) - ")" | 
+             n_this -: ((v==='NUM{
+               n_this->value := v
+             }){
+               result := n_this
+             })
+       
 	      token('NUM) ::= "1";
       }
     }
