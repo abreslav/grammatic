@@ -8,7 +8,9 @@ object XMLSerializer {
     {g.symbols.map(apply(_))}
   </grammar>
   
-  def apply(s : Symbol) : Elem = <symbol name={s.name}>
+  def apply(s : Symbol) : Elem = <symbol name={s.name} token={s.token.toString}>
+    {s.inputs.map(a => <in name={a.name.name}/>)}
+    {s.outputs.map(a => <out name={a.name.name}/>)}
     {s.productions.map(apply(_))}
   </symbol>
   
