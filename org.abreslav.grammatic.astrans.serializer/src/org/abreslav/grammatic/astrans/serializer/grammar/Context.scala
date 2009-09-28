@@ -9,7 +9,7 @@ trait Context {
 	def apply(obj : EObject, feature : EStructuralFeature) : (Option[EObject], Context)
 	def print(string : String) : Context
 	def print(strings : String*) : Context = {
-	  strings.foldLeft(this)((cont, str) => cont.print(str));
+	  strings.foldLeft(this)((cont, str) => cont.print(str))
 	} 
 }
 
@@ -25,7 +25,7 @@ object Context {
     
 	override def setAttribute(semanticalAttribute : Attribute, value : EObject) : Context = {
       new ContextImpl(
-        environment + (semanticalAttribute -> value),
+        environment + ((semanticalAttribute, value)),
         collectionEnvironment,
         output
       )	  

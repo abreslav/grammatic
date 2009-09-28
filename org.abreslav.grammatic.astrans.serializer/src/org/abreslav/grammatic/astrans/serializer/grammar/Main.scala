@@ -2,6 +2,7 @@ package org.abreslav.grammatic.astrans.serializer.grammar
 
 object Main {
   def main(args : Array[String]) : Unit = {
+    scala.xml.XML.saveFull("debug.xml", XMLSerializer(Experiment.theGrammar), "UTF-8", true, null)
     import Context._
     val context = emptyContext
     println(context.print("S", "1").print("2"))

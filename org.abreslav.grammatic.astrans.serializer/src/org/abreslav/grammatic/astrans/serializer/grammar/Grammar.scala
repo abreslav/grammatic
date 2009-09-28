@@ -2,7 +2,12 @@ package org.abreslav.grammatic.astrans.serializer.grammar
 
 final case class Grammar(symbols : List[Symbol])
 
-final case class Symbol(name : String, var productions : List[Production])
+final case class Symbol(
+  name : String, 
+  var productions : List[Production], 
+  var inputs : Seq[Attribute], 
+  var outputs : Seq[Attribute], 
+  val token : Boolean)
 
 final case class Production(body : Expression)
 
@@ -33,5 +38,5 @@ case class AnnotatedExpression(
 
 case class AnnotatedSymbolReference(
     symbolReference : AbstractSymbolReference, 
-    assignedTo : Reference, 
+    assignedTo : Seq[Reference], 
     arguments : Seq[Attribute]) extends Expression

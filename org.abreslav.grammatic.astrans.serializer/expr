@@ -70,4 +70,88 @@ match sum:
                     => )
                            
 result: 2*(1+3)
-                                 
+
+-------
+
+sum ::= [this:Sum]([this.exprs+=]mult ('+' [this.exprs+=]mult)+)[result=this] | [result=]mult
+  -> Expr
+mult ::= [this : Mult]([this.left=]factor '*' [this.right=]mult)[result=this] | [result=]factor
+  -> Expr
+factor ::= [this:Num][this.value=]NUM[result=this] | '(' [result=]sum ')'
+  -> Expr
+
+----------
+
+sum(result : Expr) = result match 
+  case Sum(exprs) => mult(exprs.next) (#print('+') mult(exprs.next))+
+  case _ => mult(result)
+  
+mult(result : Expr) = result match
+  case Mult(left, right) => factor(left) #print('*') mult(right)
+  case _ => factor(result)
+  
+factor(result : Expr) = result match
+  case Num(x) =>  #print(x)
+  case _ => #print('(') sum(result) #print(')')
+  
+---------------------
+Grammar(
+	List(
+		Symbol(
+			sum,
+			List(
+				Production(
+					AnnotatedExpression(
+						AnnotatedExpression(
+							Sequence(List(
+									Iteration(
+										Sequence(List(
+											AnnotatedExpression(
+												AnnotatedSymbolReference(
+													SymbolReference_('mult),
+													List(
+														AttributeReference(
+															Attribute('this,null)
+														)
+													),
+													List()
+												),
+												List(),
+												List(
+													AttributeAssignment(
+														FeatureReference(
+															Attribute('this,null),
+															null
+														),
+														Attribute('this,null)
+													)
+												),
+												List()
+											), 
+											AnnotatedExpression(
+												AnnotatedSymbolReference(
+													SymbolReference_('mult),
+													List(
+														AttributeReference(
+															Attribute('this,null)
+														)
+													),
+													List()
+												),
+												List(),
+												List(
+													AttributeAssignment(
+														FeatureReference(
+															Attribute('this,null),
+															null
+														),
+														Attribute('this,null)
+													)
+												),
+												List()
+											)
+										)
+									),
+									0,
+									-1), 
+									Iteration(Sequence(List(AnnotatedExpression(AnnotatedSymbolReference(SymbolReference_('mult),List(AttributeReference(Attribute('this,null))),List()),List(),List(AttributeAssignment(FeatureReference(Attribute('this,null),null),Attribute('this,null))),List()), AnnotatedExpression(AnnotatedSymbolReference(SymbolReference_('mult),List(AttributeReference(Attribute('this,null))),List()),List(),List(AttributeAssignment(FeatureReference(Attribute('this,null),null),Attribute('this,null))),List()))),0,-1))),List(Attribute('this,null)),List(),List()),List(Attribute('this,null)),List(AttributeAssignment(AttributeReference(Attribute('result,null)),Attribute('this,null))),List()))),List(),List(Attribute('result,null)),false), Symbol(mult,List(Production(Alternative(List(Sequence(List(SymbolReference_('mult), SymbolReference_('mult))), Sequence(List(SymbolReference_('mult), SymbolReference_('mult))))))),List(),List(Attribute('this,null)),false), Symbol(factor,List(Production(Alternative(List(SymbolReference_('NUM), SymbolReference_('NUM))))),List(),List(),false), Symbol(NUM,List(Production(StringExpression(1))),List(),List(),true)))
