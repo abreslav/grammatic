@@ -4,9 +4,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 trait Context {
-	def apply(semanticalAttribute : Attribute) : AnyRef
-	def setAttribute(semanticalAttribute : Attribute, value : AnyRef) : Context
-	def apply(obj : EObject, feature : EStructuralFeature) : (Option[AnyRef], Context)
+	def apply(attribute : Attribute) : Option[AnyRef]
+	def setAttribute(attribute : Attribute, value : AnyRef) : Context
+	def apply(obj : EObject, feature : EStructuralFeature) : Option[(Context, AnyRef)]
 	def print(string : String) : Context
 	def print(strings : String*) : Context = {
 	  strings.foldLeft(this)((cont, str) => cont.print(str))
@@ -21,17 +21,21 @@ object Context {
 	  private val output : Queue[String]  
     ) extends Context {
     
-    override def apply(semanticalAttribute : Attribute) : AnyRef = environment(semanticalAttribute)
+    override def apply(attribute : Attribute) : Option[AnyRef] = 
+      if (environment contains attribute)
+        Some(environment(attribute))
+      else None
     
-	override def setAttribute(semanticalAttribute : Attribute, value : AnyRef) : Context = {
+	override def setAttribute(attribute : Attribute, value : AnyRef) : Context = {
+	  assert(!value.isInstanceOf[Option[_]])
       new ContextImpl(
-        environment + ((semanticalAttribute, value)),
+        environment + ((attribute, value)),
         collectionEnvironment,
         output
       )	  
 	}
  
-    override def apply(obj : EObject, feature : EStructuralFeature) : (Option[AnyRef], Context) = {
+    override def apply(obj : EObject, feature : EStructuralFeature) : Option[(Context, AnyRef)] = {
 	  if (!feature.isMany())
         throw new IllegalArgumentException();
       
@@ -39,14 +43,14 @@ object Context {
       val index = collectionEnvironment.getOrElse((obj, feature), 0)
     
       if (index >= values.size)
-        (None, this)
+        None
       else
-        (Some(values.get(index)),
+        Some((
           new ContextImpl(
             environment, 
             collectionEnvironment + ((obj, feature) -> (index + 1)), 
             output)
-        )
+        , values.get(index)))
 	}
  
 	override def print(string : String) : Context = new ContextImpl(
@@ -61,7 +65,18 @@ object Context {
     		strings.foldLeft(output)((out, str) => out.enqueue(str))
     );
     
-    override def toString : String = output.foldLeft(new StringBuilder())((sb, str) => sb.append(str)).toString
+    private def outputStr : String = output.foldLeft(new StringBuilder()){
+        (sb, str) => sb.append(str)
+      }.toString
+    
+    private def environmentStr : String = environment.foldLeft(new StringBuilder()){
+        (sb, entry) => {
+          val (attribute, value) = entry 
+          sb.append(attribute.name).append("=").append(value).append("\n")
+        }
+      }.toString
+    
+    override def toString = environmentStr + "output:\"" + outputStr + "\""
   } 
   
   val emptyContext : Context = new ContextImpl(Map(), Map(), new Queue)

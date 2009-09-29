@@ -1,6 +1,6 @@
 package org.abreslav.grammatic.astrans.serializer.grammar
 
-import org.eclipse.emf.ecore.EClass 
+import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EEnumLiteral
 
@@ -12,8 +12,11 @@ object ReferenceBuilder {
   implicit def attributeToRef(attribute : Attribute) = AttributeReference(attribute)
 }
                                                               
-case class Attribute(name : scala.Symbol, eClass : EClass) {
-  def -> (feature : EStructuralFeature) = FeatureReference(this, feature) 
+case class Attribute(name : scala.Symbol, eClass : EClassifier) {
+  def -> (feature : EStructuralFeature) = FeatureReference(this, feature)
+  def ifNotNull[A, B](a : A, f : A => B) = if (a == null) null else f(a)
+  
+  override def toString = name.name + " : " + ifNotNull(eClass, (_ : EClassifier).getName) 
 }
 
 abstract class Reference {

@@ -117,32 +117,36 @@ object GrammarUtils {
   }
   
   def grammar (name : String) (builder : => GrammarBuilder) = Grammar(builder.symbolList) 
-  implicit def symbolToRef(s : scala.Symbol) = new SymbolReferenceBuilder(SymbolReference_(s))
+  implicit def symbolToRef(s : scala.Symbol) = new GrammarUtils.SymbolReferenceBuilder(SymbolReference_(s))
   
 }
 
 object Experiment {
-//  import org.eclipse.emf.ecore.EClass 
+  import org.eclipse.emf.ecore.EClass 
   import org.eclipse.emf.ecore.EStructuralFeature
   import org.eclipse.emf.ecore.EEnumLiteral
   import org.eclipse.emf.ecore.EcoreFactory
+  import org.eclipse.emf.ecore.EcorePackage
   
+
   def EClass(s : String) = {
-    val result = EcoreFactory.eINSTANCE.createEClass()
-    result.setName(s)
+//    val result = EcoreFactory.eINSTANCE.createEClass()
+//    result.setName(s)
+//    result
+    val result = arith.ArithPackage.eINSTANCE.getEClassifier(s).asInstanceOf[EClass]
+    assert(result != null)
     result
   }
   
-  def EReference(s : String) = {
-    val result = EcoreFactory.eINSTANCE.createEReference()
-    result.setName(s)
-    result
+  def EReference(c : EClass, s : String) = {
+    c.getEStructuralFeature(s)
   }
   
-  def EAttribute(s : String) = {
-	  val result = EcoreFactory.eINSTANCE.createEAttribute()
-	  result.setName(s)
-	  result
+  def EAttribute(c : EClass, s : String) = {
+//	  val result = EcoreFactory.eINSTANCE.createEAttribute()
+//	  result.setName(s)
+//	  result 
+    c.getEStructuralFeature(s)
   }
   
   import GrammarUtils._
@@ -151,20 +155,23 @@ object Experiment {
       new GrammarBuilder() {
     	  val Expr = EClass("Expr")
 	      val Sum = EClass("Sum")
-	      val children = EReference("children")
+	      val children = EReference(Sum, "expressions")
 	      val Mult = EClass("Mult")
-	      val left = EReference("left")
-	      val right = EReference("right")
+	      val left = EReference(Mult, "left")
+	      val right = EReference(Mult, "right")
 	      val Num = EClass("Num")
-	      val value = EReference("value")
+	      val value = EReference(Num, "value")
 	      
 	      val result = Attribute('result, Expr)
-	      val tmp = Attribute('mult_results, Expr)
+	      val tmp = Attribute('tmp, Expr)
 	      
-          val s_this = Attribute('this, Sum)
-          val m_this = Attribute('this, Mult)
-          val n_this = Attribute('this, Num)
-          val v = Attribute('value, null)
+          val s_this = Attribute('s_this, Sum)
+          val m_this = Attribute('m_this, Mult)
+          val n_this = Attribute('n_this, Num)
+          val EString = EcorePackage.eINSTANCE.getEString()
+          val v = Attribute('value, EString)
+          
+          val str = Attribute('str, EString)
        
 	      'sum -> result ::= (s_this -: (
 	        (tmp==='mult){
@@ -174,7 +181,7 @@ object Experiment {
 	            s_this->children += tmp
 	          }).*)){
 	    	  result := s_this
-	        }
+	        } | result==='mult 
        
 	      'mult -> result ::= m_this -: (
 	        (tmp==='factor){
@@ -185,14 +192,14 @@ object Experiment {
 	          result := m_this
 	        } | result==='factor
        
-	      'factor -> result ::= "(" - (result==='sum) - ")" | 
+	      'factor -> result ::=  
              n_this -: ((v==='NUM{
                n_this->value := v
              }){
                result := n_this
-             })
+             }) | "(" - (result==='sum) - ")"
        
-	      token('NUM) ::= "1";
+	      token('NUM) -> str ::= "1";
       }
     }
 }
