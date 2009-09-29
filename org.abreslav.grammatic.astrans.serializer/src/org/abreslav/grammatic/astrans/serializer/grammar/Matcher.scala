@@ -123,8 +123,8 @@ object Matcher {
         insC match {
           case Some(cont) =>
             if (token)
-              // what does this print() mean?!
-              continuation(cont.print(cont(outs.head).toString))
+              // what does this print() mean?! -- it's for a token
+              continuation(cont.print(cont(outs.head) match {case Some(o) => o.toString}))
             else
               matchAlternative(prods.map(_.body), cont, continuation)
           case None => false
