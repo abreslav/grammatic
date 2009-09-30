@@ -6,7 +6,8 @@ object Main {
     scala.xml.XML.saveFull("debug.xml", XMLSerializer(grammar), "UTF-8", true, null)
 
     // 1 * (2 + 3)
-    val expr = Mult(Num("1"), Sum(Num("2"), Num("3")))
+//    val expr = Mult(Num("1"), Sum(Num("2"), Num("3")))
+    val expr = Mult(Mult(Num("1"), Sum(Num("4"), Num("111"))), Sum(Num("2"), Num("3"), Mult(Num("5"), Num("8"))))
 //    val expr = Sum(Num("2"), Num("3"))
 //    val expr = Num("1")
 //    val expr = Mult(Num("1"), Num("2"))
