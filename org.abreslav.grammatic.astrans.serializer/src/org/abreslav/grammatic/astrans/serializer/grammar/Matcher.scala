@@ -193,8 +193,12 @@ object Matcher {
       case 1 => matchExpression(expression, context, continuation)
       case -1 => {
         // suspicious: what if lowerBounds is 1 and this does not match at all?
-        matchExpression(expression, context, matchIteration(expression, low, up, _, _ => true));
-        continuation(context)
+        matchExpression(expression, context, 
+          cont => {
+            val next = matchIteration(expression, low, up, cont, continuation)
+            next || continuation(cont)
+          }
+        )
       }
     }
     first
