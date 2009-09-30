@@ -162,7 +162,9 @@ object Experiment {
 	      val Num = EClass("Num")
 	      val value = EReference(Num, "value")
 	      
-	      val result = Attribute('result, Expr)
+	      val s_result = Attribute('s_result, Expr)
+	      val m_result = Attribute('m_result, Expr)
+	      val f_result = Attribute('f_result, Expr)
 	      val tmp = Attribute('tmp, Expr)
 	      
           val s_this = Attribute('s_this, Sum)
@@ -173,31 +175,31 @@ object Experiment {
           
           val str = Attribute('str, EString)
        
-	      'sum -> result ::= (s_this -: (
+	      'sum -> s_result ::= (s_this -: (
 	        (tmp==='mult){
 	          s_this->children += tmp
 	        } - 
 	          ("+" - (tmp==='mult){
 	            s_this->children += tmp
 	          }).*)){
-	    	  result := s_this
-	        } | result==='mult 
+	    	  s_result := s_this
+	        } | s_result==='mult 
        
-	      'mult -> result ::= m_this -: (
+          'mult -> m_result ::= m_this -: (
 	        (tmp==='factor){
 	          m_this->left := tmp
 	        }  - "*" - (tmp==='mult{
 	          m_this->right := tmp
 	        })){
-	          result := m_this
-	        } | result==='factor
+	          m_result := m_this
+	        } | m_result==='factor
        
-	      'factor -> result ::=  
+	      'factor -> f_result ::=  
              n_this -: ((v==='NUM{
                n_this->value := v
              }){
-               result := n_this
-             }) | "(" - (result==='sum) - ")"
+               f_result := n_this
+             }) | "(" - (f_result==='sum) - ")"
        
 	      token('NUM) -> str ::= "1";
       }

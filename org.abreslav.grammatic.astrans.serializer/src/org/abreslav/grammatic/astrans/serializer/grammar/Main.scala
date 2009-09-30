@@ -6,15 +6,17 @@ object Main {
     scala.xml.XML.saveFull("debug.xml", XMLSerializer(grammar), "UTF-8", true, null)
 
     // 1 * (2 + 3)
-//    val expr = Mult(Num("1"), Sum(Num("2"), Num("3")))
-    val expr = Num("1")
+    val expr = Mult(Num("1"), Sum(Num("2"), Num("3")))
+//    val expr = Sum(Num("2"), Num("3"))
+//    val expr = Num("1")
+//    val expr = Mult(Num("1"), Num("2"))
     
-    print(Matcher.matchSymbol(grammar.symbols(2), expr)) 
+    print(Matcher.matchSymbol(grammar.symbols(0), expr)) 
     
     if (2 > -1) {
     import Context._
     val context = emptyContext
-    println(context.print("S", "1").print("2"))
+    println(context.print("S").print("1").print("2"))
     val eFactory = org.eclipse.emf.ecore.EcoreFactory.eINSTANCE
     val ePackage = org.eclipse.emf.ecore.EcorePackage.eINSTANCE
     val o = eFactory.createEClass()

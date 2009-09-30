@@ -8,9 +8,8 @@ trait Context {
 	def setAttribute(attribute : Attribute, value : AnyRef) : Context
 	def apply(obj : EObject, feature : EStructuralFeature) : Option[(Context, AnyRef)]
 	def print(string : String) : Context
-	def print(strings : String*) : Context = {
-	  strings.foldLeft(this)((cont, str) => cont.print(str))
-	} 
+ 
+   def compose(collectionsAndOutput : Context) : Context
 }
 
 object Context {
@@ -20,6 +19,11 @@ object Context {
       private val collectionEnvironment : Map[(AnyRef, EStructuralFeature), Int],
 	  private val output : Queue[String]  
     ) extends Context {
+    
+    override def compose(collectionsAndOutput : Context) : Context = {
+      val other = collectionsAndOutput.asInstanceOf[ContextImpl]
+      new ContextImpl(environment, other.collectionEnvironment, other.output)
+    }
     
     override def apply(attribute : Attribute) : Option[AnyRef] = 
       if (environment contains attribute)
@@ -59,12 +63,6 @@ object Context {
       output.enqueue(string)
 	); 
 
-    override def print(strings : String*) : Context = new ContextImpl( 
-    		environment,
-    		collectionEnvironment,
-    		strings.foldLeft(output)((out, str) => out.enqueue(str))
-    );
-    
     private def outputStr : String = output.foldLeft(new StringBuilder()){
         (sb, str) => sb.append(str)
       }.toString

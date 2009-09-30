@@ -11,7 +11,10 @@ object Matcher {
   
   def matchSymbol(symbol : Symbol, obj : AnyRef) : Boolean = matchExpression(
     AnnotatedSymbolReference(SymbolReference(symbol), AttributeReference(symbol.outputs(0))::Nil, Nil), 
-    Context.emptyContext.setAttribute(symbol.outputs(0), obj), c => {print("Hooo: " + c); true}
+    Context.emptyContext.setAttribute(symbol.outputs(0), obj), c => {
+      println("Hooo: " + c); 
+      true
+    }
   )
 
   private def checkObjectType(obj : AnyRef, eClassifier : EClassifier) = eClassifier.isInstance(obj)
@@ -94,6 +97,7 @@ object Matcher {
       case StringExpression(str) => continuation(context.print(str))
       case Alternative(list) => matchAlternative(list, context, continuation)
       case Sequence(list) => matchSequence(list, context, continuation)
+      case Iteration(e, l, u) => matchIteration(e, l, u, context, continuation)
       
       case AnnotatedSymbolReference(SymbolReference(Symbol(name, prods, ins, outs, token)), assignedTo, args) => {
         println(">>ASR: " + name)
@@ -122,11 +126,19 @@ object Matcher {
         
         insC match {
           case Some(cont) =>
-            if (token)
+            if (token) {
+              println("Printing a token")
               // what does this print() mean?! -- it's for a token
-              continuation(cont.print(cont(outs.head) match {case Some(o) => o.toString}))
-            else
-              matchAlternative(prods.map(_.body), cont, continuation)
+              val c = cont.print(cont(outs.head) match {case Some(o) => o.toString})
+              println(c)
+              val cres = continuation(c)
+              println("Continuation result: " + cres)
+              cres
+            } else
+              matchAlternative(prods.map(_.body), cont, 
+                c => {
+                  continuation(context.compose(c))
+                })
           case None => false
         }
       }
@@ -156,7 +168,7 @@ object Matcher {
   private def matchSequence(sequence : List[Expression], context : Context, continuation : Continuation) : Boolean = {
     sequence match {
       case head :: tail => matchExpression(head, context, matchSequence(tail, _, continuation))  
-      case Nil => false // think
+      case Nil => {println("sequence is over"); continuation(context)} // think
     }
   }
   
@@ -174,30 +186,32 @@ object Matcher {
   
   private def matchIteration(expression : Expression, low : Int, up : Int, context : Context, continuation : Continuation) : Boolean = {
     if (up != -1 && up < low) {
-      return false
+      throw new IllegalArgumentException
     }
+    println("Matching iteration")
     val first = up match {
       case 1 => matchExpression(expression, context, continuation)
       case -1 => {
         // suspicious: what if lowerBounds is 1 and this does not match at all?
-        matchExpression(expression, context, matchIteration(expression, low, up, _, continuation));
-        true
+        matchExpression(expression, context, matchIteration(expression, low, up, _, _ => true));
+        continuation(context)
       }
     }
-    if (first) {
-      return true
-    } else {
-      if (low == 0) {
-        if (continuation(context)) {
-          return true
-        }
-      }
-      for (i <- low to up) {
-        if (matchExpression(expression, context, matchIteration(expression, low, i, _, continuation)))
-          return true
-      }
-    }
-    false
+    first
+//    if (first) {
+//      return true
+//    } else {
+//      if (low == 0) {
+//        if (continuation(context)) {
+//          return true
+//        }
+//      }
+//      for (i <- low to up) {
+//        if (matchExpression(expression, context, matchIteration(expression, low, i, _, continuation)))
+//          return true
+//      }
+//    }
+//    false
   }
   
 }
