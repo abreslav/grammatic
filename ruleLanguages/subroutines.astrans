@@ -1,0 +1,121 @@
+altOption : $A | ... [$A] => $A
+duplicateProduction : $c=# |: $A [$A] => $c : $A : $A : {...}
+inline : $c=# => ..
+remove : $c |: .. => /* nothing */
+remove : $A => #empty
+
+toTrivialAltF : $A [$c : #fresh] => $A | $A {
+	.extract[$c]
+	
+	#grammar[$c |: ..].duplicateProduction[: $A]
+		
+	#.inline
+		
+	#grammar[$c |: ..].remove
+}
+
+toTrivialAlt : $A => $A | $A {
+	.toTrivialAltF[#tmp]
+}
+
+replaceAlt : $A | ... [$A] [replacement : $A => $B] => $B | ... {
+	$A.replacement
+}
+
+replaceWithAlt2 : $A [rep1 : $A => $B] [rep2 : $A => $C] => $B | $C {
+	.toTrivialAlt
+	.rep1[$A]
+	.rep2[$A]
+}
+
+doubleStar : $A* => $A** {
+	.insertAfter[#empty*]
+	.hashStars
+	.[($A* $=(#empty*))*] {
+		.remove
+	}
+}
+
+iterateAlternativePart : ($A=... | $B)* [$B] => ($A | $B*)* {
+	.doubleStar
+	.[$=$IT=(($A | $B)*)*] {
+		.toTrivialAlt
+		.[$=$IT | ...] {
+			.unwindStar
+			.altOpt[$A]
+		}
+		.[$=(..)* | ...] {
+			.altOpt[$B]
+		}
+	}
+}
+
+raiseLowerBound : $A* => $A+ {
+	.starToOptionalPlus
+	.[$A+ | #empty]
+	.altOption[$A+]
+}
+
+iterateAltPartPlus : ($A=... | $B)* [$B] => ($A | $B+)* {
+	.iterateAlternativePart[$B]
+	.[($A | $=($B*))*] {
+		.raiseLowerBound
+	}
+}
+
+plusQuestToStar : $A+? => $A* {
+	.questionToOptional
+	.[$A+ | #empty]
+	.optionalPlusToStar
+}
+
+hashStarsIntoAlt : $A* $BS=($B*) => ($A | $B)* {
+	.hashStars
+	.[($A* $=..)*] {
+		.toTrivialAlt
+		.[$=$X | ...] {
+			.removeStar
+		}
+		.[$=$X | ...] {
+			.substEmptyForStar
+		}
+	}
+	.[($A* $=($B | #empty))*] {
+		.openAlternative
+	}
+	.normalize
+	.[(($=$AS $B) | $A*)*] {
+		.substEmptyForStar
+	}
+	.normalize
+	.[($B | $=($A*))*] {
+		.removeStar
+	}
+}
+
+openAlternative : $X $XY=($Y | $Z) $W => $X $Y $W | $X $Z $W {
+	.toTrivialAlt
+	.[$X $=$XY $Y | ...] {
+		.altOpt[$Y]
+	}
+	.[$X $=$XY $Y | ...] {
+		.altOpt[$X]
+	}
+}
+
+starToStarQuestion : $A* => $A*? {
+	.toTrivialAlt
+	.[$=$X | ...] {
+		.substEmptyForStar
+	}
+	.optionalToQuestion
+}
+
+plusToElementAndStar : A+ [$c=#fresh] -> A A* {
+	.plusToRecusrion[$c]
+	.[$C]
+	.symbolSubst[$A $C]
+	.[$A $=$C] {
+		.symbolSubst[$A*]
+	}
+}

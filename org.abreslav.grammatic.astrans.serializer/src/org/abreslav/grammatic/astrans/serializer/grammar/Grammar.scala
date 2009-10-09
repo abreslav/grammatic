@@ -13,7 +13,10 @@ final case class Production(body : Expression)
 
 sealed abstract class Expression
 abstract class AbstractSymbolReference extends Expression
-case class SymbolReference(symbol : Symbol) extends AbstractSymbolReference
+case class SymbolReference(symbol : Symbol) extends AbstractSymbolReference {
+  override def toString = symbol.name
+}
+
 private case class SymbolReference_(var symbol : scala.Symbol) extends AbstractSymbolReference
 case class Empty() extends Expression
 case class Iteration(

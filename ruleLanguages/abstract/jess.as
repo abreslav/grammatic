@@ -54,7 +54,7 @@ moduleCitizen
 
 deftemplate
 	: moduleCitizen
-	  ($super=deftemplate&)? // super
+	  ($super=deftemplate)? // super
 	  slotSpecific?
       backchainReactive?
       fromClass?

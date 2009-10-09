@@ -1,0 +1,55 @@
+A+ <-> {c;
+c 
+	: A 
+	: A c
+	;
+}
+
+c : c : {...} <-> c : {...};
+
+c : $x=(.. | ...) -> {c1;
+where 
+c1 : #verticalize($x)
+}
+
+c -> (A1{S1} | ... | An{Sn})
+
+($A=..)* <-> ($A+ | #empty)
+
+($A $B*) <-> { $c=#;
+where:
+	$c
+		: $A
+   		: $c $B
+   		;
+}
+
+$A=..? <-> $A | #empty;
+
+X Y W | X Z W -> X (Y | Z) W;
+
+(A | B) | C -> (A | B | C);
+
+substitute $A -> [$A => $B] $B;
+
+---------------------
+
+take every c : $=(A | B)
+put {
+	substitute [A | B => A] $ -> A;
+	assert c : A;
+}
+
+lemma A* =>* A A* {
+	A* =>
+	A+ | #empty =>
+	A+ =>
+	A A*
+}
+
+lemma [A* =>* A A A A* {
+	A* =>
+	A [A*] =>
+	A A [A*] =>
+	A A A A*
+}

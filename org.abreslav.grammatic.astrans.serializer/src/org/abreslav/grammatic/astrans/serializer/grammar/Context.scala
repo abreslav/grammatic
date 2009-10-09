@@ -4,12 +4,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 trait Context {
-	def apply(attribute : Attribute) : Option[AnyRef]
-	def setAttribute(attribute : Attribute, value : AnyRef) : Context
-	def apply(obj : EObject, feature : EStructuralFeature) : Option[(Context, AnyRef)]
-	def print(string : String) : Context
+  def apply(attribute : Attribute) : Option[AnyRef]
+  def setAttribute(attribute : Attribute, value : AnyRef) : Context
+  def apply(obj : EObject, feature : EStructuralFeature) : Option[(Context, AnyRef)]
+  def print(string : String) : Context
  
-   def compose(collectionsAndOutput : Context) : Context
+  def compose(collectionsAndOutput : Context) : Context
 }
 
 object Context {

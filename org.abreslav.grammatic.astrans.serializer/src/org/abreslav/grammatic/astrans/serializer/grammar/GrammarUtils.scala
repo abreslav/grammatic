@@ -204,4 +204,160 @@ object Experiment {
 	      token('NUM) -> str ::= "1";
       }
     }
+
+  val theGrammar1 = grammar ("Test") {
+      new GrammarBuilder() {
+    	  val Expr = EClass("Expr")
+	      val Sum = EClass("Sum")
+	      val children = EReference(Sum, "expressions")
+	      val Mult = EClass("Mult")
+	      val left = EReference(Mult, "left")
+	      val right = EReference(Mult, "right")
+	      val Num = EClass("Num")
+	      val value = EReference(Num, "value")
+	      
+	      val s_result = Attribute('s_result, Expr)
+	      val m_result = Attribute('m_result, Expr)
+	      val f_result = Attribute('f_result, Expr)
+	      val tmp = Attribute('tmp, Expr)
+	      
+          val s_this = Attribute('s_this, Sum)
+          val m_this = Attribute('m_this, Mult)
+          val n_this = Attribute('n_this, Num)
+          val EString = EcorePackage.eINSTANCE.getEString()
+          val v = Attribute('value, EString)
+          
+          val str = Attribute('str, EString)
+       
+	      'sum -> s_result ::= (s_this -: (
+	        (tmp==='mult){
+	          s_this->children += tmp
+	        } - 
+	          ("+" - (tmp==='mult){
+	            s_this->children += tmp
+	          }).* - ":" - (tmp==='mult){
+	            s_this->children += tmp
+	          })){
+	    	  s_result := s_this
+	        } | s_result==='mult 
+       
+          'mult -> m_result ::= m_this -: (
+	        (tmp==='factor){
+	          m_this->left := tmp
+	        }  - "*" - (tmp==='mult{
+	          m_this->right := tmp
+	        })){
+	          m_result := m_this
+	        } | m_result==='factor
+       
+	      'factor -> f_result ::=  
+             n_this -: ((v==='NUM{
+               n_this->value := v
+             }){
+               f_result := n_this
+             }) | "(" - (f_result==='sum) - ")"
+       
+	      token('NUM) -> str ::= "1";
+      }
+    }
+
+
+  val theGrammar2 = grammar ("Test") {
+      new GrammarBuilder() {
+    	  val Expr = EClass("Expr")
+	      val Sum = EClass("Sum")
+	      val children = EReference(Sum, "expressions")
+	      val Mult = EClass("Mult")
+	      val left = EReference(Mult, "left")
+	      val right = EReference(Mult, "right")
+	      val Num = EClass("Num")
+	      val value = EReference(Num, "value")
+	      
+	      val s_result = Attribute('s_result, Expr)
+	      val m_result = Attribute('m_result, Expr)
+	      val f_result = Attribute('f_result, Expr)
+	      val tmp = Attribute('tmp, Expr)
+	      
+          val s_this = Attribute('s_this, Sum)
+          val m_this = Attribute('m_this, Mult)
+          val n_this = Attribute('n_this, Num)
+          val EString = EcorePackage.eINSTANCE.getEString()
+          val v = Attribute('value, EString)
+          
+          val str = Attribute('str, EString)
+       
+	      'sum -> s_result ::= (s_this -: (
+	        (tmp==='num){
+	          s_this->children += tmp
+	        } - 
+	          ("+" - (tmp==='num){
+	            s_this->children += tmp
+	          }).* - ":" - ((tmp==='num){
+	            s_this->children += tmp
+	          } - ",").+ - (tmp==='num){
+	            s_this->children += tmp
+	          } - (tmp==='num){
+	            s_this->children += tmp
+	          })){
+	    	  s_result := s_this
+	        }
+       
+	      'num -> f_result ::=  
+             n_this -: ((v==='NUM{
+               n_this->value := v
+             }){
+               f_result := n_this
+             })
+       
+	      token('NUM) -> str ::= "1";
+      }
+    }
+
+    val theGrammar3 = grammar ("Test") {
+      new GrammarBuilder() {
+    	  val Expr = EClass("Expr")
+	      val Sum = EClass("Sum")
+	      val children = EReference(Sum, "expressions")
+	      val Mult = EClass("Mult")
+	      val left = EReference(Mult, "left")
+	      val right = EReference(Mult, "right")
+	      val Num = EClass("Num")
+	      val value = EReference(Num, "value")
+	      
+	      val s_result = Attribute('s_result, Expr)
+	      val m_result = Attribute('m_result, Expr)
+	      val f_result = Attribute('f_result, Expr)
+	      val tmp = Attribute('tmp, Expr)
+	      
+          val s_this = Attribute('s_this, Sum)
+          val m_this = Attribute('m_this, Mult)
+          val n_this = Attribute('n_this, Num)
+          val EString = EcorePackage.eINSTANCE.getEString()
+          val v = Attribute('value, EString)
+          
+          val str = Attribute('str, EString)
+       
+	      'sum -> s_result ::= (s_this -: (
+	        (tmp==='factor){
+	          s_this->children += tmp
+	        } -"+" - 
+	          ((tmp==='factor){
+	            s_this->children += tmp
+	          }).* - ":" - (tmp==='factor){
+	            s_this->children += tmp
+	          })){
+	    	  s_result := s_this
+	        } | s_result==='factor 
+       
+	      'factor -> f_result ::=  
+             n_this -: ((v==='NUM{
+               n_this->value := v
+             }){
+               f_result := n_this
+             }) | "(" - (f_result==='sum) - ")"
+       
+	      token('NUM) -> str ::= "1";
+      }
+    }
+
 }

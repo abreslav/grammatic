@@ -8,24 +8,26 @@ object Main {
     // 1 * (2 + 3)
 //    val expr = Mult(Num("1"), Sum(Num("2"), Num("3")))
     val expr = Mult(Mult(Num("1"), Sum(Num("4"), Num("111"))), Sum(Num("2"), Num("3"), Mult(Num("5"), Num("8"))))
-//    val expr = Sum(Num("2"), Num("3"))
+//    val expr = Sum(Num("2"), Num("3"), Num("4"), Num("5"), Num("13"), Num("14"), Num("15"))
+//    val expr = Sum(Num("2"), Num("3"), Num("4"), Num("5"), Num("6"), Num("7"))
+//    val expr = Sum(Num("1"), Num("2"), Num("3"))
 //    val expr = Num("1")
 //    val expr = Mult(Num("1"), Num("2"))
     
-    print(Matcher.matchSymbol(grammar.symbols(0), expr)) 
+    println(Matcher.matchSymbol(grammar.symbols(0), expr)) 
     
-    if (2 > -1) {
-    import Context._
-    val context = emptyContext
-    println(context.print("S").print("1").print("2"))
-    val eFactory = org.eclipse.emf.ecore.EcoreFactory.eINSTANCE
-    val ePackage = org.eclipse.emf.ecore.EcorePackage.eINSTANCE
-    val o = eFactory.createEClass()
-    o.getEStructuralFeatures().add(eFactory.createEReference())
-    val eReferences = o.eClass().getEStructuralFeature("eReferences")
-    val Some((context1, r)) = context(o, eReferences)
-    println(r)
-    println(context1(o, eReferences))
+    if (2 > 3) {
+      import Context._
+      val context = emptyContext
+      println(context.print("S").print("1").print("2"))
+      val eFactory = org.eclipse.emf.ecore.EcoreFactory.eINSTANCE
+      val ePackage = org.eclipse.emf.ecore.EcorePackage.eINSTANCE
+      val o = eFactory.createEClass()
+      o.getEStructuralFeatures().add(eFactory.createEReference())
+      val eReferences = o.eClass().getEStructuralFeature("eReferences")
+      val Some((context1, r)) = context(o, eReferences)
+      println(r)
+      println(context1(o, eReferences))
     }
   }
 

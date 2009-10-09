@@ -9,13 +9,17 @@ object Matcher {
   type Continuation = Context => Boolean
 
   
-  def matchSymbol(symbol : Symbol, obj : AnyRef) : Boolean = matchExpression(
-    AnnotatedSymbolReference(SymbolReference(symbol), AttributeReference(symbol.outputs(0))::Nil, Nil), 
-    Context.emptyContext.setAttribute(symbol.outputs(0), obj), c => {
-      println("Hooo: " + c); 
-      true
-    }
-  )
+  def matchSymbol(symbol : Symbol, obj : AnyRef) : String = {
+    var result : String = null
+    matchExpression(
+      AnnotatedSymbolReference(SymbolReference(symbol), AttributeReference(symbol.outputs(0))::Nil, Nil), 
+      Context.emptyContext.setAttribute(symbol.outputs(0), obj), c => {
+        assert(result == null)
+        result = c.toString
+        true
+      })
+    result
+  }
 
   private def checkObjectType(obj : AnyRef, eClassifier : EClassifier) = eClassifier.isInstance(obj)
   
@@ -91,8 +95,8 @@ object Matcher {
   }
   
   private def matchExpression(expression : Expression, context : Context, continuation : Continuation) : Boolean = {
-    println("\n>>>>>Match expression")
-    println(XMLSerializer(expression))
+    println("\n>>>>>Match expression: " + expression)
+//    println(XMLSerializer(expression))
     val result = expression match {
       case StringExpression(str) => continuation(context.print(str))
       case Alternative(list) => matchAlternative(list, context, continuation)
@@ -101,10 +105,10 @@ object Matcher {
       
       case AnnotatedSymbolReference(SymbolReference(Symbol(name, prods, ins, outs, token)), assignedTo, args) => {
         println(">>ASR: " + name)
-        println(">>ins: " + ins)
-        println(">>outs: " + outs)
-        println(">>assignedTo: " + assignedTo)
-        println(">>args: " + args)
+//        println(">>ins: " + ins)
+//        println(">>outs: " + outs)
+//        println(">>assignedTo: " + assignedTo)
+//        println(">>args: " + args)
         implicit def seqToList[A](seq : Seq[A]) = seq.toList
         if (assignedTo.size != outs.size || args.size != ins.size)
           throw new IllegalArgumentException()
@@ -146,14 +150,13 @@ object Matcher {
         println(">>AE: " + expr.getClass.getSimpleName)
         println(">>after: " + after)
         println(">>context: " + context)
-        // check against decls -- ???
         
         val newContext = applyAssignments(context, after, afterOpt)
         
         println(">newContext: " + newContext)
         newContext match {
-          case None => {println("here"); false}
           case Some(c) => matchExpression(expr, c, continuation)
+          case None => false
         }
       }
       case _ => false
@@ -161,20 +164,24 @@ object Matcher {
     if (result)
       println("match succeded")
     else 
-      println("match failed")
+      println("match failed: " + expression)
     result
   }
   
   private def matchSequence(sequence : List[Expression], context : Context, continuation : Continuation) : Boolean = {
-    sequence match {
+    println("sequence step, tail: " + sequence.size)
+    val result = sequence match {
       case head :: tail => matchExpression(head, context, matchSequence(tail, _, continuation))  
-      case Nil => {println("sequence is over"); continuation(context)} // think
+      case Nil => continuation(context)
     }
+    println("end of sequence step, tail: " + sequence.size)
+    result
   }
   
   private def matchAlternative(options : List[Expression], context : Context, continuation : Continuation) : Boolean = {
     println("Enter alternative")
     for (option <- options) {
+      println(">>In alternative, current option: " + option.getClass.getSimpleName)
       if (matchExpression(option, context, continuation)) {
         println("Exit alternative : true")
         return true
@@ -192,30 +199,44 @@ object Matcher {
     val first = up match {
       case 1 => matchExpression(expression, context, continuation)
       case -1 => {
-        // suspicious: what if lowerBounds is 1 and this does not match at all?
-        matchExpression(expression, context, 
-          cont => {
-            val next = matchIteration(expression, low, up, cont, continuation)
-            next || continuation(cont)
-          }
-        )
+        println(">>>try a greedy match")
+        matchOneOrMoreTimes(expression, context, continuation)
       }
     }
-    first
-//    if (first) {
-//      return true
-//    } else {
-//      if (low == 0) {
-//        if (continuation(context)) {
-//          return true
-//        }
-//      }
-//      for (i <- low to up) {
-//        if (matchExpression(expression, context, matchIteration(expression, low, i, _, continuation)))
-//          return true
-//      }
-//    }
-//    false
+    
+    if (first) {
+      return true
+    }
+    
+    // try no match
+    if (low == 0) {
+      println(">>>try no match")
+      println(context)
+      if(continuation(context)) {
+         return true
+      }
+    }
+    
+    // try finite matches
+    //   actually finite matches have been tied already on a greedy match
+    
+    false
   }
+  
+  private def matchOneOrMoreTimes(expression : Expression, context : Context, continuation : Continuation) : Boolean = {
+    matchExpression(expression, context, 
+      cont => {
+        val next = matchOneOrMoreTimes(expression, cont, continuation)
+        next || continuation(cont)
+      }
+    )
+  }
+  
+  private def matchNTimes(expression : Expression, n : Int, context : Context, continuation : Continuation) : Boolean = {
+    if (n == 0)
+      continuation(context)
+    else
+      matchExpression(expression, context, matchNTimes(expression , n - 1, _, continuation))
+  } 
   
 }

@@ -1,0 +1,183 @@
+defmodule
+	@module : Module
+	$=: nonVariableSymbol{module.name=#} 
+	  STRING{module.comment=#}? 
+	  boolean{module.autoFocus=#}?
+	;
+:: {
+	before = insertLiteral('(' 'defmodule')
+	after = insertLiteral(')')
+	boolean.before = '(' 'auto-focus'
+	boolean.after = ')'
+}
+
+defglobal
+	: $body=(GLOBAL_VARIABLE expression)
+	;
+:: {
+    ..
+      defglobal.inline
+    
+    defglobal : {...}
+      delete()
+
+	[3.2] inline(statement); [7] delete(statement)
+
+	???[prop. 8] approx, there are some more steps
+	/// DOUBTS IF THIS COULD BE DONE AUTOMATICALLY
+	///   And we would like to hide most annotations from the user 
+	program	: $prg=($body | ...)* ;
+		$prg
+		.iterateAltPartPlus[$body]
+		.assert[($it=($body+) | ...)] {
+			$body
+			.insertBefore['(' 'defglobal']
+			.insertAfter[')']
+		}
+		.assert[$statement*] {
+			#statement
+			.extract[statement]
+		}
+	
+	statement : $defg=('(' 'defglobal' ..) | ...
+		$defg.extract[defglobal]
+		$statement.verticalize
+}
+ 
+type
+	: 'ANY'{enumliteral} | 'INTEGER'{enumliteral} | 'FLOAT' |
+      'NUMBER' | 'SYMBOL' | 'STRING' |
+      'LEXEME' | 'OBJECT' | 'LONG'
+    ;
+ 
+slotKind
+	: 'slot'{enumliteral}
+	: 'multislot'{enumliteral}
+	;
+	
+permPart : $A? -> $A** {
+	$A.convertToPermutationPart
+	#result
+		.optionalPlusToStar
+		.doubleStar
+}	
+
+enclose : $A [$PRE=#lex, $POST=#lex] => .. {
+	.insertBefore[$PRE]
+	.insertAfter[$POST]
+}
+
+hashStars : .. $=($A* $B*) .. => .. {
+	.hashStarsIntoAlt
+}
+
+slot
+	$=: slotKind
+	  nonVariableSymbol
+	  $ot=(type?)
+      $od=($default?)
+      $odd=($defDyn?)
+      $oa=($allowed*)
+    ;
+:: {
+	.insertBefore['(']
+	.insertAfter[')']
+	
+	$ot.permPart
+	$od.permPart
+	$odd.permPart
+	$oa.doubleStar
+	
+    $oa
+    	.raiseLowerBound
+    	.plusToElementAndStar
+    	.assert[$A ..] {
+    		$A.assertFirst // make {slot.?!allowedValues+=#}
+    	}
+
+    type.enclose[
+    	'(' 'type',
+    	')'
+    ]
+    $default.enclose[
+    	'(' 'default',
+    	')'
+    ]
+    $defDyn.enclose[
+    	'(' 'default-dynamic',
+    	')'
+    ]
+    $oa.enclose[
+    	'(' 'allowed-values',
+    	')'
+    ]
+
+	#result.assert[.. $=(..* ..* ..* ..*) ..] {
+		.hashStars
+		.hashStars
+		.hashStars
+	}
+	
+    // add ?
+    // add 'declare'
+	
+}
+
+deftemplate
+	: nonVariableSymbol 
+	  comment=(STRING?)
+	  defmodule
+	  $super=(deftemplate?)
+	  $ss=($slotSpecific=boolean?)
+      $backchainReactive=boolean?
+      fromClass=nonVariableSymbol?
+      includeVariables=boolean? 
+      slot*
+	;
+:: {
+    $ss.insertBefore['(' 'ordered' TRUE ')' | '(' 'ordered' FALSE ')']
+	... orT sl? sl* | orF sl? sl* ...
+	... orT sl? | orF sl* ...
+	... orT sl | orf sl* ...
+	... orT \e {__data} | orf sl* ...
+	now we have two alternatives: for ordered and unordered facts :)
+	
+	---
+	
+	[4.4] defmodule {synth scope TEMPLATES: nonVariableSymbol -> Template}
+	[4.4] defmodule {synth scope THIS_MODULE: Template}
+	[4.4] deftemplate {inherit scope TEMPLATES = defmodule::TEMPLATES}
+	[4.4] deftemplate {inherit scope THIS_MODULE = defmodule::THIS_MODULE}
+	[4.4] introduce key
+    ... (nonVariableSymbol{key in MODULES}{template.module=#})?{template.module=THIS_MODULE()} ...
+    
+	[4.4] deftemplate{template.super=#}?
+	... (nonVariableSymbol{$M = MODULES(#)} '::' nonVariableSymbol{$T = #})
+		{$M(T)}
+		{template.super=#}    
+
+	... (
+			(nonVariableSymbol{$M = MODULES(#)})?
+				{? $M = THIS_MODULE()}
+			'::' 
+			nonVariableSymbol{$T = #}
+		)
+		{$M.TEMPLATES(T)}
+		{template.super=#}    
+	
+	
+	[4.1 + ...] before after
+	representReference(defmodule&, $module=nonVariableSymbol -- key in MODULES)
+	$module.after = '::'
+	extract(topLevelName: $module '::' nonVariableSymbol)
+	$super.before = 'extends'
+	representReference($super, 
+		$superModule=nonVariableSymbol -- key in MODULES
+		$superName=nonVariableSymbol -- key in $superModule::TEMPLATES)
+	$superName.before = '::'
+	move(STRING?, slotSpecific?.before)
+	$declarations = mergeIntoAlternative(...)
+	replaceIteration(?, $declarations)
+	::$declarations == $body?
+	extract(templateDeclarations: $body)
+}
