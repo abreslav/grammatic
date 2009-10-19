@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="astrans"
+    nsURI="http://www.grammatic.org/grammatic/2009/ASTrans" nsPrefix="astrans">
+  <eClassifiers xsi:type="ecore:EClass" name="TransformationRule" abstract="true"
+      interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variableDefinitions" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//VariableDefinition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//QueryContainer">
+        <eTypeArguments>
+          <eUpperBound eClassifier="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//Query"/>
+        </eTypeArguments>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inputQuery" lowerBound="1"
+        eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//Query"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outputQuery" lowerBound="1"
+        eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//Query"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NativeTransformationRule" eSuperTypes="#//TransformationRule">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UserTransformationRule" eSuperTypes="#//TransformationRule">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" lowerBound="1" upperBound="-1"
+        eType="#//InstructionChain" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InstructionChain">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="initialValue" lowerBound="1"
+        eType="#//InitialValue" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instructions" lowerBound="1"
+        upperBound="-1" eType="#//TransformationInstruction" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TransformationInstruction" abstract="true"
+      interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="RuleCall" eSuperTypes="#//TransformationInstruction">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rule" lowerBound="1" eType="#//TransformationRule"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//VariableDefinition"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Match" eSuperTypes="#//TransformationInstruction">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variableDefinitions" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//VariableDefinition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="defaultVariable" eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//VariableDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="query" lowerBound="1" eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//Query"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="body" lowerBound="1" upperBound="-1"
+        eType="#//InstructionChain" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InitialValue" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DefaultInput" eSuperTypes="#//InitialValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CurrentOutput" eSuperTypes="#//InitialValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VariableReference" eSuperTypes="#//InitialValue">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variable" lowerBound="1"
+        eType="ecore:EClass platform:/resource/org.abreslav.grammatic.query/model/query.ecore#//VariableDefinition"/>
+  </eClassifiers>
+</ecore:EPackage>

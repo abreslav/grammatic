@@ -1,0 +1,55 @@
+import query = "platform:/resource/org.abreslav.grammatic.query/model/query.ecore";
+import "http://www.eclipse.org/emf/2002/Ecore";
+
+package astrans nsURI = "http://www.grammatic.org/grammatic/2009/ASTrans" nsPrefix = astrans { 
+
+abstract interface TransformationRule { 
+	attr EString[1] name;
+	val VariableDefinition[0..-1] variableDefinitions;
+	val QueryContainer<? extends Query>[0..-1] parameters;
+	val Query[1] inputQuery;
+	val Query[1] outputQuery;
+}
+ 
+class NativeTransformationRule extends TransformationRule {
+	attr EString[1] className;
+}
+
+class UserTransformationRule extends TransformationRule {
+	val InstructionChain[1..-1] body;
+}
+
+class InstructionChain {
+	val InitialValue[1] initialValue;
+	val TransformationInstruction[1..-1] instructions;
+}
+
+abstract interface TransformationInstruction {
+}
+
+class RuleCall extends TransformationInstruction {
+	ref TransformationRule[1] rule;
+	ref VariableDefinition[0..-1] arguments;
+}
+
+class Match extends TransformationInstruction {
+	val VariableDefinition[0..-1] variableDefinitions;
+	ref VariableDefinition defaultVariable;
+	val Query[1] query;
+	val InstructionChain[1..-1] body;
+}
+
+abstract interface InitialValue {
+}
+
+class DefaultInput extends InitialValue {
+}
+
+class CurrentOutput extends InitialValue {
+}
+
+class VariableReference extends InitialValue {
+	ref VariableDefinition[1] variable;
+}
+
+}
