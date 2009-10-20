@@ -1,0 +1,47 @@
+#import 
+	'GrammaticLexer.grammar' {NAME},
+	'GrammaticQuery.grammar' {query};
+
+ruleSignature
+	: NAME ':' query parameter* '=>' query
+	;
+	
+parameter
+	: '[' query ']'
+	;
+	
+ruleDefinition
+	: ruleSignature ruleBody
+	;
+
+ruleBody
+	: '#native' STRING
+	: userDefinedBody
+	;
+	
+userDefinedBody
+	: '{' instrucitonChain* '}'
+	;
+	
+instrucitonChain
+	: initialValue ('.' instruction)+ ';'?
+	;
+	
+initialValue
+	: #empty
+	: '#result'
+	: variableReference
+	;
+	
+variableReference
+	: '$' NAME
+	;
+	
+instruction
+	: NAME argument* 
+	: '[' query ']' userDefinedBody?
+	;
+	
+argument
+	: '[' variableReference ']'
+	; 

@@ -6,7 +6,7 @@ package astrans nsURI = "http://www.grammatic.org/grammatic/2009/ASTrans" nsPref
 abstract interface TransformationRule { 
 	attr EString[1] name;
 	val VariableDefinition[0..-1] variableDefinitions;
-	val QueryContainer<? extends Query>[0..-1] parameters;
+	val Query[0..-1] parameters;
 	val Query[1] inputQuery;
 	val Query[1] outputQuery;
 }
@@ -16,7 +16,7 @@ class NativeTransformationRule extends TransformationRule {
 }
 
 class UserTransformationRule extends TransformationRule {
-	val InstructionChain[1..-1] body;
+	val InstructionChain[0..-1] body;
 }
 
 class InstructionChain {
@@ -36,7 +36,7 @@ class Match extends TransformationInstruction {
 	val VariableDefinition[0..-1] variableDefinitions;
 	ref VariableDefinition defaultVariable;
 	val Query[1] query;
-	val InstructionChain[1..-1] body;
+	val InstructionChain[0..-1] body;
 }
 
 abstract interface InitialValue {
