@@ -52,7 +52,7 @@ variablePrefix
 	: $d='$' NAME? '='
 	;
 # --> (String result) {
-	#before: result = #text(d);
+	d: result = #text(d);
 	NAME: result = NAME#;
 }
 
