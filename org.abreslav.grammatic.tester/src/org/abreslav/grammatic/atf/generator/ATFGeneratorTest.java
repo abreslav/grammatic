@@ -18,8 +18,8 @@ public class ATFGeneratorTest {
 		Collection<AspectApplication> applications = ATFInterpreterTest.createApplicationsFromDirectory(new File(sourceDir));
 		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticMetadata", applications);
 		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticLexicalGrammar", applications);
+		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticQuery", applications);
 		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticGrammarTemplate", applications);
-//		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticQuery", applications);
 	}
 
 }
