@@ -1,5 +1,6 @@
 package org.abreslav.grammatic.atf.dataflow;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import org.abreslav.grammatic.metadata.util.IMetadataStorage;
 import org.abreslav.grammatic.metadata.util.MetadataStorage;
 import org.abreslav.grammatic.utils.IErrorHandler;
 import org.abreslav.grammatic.utils.INull;
+import org.abreslav.grammatic.utils.Stack;
 import org.eclipse.emf.ecore.EObject;
 
 
@@ -77,10 +79,56 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 			IErrorHandler<E> unreadValuesErrorHandler) throws E {
 		DataFlowAnalyzer<E> dataFlowAnalyzer = new DataFlowAnalyzer<E>(graph, trace, metadataProvider, definitiveAssignmentErrorHandler);
 		dataFlowAnalyzer.buildOperations();
+
 		dataFlowAnalyzer.analyze(FORWARD_DIRECTION, new DefiniteAssignmentOperationHandler<E>(definitiveAssignmentErrorHandler));
 		dataFlowAnalyzer.analyze(BACKWARD_DIRECTION, new UnreadValuesOperationHandler<E>(unreadValuesErrorHandler));
 	}
 	
+	@Deprecated
+	private void dump(PrintStream out) {
+		System.err.println("Dumping started");
+		System.err.flush();
+		Collection<FunctionModel> functionModels = myFunctionModels;
+		for (FunctionModel functionModel : functionModels) {
+			out.println("Start " + functionModel.ffFunction.getName());
+			
+			Stack<ControlFlowVertex> stack = new Stack<ControlFlowVertex>();
+			stack.push(functionModel.ffStartVertex);
+			
+			HashSet<ControlFlowVertex> visited = new HashSet<ControlFlowVertex>();
+			while (!stack.isEmpty()) {
+				ControlFlowVertex vertex = stack.pop();
+				if (visited.contains(vertex)) {
+					continue;
+				}
+				
+				visited.add(vertex);
+				
+				List<Operation> list = functionModel.ffVertexToOperations.get(vertex);
+				if (!list.isEmpty()) {
+					out.print(vertex);
+					out.println("{");
+					for (Operation operation : list) {
+						out.print(operation.ffAttribute.getName());
+						if (operation.ffRead) {
+							out.print("(r)");
+						}
+						out.println();
+					}
+					out.println("}");
+				}
+
+				Collection<ControlFlowEdge> outgoingEdges = FORWARD_DIRECTION.outgoingEdges(vertex);
+				for (ControlFlowEdge controlFlowEdge : outgoingEdges) {
+					stack.push(controlFlowEdge.getEnd());
+				}
+			}
+			
+			
+			out.println("End " + functionModel.ffFunction.getName());
+		}
+	}
+
 	private interface IDirection {
 		ControlFlowVertex vertexToStartFrom(FunctionModel functionModel);
 		Iterator<ControlFlowVertex> iterator(TopologicalOrder topologicalOrder, ControlFlowVertex startVertex);
@@ -208,15 +256,10 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 		for (ATFAttribute attribute : function.getInputAttributes()) {
 			Operation.write(attribute, initialOperations);
 		}
-//		HashSet<ATFAttribute> initiallyWritten = new HashSet<ATFAttribute>(function.getInputAttributes());
 		// symbol.before
 		Statement beforeSymbol = readStatement(symbolMetadata, ATFMetadata.BEFORE);
 		readWriteAttributes(beforeSymbol, initialOperations);
 
-//		Map<ControlFlowEdge, Set<ATFAttribute>> writtenOnEdge = new HashMap<ControlFlowEdge, Set<ATFAttribute>>();
-//		ControlFlowEdge firstEdge = startVertex.getNext();
-//		writtenOnEdge.put(firstEdge, initiallyWritten);
-		
 		EndVertex endVertex = null;
 		
 		Iterator<ControlFlowVertex> iterator = myTopologicalOrder.iterator(startVertex);
@@ -243,22 +286,8 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 				}
 				// symbolReference.mapping
 				Expression last = beforeExpressions.get(beforeExpressions.size() - 1);
-				if (last instanceof SymbolReference) {
-					IMetadataStorage metadata = MetadataStorage.getMetadataStorage(last, metadataProvider);
-					Collection<ATFExpression> args = metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
-					if (args != null) {
-						for (ATFExpression expression : args) {
-							readWriteAttributes(expression, operations);
-						}
-					}
-					Collection<ATFAttributeReference> assignedTo = metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
-					if (assignedTo != null) {
-						for (ATFAttributeReference attributeReference : assignedTo) {
-//							myReadWrites.write(attributeReference.getAttribute(), written);
-							Operation.write(attributeReference.getAttribute(), operations);
-						}
-					}
-				}
+				processSymbolReferenceMapping(last, operations,
+						metadataProvider);
 			}
 			// expression.after
 			List<Expression> afterExpressions = myTrace.getAfterExpressions(vertex);
@@ -267,7 +296,6 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 					IMetadataStorage metadata = MetadataStorage.getMetadataStorage(expression, metadataProvider);
 					ATFAttributeReference assignTextTo = (ATFAttributeReference) metadata.readEObject(ATFMetadata.ASSIGN_TEXT_TO_ATTRIBUTE);
 					if (assignTextTo != null) {
-//						myReadWrites.write(assignTextTo.getAttribute(), written);
 						Operation.write(assignTextTo.getAttribute(), operations);
 					}
 					processStatement(metadata, ATFMetadata.AFTER, operations);
@@ -277,24 +305,38 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 			Production endingProduction = myTrace.getProductionByLastVertex(vertex);
 			processStatement(endingProduction, ATFMetadata.AFTER, metadataProvider, operations);
 			
-//			Collection<ControlFlowEdge> outgoingEdges = VertexUtil.getOutgoingEdges(vertex);
-//			for (ControlFlowEdge edge : outgoingEdges) {
-//				writtenOnEdge.put(edge, new HashSet<ATFAttribute>(written));
-//			}
 		}
 		
-//		Set<ATFAttribute> written = getIncomingWritten(endVertex, writtenOnEdge);
 		List<Operation> operations = createOperations(endVertex, vertexToOperations);
 		
 		// symbol.after
 		Statement symbolAfter = readStatement(symbolMetadata, ATFMetadata.AFTER);
 		readWriteAttributes(symbolAfter, operations);
-		//		myReadWrites.readAll(outputAttributes, written);
+
 		for (ATFAttribute attribute : function.getOutputAttributes()) {
 			Operation.read(attribute, operations);
 		}
 
 		myFunctionModels.add(new FunctionModel(function, startVertex, endVertex, vertexToOperations));
+	}
+
+	private void processSymbolReferenceMapping(Expression expression,
+			List<Operation> operations, IMetadataProvider metadataProvider) {
+		if (expression instanceof SymbolReference) {
+			IMetadataStorage metadata = MetadataStorage.getMetadataStorage(expression, metadataProvider);
+			Collection<ATFExpression> args = metadata.readEObjects(ATFMetadata.ASSOCIATED_CALL_ARGUMENTS);
+			if (args != null) {
+				for (ATFExpression atfExpression : args) {
+					readWriteAttributes(atfExpression, operations);
+				}
+			}
+			Collection<ATFAttributeReference> assignedTo = metadata.readEObjects(ATFMetadata.ASSIGNED_TO_ATTRIBUTES);
+			if (assignedTo != null) {
+				for (ATFAttributeReference attributeReference : assignedTo) {
+					Operation.write(attributeReference.getAttribute(), operations);
+				}
+			}
+		}
 	}
 
 	private List<Operation> createOperations(ControlFlowVertex vertex,
@@ -331,7 +373,6 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 		new AtfSwitch<INull>() {
 			@Override
 			public INull caseATFAttributeReference(ATFAttributeReference object) {
-//				myReadWrites.read(object.getAttribute(), written);
 				Operation.read(object.getAttribute(), operations);
 				return INull.NULL;
 			}
@@ -358,7 +399,6 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 					ATFAttributeAssignment object) {
 				doSwitch(object.getRightSide());
 				for (ATFAttributeReference attributeReference : object.getLeftSide()) {
-//					myReadWrites.write(attributeReference.getAttribute(), written);
 					Operation.write(attributeReference.getAttribute(), operations);
 				}				
 				return INull.NULL;
@@ -367,7 +407,6 @@ public class DataFlowAnalyzer<E extends RuntimeException> {
 			@Override
 			public INull caseCollectionAppending(CollectionAppending object) {
 				doSwitch(object.getRightSide());
-//				myReadWrites.read(object.getLeftSide().getAttribute(), written);
 				Operation.read(object.getLeftSide().getAttribute(), operations);
 				return INull.NULL;
 			}

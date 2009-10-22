@@ -73,13 +73,14 @@ public class ATFBuilders implements IATFBuilders {
 	private final IErrorHandler<RuntimeException> myErrorHandler;
 	private final ATFImportsBuilders myImportsBuilders;
 	
-	private final SemanticResolver mySemanticResolver = new SemanticResolver();
+	private final SemanticResolver mySemanticResolver;
 	
 	private AssignmentRule myCurrentAssignment;
 	private Namespace myCurrentNamespace;
 	
 	public ATFBuilders(IATFModuleLoader parser, ITypeSystemBuilder<?> typeSystemBuilder, IErrorHandler<RuntimeException> errorHandler) {
 		myErrorHandler = errorHandler;
+		mySemanticResolver = new SemanticResolver();
 		myImportsBuilders = new ATFImportsBuilders(errorHandler, parser, mySemanticResolver);
 		myTypeSystemBuilder = typeSystemBuilder;
 	}
@@ -1343,6 +1344,8 @@ public class ATFBuilders implements IATFBuilders {
 			reportError("Variable '%s' is already associated with a function call", variable.getName());
 			todoAppend();
 		}
+		// may throw an exception
+		mySemanticResolver.mySymbolMappingTracker.checkAssignToAttributes(variable);
 		if (leftSide != null) {
 			Attribute assignedTo = getAttribute(myCurrentAssignment, 
 					variable, myCurrentNamespace, ASSIGNED_TO_ATTRIBUTES);
@@ -1445,7 +1448,7 @@ public class ATFBuilders implements IATFBuilders {
 	}
 
 	private static void todoAppend() {
-		throw new IllegalStateException("This method shuold be modified to support multi error reporting");
+		throw new IllegalStateException("This method should be modified to support multi error reporting");
 	}
 
 	private class SemanticResolver implements ISemanticModuleHandler {
@@ -1464,6 +1467,8 @@ public class ATFBuilders implements IATFBuilders {
 		private Map<String, FunctionSignature> myCurrentScope = Collections.emptyMap();
 		private String myCurrentSymbol;
 		private String myCurrentFunction;
+		
+		private SymbolMappingTracker mySymbolMappingTracker = new SymbolMappingTracker(myErrorHandler);
 
 		public FunctionSignature getLocalFunction(String name) {
 			if (myCurrentScope != myFunctionScope) {
@@ -1533,6 +1538,7 @@ public class ATFBuilders implements IATFBuilders {
 			myCurrentFunction = "";
 			myDefaultAttributes.clear();
 			myTextAttributes.clear();
+			mySymbolMappingTracker.clear();
 		}
 		
 		public void registerFunction(FunctionSignature functionSignature) {
@@ -1665,6 +1671,8 @@ public class ATFBuilders implements IATFBuilders {
 			if (attribute != null) {
 				return attribute;
 			}
+			mySymbolMappingTracker.checkAddDefaultAttribute(variable);
+			
 			assertSymbolVariable(variable);
 			attribute = AtfFactory.eINSTANCE.createATFAttribute();
 			myDefaultAttributes.put(variable, attribute);
@@ -1676,6 +1684,7 @@ public class ATFBuilders implements IATFBuilders {
 					DEFAULT_FUNCTION, Collections.<ATFExpression>emptyList());
 			return attribute;
 		}
+
 	}
 
 }

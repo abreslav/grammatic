@@ -8,7 +8,7 @@ public interface IVertexNameProvider {
 
 		@Override
 		public String getVertexName(ControlFlowVertex vertex) {
-			return vertex.getClass().getSimpleName() + System.identityHashCode(vertex);
+			return String.format("%s_%x", vertex.getClass().getSimpleName(), System.identityHashCode(vertex));
 		}
 		
 	};

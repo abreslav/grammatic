@@ -26,4 +26,8 @@ public class Stack<T> {
 		myTop = item;
 	}
 	
+	public boolean isEmpty() {
+		return myTop == null;
+	}
+	
 }

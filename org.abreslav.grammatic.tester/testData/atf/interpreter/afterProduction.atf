@@ -1,13 +1,22 @@
 // It reports wrong attribute to be not set upon reading
 
+// Bug is the following:
+//   two variables a and atom refer to the same object -- call of atom
+//   a:: assigns result to result1 attribute
+//   atom assigns result to atom#
+//   after aspect application what atom set overwrites what was previously set by a::
+// possible solution: on a:: identify the call and assign the default attribute of this call
+//   now a new attribute is always created if atom# is referenced
+// another solution: identify a and atom variables. Will not work exactly this way: atom is more than just a  
+
 x
 	: $a=atom
-	$var=: varPref atom
+	$var=: varPref $b=atom
 	;
 [[
-some () --> (String result) {
-	a:: result = #();
-	var: result = b(atom#);
+some () --> (String result1) {
+	a:: result1 = #();
+	var: result1 = b(atom#);
 }
 ]]
 

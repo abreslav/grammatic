@@ -1,7 +1,10 @@
 package org.abreslav.grammatic.atf.interpreter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +25,7 @@ import org.abreslav.grammatic.atf.types.checker.ATFTypeChecker;
 import org.abreslav.grammatic.atf.types.unification.ITypeErrorHandler;
 import org.abreslav.grammatic.cfgraph.BodyVertex;
 import org.abreslav.grammatic.cfgraph.ControlFlowGraph;
+import org.abreslav.grammatic.cfgraph.ControlFlowVertex;
 import org.abreslav.grammatic.cfgraph.EndVertex;
 import org.abreslav.grammatic.cfgraph.StartVertex;
 import org.abreslav.grammatic.grammar.Expression;
@@ -31,6 +35,8 @@ import org.abreslav.grammatic.grammar.Symbol;
 import org.abreslav.grammatic.grammar.template.parser.GrammarParserUtils;
 import org.abreslav.grammatic.grammar.template.parser.IGrammarLoadHandler;
 import org.abreslav.grammatic.grammar.template.parser.ParsingContext;
+import org.abreslav.grammatic.graph.DotPrinter;
+import org.abreslav.grammatic.graph.IVertexNameProvider;
 import org.abreslav.grammatic.metadata.aspectdef.AspectDefinition;
 import org.abreslav.grammatic.metadata.aspectdef.interpreter.AspectDefinitionInterpreter;
 import org.abreslav.grammatic.metadata.aspectdef.parser.AspectDefinitionParser;
@@ -108,7 +114,7 @@ public class ATFInterpreter {
 		ControlFlowGraph controlFlowGraph = buildControlFlowGraph(grammars,	trace);
 		
 		DataFlowAnalyzer.completeAnalysis(
-				controlFlowGraph, trace, metadataProvider, 
+				controlFlowGraph, trace, new MetadataProvider(aspect), 
 				IErrorHandler.EXCEPTION, new IErrorHandler<RuntimeException>() {
 
 			@Override
@@ -127,6 +133,32 @@ public class ATFInterpreter {
 				new MetadataProvider(aspect), 
 				typeSystem, 
 				IErrorHandler.EXCEPTION);
+	}
+
+	@Deprecated
+	private void dump(ControlFlowGraph controlFlowGraph,
+			final GrammarGraphBuilderTrace trace) throws IOException {
+		
+		String dataDir = ".";
+		DotPrinter.printDot(controlFlowGraph, new PrintStream(new FileOutputStream(new File(dataDir, "graph.dot"))), new IVertexNameProvider() {
+
+					@Override
+					public String getVertexName(ControlFlowVertex vertex) {
+//						if (fakeVertices.contains(vertex)) {
+//							return "fake" + System.identityHashCode(vertex);
+//						}
+						if (vertex instanceof StartVertex) {
+							return trace.getSymbol(vertex).getName();
+						}
+						return IVertexNameProvider.DEFAULT.getVertexName(vertex);
+					}
+					
+				});	
+//		String dotFile = dataDir + "/types.dot";
+//		((FiniteTypeSystem<?>) typeSystem).__dump(dotFile);
+		String outFile = dataDir + "/types.png";
+		Runtime runtime = Runtime.getRuntime();
+		runtime.exec("dot -Tpng -o " + outFile + " " + dataDir + "/graph.dot");
 	}
 
 	private ControlFlowGraph buildControlFlowGraph(Set<Grammar> grammars,

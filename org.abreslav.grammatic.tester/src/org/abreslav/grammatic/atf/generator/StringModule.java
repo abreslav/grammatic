@@ -10,4 +10,9 @@ public class StringModule implements IString {
 	public String createString(String token) {
 		return token.substring(1, token.length() - 1);
 	}
+
+	@Override
+	public String null1() {
+		return null;
+	}
 }
