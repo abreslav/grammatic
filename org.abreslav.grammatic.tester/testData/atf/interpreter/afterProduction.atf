@@ -16,7 +16,7 @@ x
 [[
 some () --> (String result1) {
 	a:: result1 = #();
-	var: result1 = b(atom#);
+	var: result1 = b(b#);
 }
 ]]
 
