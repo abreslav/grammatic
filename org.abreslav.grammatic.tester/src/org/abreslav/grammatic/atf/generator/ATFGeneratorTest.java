@@ -19,7 +19,7 @@ public class ATFGeneratorTest {
 		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticMetadata", applications);
 		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticLexicalGrammar", applications);
 		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticGrammarTemplate", applications);
-		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticQuery", applications);
+//		ATFGeneratorFrontend.INSTANCE.generate(sourceDir, targetDir, packageDir, "GrammaticQuery", applications);
 	}
 
 }
