@@ -135,7 +135,7 @@ iterationQuery
 	queryMetadata:: #(varOrAtom#);
 	operation:: op = operation();
 	operation: result = assembleIterationQuery(varOrAtom#, op);
-	#before: variablePrefix = null();
+	#before: variablePrefix = string.null();
 	variablePrefix:: variablePrefix = #();
 	'..': result = createSequeceWildcard(variablePrefix); 
 }
@@ -146,10 +146,12 @@ operation
 	;
 [[
 	operation() --> (IterationQuery result) {
+	    // Better use codes of tokens instead of text
 		token: result = createIteration(#text(token));
 		e: result = null();
 	}
 	lexicalOperation() --> (Iteration result) {
+	    // Better use codes of tokens instead of text
 		token: result = createIteration(#text(token));
 		e: result = null();
 	}
@@ -195,7 +197,7 @@ attributeQuery
 	;		 
 # --> (AttributeQuery result) {
 	attributeWithValueQuery:: result = #();
-	#before: namespaceUri = null();
+	#before: namespaceUri = string.null();
 	namespaceUri:: namespaceUri = #();
 	not.after: result = createAbsence(namespaceUri, NAME#);
 	attributeType: result = createType(namespaceUri, NAME#, attributeType#);
@@ -209,6 +211,7 @@ attributeWithValueQuery
 	namespaceUri: setNamespace(result, namespaceUri#);
 	NAME: setName(result, NAME#);
 	attributeValue: setValue(result, attributeValue#);
+	#after: setPresenceIfNeeded(result);
 }
 	
 namespaceUri
