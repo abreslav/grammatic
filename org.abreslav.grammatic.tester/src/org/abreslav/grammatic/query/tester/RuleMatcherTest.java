@@ -113,8 +113,7 @@ public class RuleMatcherTest extends GenericModelBasedTest<MatcherTest, MatcherT
 	private Map<String, VariableDefinition> buildNameToVarMap(
 			QueryContainer<? extends Query> parsedQuery) {
 		Map<String, VariableDefinition> nameToVar = new HashMap<String, VariableDefinition>();
-		EList<VariableDefinition> variableDefinitions = parsedQuery.getVariableDefinitions();
-		for (VariableDefinition variableDefinition : variableDefinitions) {
+		for (VariableDefinition variableDefinition : parsedQuery.getVariableDefinitions()) {
 			nameToVar.put(variableDefinition.getName(), variableDefinition);
 		}
 		return nameToVar;

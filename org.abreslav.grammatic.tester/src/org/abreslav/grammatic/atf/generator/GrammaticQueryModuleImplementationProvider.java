@@ -54,6 +54,14 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 			entry.getKey().setVariable(variableDefinition);
 		}
 	}
+
+	public void fillInQueryContainer(QueryContainer<?> queryContainer) {
+		queryContainer.getVariableDefinitions().addAll(getVariables());
+		myVariables.clear();
+		myUnresolvedReferences.clear();
+		clearVariableMaps();
+	}
+
 	
 	@Override
 	public IRuleQueryContainerFunctions getRuleQueryContainerFunctions() {
@@ -68,6 +76,7 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 			public QueryContainer<RuleQuery> createQueryContainer(RuleQuery query) {
 				QueryContainer<RuleQuery> container = QueryFactory.eINSTANCE.createQueryContainer();
 				container.setQuery(query);
+				fillInQueryContainer(container);
 				return container;
 			}
 		};
@@ -80,6 +89,7 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 			@Override
 			public void namedLeftSide(RuleQuery query, SymbolQuery namedSymbolQuery) {
 				query.setSymbolVariable(addSymbolQueryVariable(namedSymbolQuery.getName(), null));
+				query.setSymbol(namedSymbolQuery);
 			}
 			
 			@Override
@@ -91,6 +101,7 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 									varName, 
 								EMFProxyUtil.copy(anonymousSymbolQuery)));
 				}
+				query.setSymbol(anonymousSymbolQuery);
 			}
 		};
 	}
@@ -160,6 +171,7 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 				if (productionVariable != null) {
 					productionQuery.setVariable(createVariableDefinition(productionVariable, query));
 				}
+				query.getDefinitions().add(productionQuery);
 			}
 		};
 	}
@@ -424,7 +436,7 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 
 			@Override
 			public void setNamespace(AttributeQuery result, String namespaceUri) {
-				result.setNamespaceUri(namespaceUri);
+				result.setNamespaceUri(getNamespaceUri(namespaceUri));
 			}
 
 			@Override
@@ -622,6 +634,14 @@ public class GrammaticQueryModuleImplementationProvider implements IGrammaticQue
 		return s;
 	}
 
+	public Set<VariableDefinition> getVariables() {
+		return myVariables;
+	}
+
+	public void clearVariableMaps() {
+		mySymbolVariableDefinitions.clear();
+		myVariableDefinitions.clear();
+	}
 
 	private VariableDefinition createVariable(String name, Query query) {
 		VariableDefinition var = QueryFactory.eINSTANCE.createVariableDefinition();
