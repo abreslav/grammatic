@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.abreslav.grammatic.emfutils.EMFProxyUtil;
 import org.abreslav.grammatic.grammar.Alternative;
@@ -44,6 +45,16 @@ import org.abreslav.grammatic.query.VariableReference;
 
 public class GrammaticQueryModuleImplementationProvider implements IGrammaticQueryModuleImplementationProvider {
 
+	public final void resolveVariableReferences() {
+		for (Entry<VariableReference, String> entry : myUnresolvedReferences.entrySet()) {
+			VariableDefinition variableDefinition = myVariableDefinitions.get(entry.getValue());
+			if (variableDefinition == null) {
+				throw new IllegalArgumentException("Undefined variable: " + entry.getValue());
+			}
+			entry.getKey().setVariable(variableDefinition);
+		}
+	}
+	
 	@Override
 	public IRuleQueryContainerFunctions getRuleQueryContainerFunctions() {
 		return new IRuleQueryContainerFunctions() {

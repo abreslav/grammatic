@@ -460,7 +460,7 @@ public class VariableMatcherTest {
 
 	@Test
 	public void test() throws Exception {
-		ExpressionQuery query = QueryParser.parseExpressionQuery(myQuery + ";");
+		ExpressionQuery query = getQueryParser().parseExpressionQuery(myQuery + ";");
 		IVariableValues resultVariables = new VariableValues();
 		Matchers matchers = new Matchers(new MetadataProvider(myMetadataAspect));
 		assertEquals(myExpressionString + " - " + myQuery, myResult, matchers.getExpressionMatcher().matchExpression(query, myExpression, resultVariables));
@@ -494,6 +494,10 @@ public class VariableMatcherTest {
 			}
 			assertTrue("Absent variables: " + varNames.toString(), varNames.isEmpty());
 		}
+	}
+
+	protected IQueryParser getQueryParser() {
+		return QueryParser.INSTANCE;
 	}
 	
 }

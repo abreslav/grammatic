@@ -62,7 +62,7 @@ public class RuleMatcherTest extends GenericModelBasedTest<MatcherTest, MatcherT
 
 	@Test
 	public void testSymbolQuery() throws IOException, RecognitionException {
-		QueryContainer<RuleQuery> parsedQuery = QueryParser.parseRuleQuery(myTest.getText());
+		QueryContainer<RuleQuery> parsedQuery = getQueryParser().parseRuleQuery(myTest.getText());
 		VariableValues variables = new VariableValues();
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
@@ -89,6 +89,10 @@ public class RuleMatcherTest extends GenericModelBasedTest<MatcherTest, MatcherT
 			unsetVariables += variableDefinition.getName() + " ";
 		}
 		assertTrue(message + " Unset vars: " + unsetVariables, expectedVariables.isEmpty());
+	}
+
+	protected IQueryParser getQueryParser() {
+		return QueryParser.INSTANCE;
 	}
 
 	private Set<VariableDefinition> checkVariables(

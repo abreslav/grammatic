@@ -101,9 +101,13 @@ public class ExpressionMatcherTest {
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
 		Expression expression = GrammarParserUtils.parseExpressionFromString(myExpression + ";", new HashMap<String, Symbol>(), writableAspect);
-		ExpressionQuery query = QueryParser.parseExpressionQuery(myQuery + ";");
+		ExpressionQuery query = getQueryParser().parseExpressionQuery(myQuery + ";");
 		ExpressionMatcher expressionMatcher = new Matchers(new MetadataProvider(aspect)).getExpressionMatcher();
 		assertEquals(myExpression + " - " + myQuery, myResult, expressionMatcher.matchExpression(query, expression, new VariableValues()));
+	}
+
+	protected IQueryParser getQueryParser() {
+		return QueryParser.INSTANCE;
 	}
 	
 }

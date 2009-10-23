@@ -72,12 +72,16 @@ public class AttributeMatcherTest {
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
 		Expression expression = GrammarParserUtils.parseExpressionFromString(myExpression + ";", new HashMap<String, Symbol>(), writableAspect);
 		
-		List<AttributeQuery> queries = QueryParser.parseAttributeQuery(myQueries);
+		List<AttributeQuery> queries = getQueryParser().parseAttributeQuery(myQueries);
 		MetadataProvider metadataProvider = new MetadataProvider(aspect);
 		AttributeMatcher attributeMatcher = new Matchers(metadataProvider).getAttributeMatcher();
 
 		
 		assertEquals(myExpression + " - " + myQueries, myResult, attributeMatcher.matchAttributes(queries, expression));
+	}
+
+	protected IQueryParser getQueryParser() {
+		return QueryParser.INSTANCE;
 	}
 	
 }
