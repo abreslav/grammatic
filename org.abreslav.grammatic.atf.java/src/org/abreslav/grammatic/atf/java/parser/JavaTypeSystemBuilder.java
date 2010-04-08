@@ -13,7 +13,6 @@ import org.abreslav.grammatic.atf.parser.IOptions;
 import org.abreslav.grammatic.atf.parser.ITypeSystemBuilder;
 import org.abreslav.grammatic.atf.types.ITypeSystem;
 import org.abreslav.grammatic.atf.types.unification.IStringRepresentationProvider;
-import org.abreslav.grammatic.atf.types.unification.ISubtypingRelation;
 import org.abreslav.grammatic.atf.types.unification.ITypeErrorHandler;
 import org.abreslav.grammatic.atf.types.unification.impl.FiniteTypeSystem;
 import org.abreslav.grammatic.emfutils.ProxyRemover;
@@ -56,8 +55,6 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 		
 	};
 	private final IStringRepresentationProvider<EGenericType> myGenericTypeRenderer = new JavaTypeStringRepresentationProvider();
-	
-	private final ISubtypingRelation<EGenericType> mySubtypingRelation = JavaSubtypingRelation.INSTANCE;
 	
 	private final ProxyRemover myProxyRemover = new ProxyRemover();
 	private final Set<EGenericType> myTypes = new HashSet<EGenericType>();
@@ -250,7 +247,7 @@ public class JavaTypeSystemBuilder implements ITypeSystemBuilder<EGenericType> {
 		types.addAll(myTypes);
 		return new FiniteTypeSystem<EGenericType>(
 				types, 
-				mySubtypingRelation,
+				JavaSubtypingRelation.INSTANCE,
 				myHashingStrategy,
 				myGenericTypeRenderer, 
 				errorHandler);

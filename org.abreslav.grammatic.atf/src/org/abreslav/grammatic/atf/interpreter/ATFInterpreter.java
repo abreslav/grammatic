@@ -1,7 +1,6 @@
 package org.abreslav.grammatic.atf.interpreter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -62,7 +61,7 @@ public class ATFInterpreter {
 			IATFParserImplementationFactory parserImplementationFactory,
 			MetadataAspect aspect,
 			Map<SemanticModule, SemanticModuleDescriptor> descriptors)
-			throws IOException, RecognitionException, FileNotFoundException, InterruptedException {
+			throws IOException, RecognitionException {
 		IWritableAspect writableAspect = AspectWriter.createWritableAspect(aspect);
 		ParsingContext parsingContext = new ParsingContext(GrammarParserUtils.GRAMMAR_PARSER, fileLocator, writableAspect, IGrammarLoadHandler.NONE);
 		

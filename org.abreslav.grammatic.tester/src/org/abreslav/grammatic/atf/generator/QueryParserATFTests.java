@@ -2,6 +2,7 @@ package org.abreslav.grammatic.atf.generator;
 
 import java.io.IOException;
 
+
 import matcher_test.MatcherTest;
 
 import org.abreslav.grammatic.query.tester.AttributeMatcherTest;
@@ -25,12 +26,12 @@ public class QueryParserATFTests {
 			return QueryParserATF.INSTANCE;
 		}
 	}
-	
-	public static class ExpressionMatcherTestATF extends ExpressionMatcherTest {
 
-		public ExpressionMatcherTestATF(String expression, String query,
-				boolean result) {
-			super(expression, query, result);
+	public static class RuleMatcherTestATF extends RuleMatcherTest {
+
+		public RuleMatcherTestATF(String testsName, MatcherTest test,
+				MatcherTest result) {
+			super(testsName, test, result);
 		}
 
 		@Override
@@ -39,11 +40,11 @@ public class QueryParserATFTests {
 		}
 	}
 	
-	public static class RuleMatcherTestATF extends RuleMatcherTest {
+	public static class ExpressionMatcherTestATF extends ExpressionMatcherTest {
 
-		public RuleMatcherTestATF(String testsName, MatcherTest test,
-				MatcherTest result) {
-			super(testsName, test, result);
+		public ExpressionMatcherTestATF(String expression, String query,
+				boolean result) {
+			super(expression, query, result);
 		}
 
 		@Override

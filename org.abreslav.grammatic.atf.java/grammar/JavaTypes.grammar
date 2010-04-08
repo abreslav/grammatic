@@ -62,7 +62,7 @@ classType
 	;
 	
 qualifiedName
-	: (NAME '.')*NAME
+	: (NAME '.')* NAME
 	;
 	
 genericArguments

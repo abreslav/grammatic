@@ -4,11 +4,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.abreslav.grammatic.atf.SemanticModule;
@@ -75,7 +72,7 @@ public class ATFInterpreterTest {
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		
 		ATFInterpreter.INSTANCE.loadATFGrammar(
-				createApplicationsFromDirectory(baseDir) ,
+				AspectApplication.createApplicationsFromDirectory(baseDir) ,
 				new FileLocator(baseDir), 
 				typeSystemBuilder, 
 				parserImplementationFactory,
@@ -103,24 +100,6 @@ public class ATFInterpreterTest {
 //		Runtime runtime = Runtime.getRuntime();
 //		runtime.exec("dot -Tpng -o " + outFile + " " + dotFile);
 		
-	}
-	
-	public static Collection<AspectApplication> createApplicationsFromDirectory(
-			File baseDir) {
-		Collection<AspectApplication> aspectAppliactions = new ArrayList<AspectApplication>();
-		for (File file : baseDir.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.getName().endsWith(".atf");
-			}
-		})) {
-			AspectApplication aspectApplication = new AspectApplication();
-			String baseName = file.getName();
-			aspectApplication.setAspectName(baseName);
-			aspectApplication.setGrammarName(baseName.replace(".atf", ".grammar"));
-			aspectAppliactions.add(aspectApplication);
-		}
-		return aspectAppliactions;
 	}
 
 }

@@ -26,7 +26,7 @@ public class ConstraintSystemSolver {
 			try {
 				ConstraintGraphPrinter.print(constraintGraph, new PrintStream("testData/atf/interpreter/constraintGraph.dot"));
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				throw new IllegalStateException(e);
 			}
 		}
 		

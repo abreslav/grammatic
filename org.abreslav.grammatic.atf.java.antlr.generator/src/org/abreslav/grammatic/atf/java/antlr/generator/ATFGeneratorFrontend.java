@@ -39,17 +39,16 @@ public class ATFGeneratorFrontend {
 	
 	private ATFGeneratorFrontend() {}
 
-	public void generate(String sourceDir, String targetDir,
+	public void generate(FileLocator fileLocator, String targetDir,
 			String packageDir, String grammarBaseName, Collection<AspectApplication> applications) throws IOException,
 			RecognitionException, FileNotFoundException, InterruptedException {
 		JavaTypeSystemBuilder typeSystemBuilder = new JavaTypeSystemBuilder();
 		MetadataAspect aspect = AspectsFactory.eINSTANCE.createMetadataAspect();
 		
 		Map<SemanticModule, SemanticModuleDescriptor> descriptors = new HashMap<SemanticModule, SemanticModuleDescriptor>();
-		File baseDir = new File(sourceDir);
 		Map<String, Grammar> grammars = ATFInterpreter.INSTANCE.loadATFGrammar(
 				applications,
-				new FileLocator(baseDir), 
+				fileLocator, 
 				typeSystemBuilder, 
 				new ATFJavaParserImplementationFactory(typeSystemBuilder),
 				aspect,
