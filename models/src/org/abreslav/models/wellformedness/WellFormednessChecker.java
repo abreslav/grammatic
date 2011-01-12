@@ -1,6 +1,7 @@
 package org.abreslav.models.wellformedness;
 
 import org.abreslav.models.*;
+import org.abreslav.models.util.ModelUtils;
 import org.abreslav.models.util.TraverseValueTreeVisitor;
 
 import java.util.*;
@@ -24,7 +25,7 @@ public class WellFormednessChecker {
 
     private void checkWithWellFormedContext(IContext context, Set<? extends IValue> preModel) {
         Collection<ObjectValue> allObjects = new ArrayList<ObjectValue>();
-        collectAllObjects(preModel, allObjects);
+        ModelUtils.collectAllObjects(preModel, allObjects);
 
 //      - identities are not objects and don't contain objects
         for (ObjectValue object : allObjects) {
@@ -79,18 +80,6 @@ public class WellFormednessChecker {
 
 //      - property names are not duplicated inside one object (trivial)
 //      - sets do not contain duplicates (trivial)
-    }
-
-    private void collectAllObjects(Set<? extends IValue> preModel, final Collection<ObjectValue> allObjects) {
-        for (IValue value : preModel) {
-            value.accept(new TraverseValueTreeVisitor<Void, Void>() {
-                @Override
-                public Void visitObject(ObjectValue value, Void data) {
-                    allObjects.add(value);
-                    return super.visitObject(value, data);
-                }
-            }, null);
-        }
     }
 
     private void collectAllReferences(Set<? extends IValue> preModel, final Collection<ReferenceValue> allReferences) {
