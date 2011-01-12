@@ -1,0 +1,7 @@
+{
+  @application {
+    abstraction = @foo,
+    arguments = [1, @Class {}]
+  }
+
+}

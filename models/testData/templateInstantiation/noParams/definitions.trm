@@ -1,0 +1,6 @@
+{
+  @abstraction foo {
+    parameters = [],
+    body = @foo
+  }
+}

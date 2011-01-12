@@ -1,0 +1,96 @@
+{
+  @Class Type {
+    @Class.abstract = true,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {}
+  },
+  @Class ClassType {
+    @Class.abstract = true,
+    @Class.superclasses = {@Type},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor ClassType.class {
+        @PropertyDescriptor.type = @ReferenceType { @ClassType.class = @Class }
+      }
+    }
+  },
+  @Class NullableType {
+    @Class.abstract = false,
+    @Class.superclasses = {@Type},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor NullableType.type {
+        @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
+      }
+    }
+  },
+  @Class ReferenceType {
+    @Class.abstract = false,
+    @Class.superclasses = {@ClassType},
+    @Class.propertyDescriptors = {}
+  },
+  @Class ObjectType {
+    @Class.abstract = false,
+    @Class.superclasses = {@ClassType},
+    @Class.propertyDescriptors = {}
+  },
+  @Class PrimitiveType {
+    @Class.abstract = false,
+    @Class.superclasses = {@Type},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor PrimitiveType.type {
+        @PropertyDescriptor.type = @PrimitiveType { @PrimitiveType.type = String }
+      }
+    }
+  },
+  @Class CollectionType {
+    @Class.abstract = true,
+    @Class.superclasses = {@Type},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor CollectionType.nonEmpty {
+        @PropertyDescriptor.type = @PrimitiveType { @PrimitiveType.type = Boolean }
+      },
+      @PropertyDescriptor CollectionType.elementType {
+        @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
+      }
+    }
+  },
+  @Class SetType {
+    @Class.abstract = false,
+    @Class.superclasses = {@CollectionType},
+    @Class.propertyDescriptors = {}
+  },
+  @Class ListType {
+    @Class.abstract = false,
+    @Class.superclasses = {@CollectionType},
+    @Class.propertyDescriptors = {}
+  },
+  @Class PropertyDescriptor {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor PropertyDescriptor.type {
+        @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
+      }
+    }
+  },
+  @Class Class {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor Class.abstract {
+        @PropertyDescriptor.type = @PrimitiveType { @PrimitiveType.type = Boolean }
+      },
+      @PropertyDescriptor Class.superclasses {
+        @PropertyDescriptor.type = @SetType {
+          @CollectionType.nonEmpty = false,
+          @CollectionType.elementType = @ReferenceType { @ClassType.class = @Class}
+        }
+      },
+      @PropertyDescriptor Class.propertyDescriptors {
+        @PropertyDescriptor.type = @SetType {
+          @CollectionType.nonEmpty = false,
+          @CollectionType.elementType = @ObjectType { @ClassType.class = @PropertyDescriptor}
+        }
+      }
+    }
+  }
+}

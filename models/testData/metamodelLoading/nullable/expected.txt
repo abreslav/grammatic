@@ -1,0 +1,15 @@
+abstract class "Term" {
+}
+class "Abstraction" {
+  "Abstraction.parameters" : ([val("Variable")*])?
+  "Abstraction.body" : (val("Term"))?
+}
+class "Variable" {
+}
+class "Application" : "Term" {
+  "Application.abstraction" : (ref(?)?
+  "Application.arguments" : [(val("Term"))?*]
+}
+class "VariableUsage" : "Term" {
+  "VariableUsage.variable" : (ref(?)?
+}

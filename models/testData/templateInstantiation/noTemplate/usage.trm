@@ -1,0 +1,15 @@
+{
+  @Class bar {},
+
+  @bar {
+    abstraction = @foo,
+    arguments = ["bar"],
+    x = @bar {},
+    y = null,
+    z = {1},
+    w = -1,
+    s = "sdf",
+    t = true
+  }
+
+}

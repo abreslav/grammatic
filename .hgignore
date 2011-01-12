@@ -13,3 +13,11 @@
 ^org.abreslav.grammatic.tester/testData/atf/.*?\.png
 ^org.abreslav.grammatic.tester/testData/templateInstantiator/Results.xmi$
 ^org.abreslav.grammatic.astrans.serializer/\.manager
+^models/models.tbl$
+^models/strategoxt\/
+^models/spoofax\/
+^models/strj\/
+^models/out\/
+^models/\.idea\/workspace.xml
+^models/testData/templateInstantiation/MMM.xml
+^models/testData/templateInstantiation/templateMM.xml

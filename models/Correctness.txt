@@ -1,0 +1,16 @@
+We need:
+  equality
+
+Well-formed models:
+  - identities are not objects and dod not contain objects
+     -- it is sufficient to require that an identity assigned an object does not refer to the object
+        that uses it as identity
+  - every identity is assigned to only one object
+  - every reference refers to an object (within an context)
+  - property names are not objects and don't contain objects if they are as collections
+  - property names are not duplicated inside one object (trivial)
+  - sets do not contain duplicates (trivial)
+
+Context:
+  - context(identity) = object with this identity
+  - every reference inside the objects is resolved by this context

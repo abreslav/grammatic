@@ -1,0 +1,6 @@
+{
+  @abstraction foo {
+    parameters = [ @variable p1 {} ],
+    body = @variableUsage { variable = @p1 }
+  }
+}

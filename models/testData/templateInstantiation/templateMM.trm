@@ -1,0 +1,6 @@
+{
+  @Class abstraction {},
+  @Class variable {},
+  @Class application {},
+  @Class variableUsage {}
+}

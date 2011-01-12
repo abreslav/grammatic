@@ -1,0 +1,15 @@
+{
+  @abstraction foo {
+    parameters = [@variable a{}, @variable b{}],
+    body = @Class {
+      a = @variableUsage {variable = @a},
+      b = @variableUsage {variable = @b},
+      c = @application {abstraction = @bar, arguments = [@variableUsage {variable = @b}]}
+    }
+  },
+  @Class y {},
+  @abstraction bar {
+    parameters = [@variable c{}],
+    body = @y {x = @variableUsage {variable = @c}}
+  }
+}

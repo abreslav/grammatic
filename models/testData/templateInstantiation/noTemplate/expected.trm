@@ -1,0 +1,1 @@
+{@"Class" "bar"{}, @"bar" ["usage.xml", 0]{"abstraction"=@"foo", "arguments"=["bar"], "x"=@"bar" ["usage.xml", 1]{}, "y"=null, "z"={1}, "w"=-1, "s"="sdf", "t"=true}}

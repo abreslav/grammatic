@@ -1,0 +1,47 @@
+module Models
+
+imports basic/Whitespace basic/StrCon basic/BoolCon
+
+exports
+  sorts Model
+
+  lexical syntax
+    "//" ~[\n]* "\n" -> LAYOUT
+    [a-zA-Z\_][a-zA-Z0-9\_]* -> ID
+    ID ("." ID)* -> Identity
+    ("-"?)[0-9]+ -> INT
+    "null" -> ID {reject}
+
+    "true" -> ID {reject}
+    "false" -> ID {reject}
+
+   
+  context-free restrictions
+    Identity -/- [a-zA-Z0-9\_\.]
+
+  context-free restrictions
+    LAYOUT? -/- [\/]
+
+  context-free syntax
+    Set -> Model {cons("Model")} 
+    
+    "{" {Value ","}* "}" -> Set
+    "[" {Value ","}* "]" -> List 
+    ClassReference ObjectID? "{" {Feature ","}* "}" -> Object  {cons("Object")}
+    "@" Value -> Reference {cons("Reference")}
+    Reference -> ClassReference {cons("ClassReference")}
+    Value -> ObjectID {cons("ObjectID")}
+    Value "=" Value -> Feature {cons("Feature")}
+
+    INT -> Value {cons("Integer")}
+    StrCon -> Value {cons("String")}
+    Identity -> Value {cons("Id")}
+    BoolCon -> Value {cons("Boolean")}
+    "null" -> Value {cons("Null")}
+    Set -> Value {cons("Set")}
+    List -> Value {cons("List")}
+    Reference -> Value
+    Object -> Value
+
+  context-free start-symbols
+    Model

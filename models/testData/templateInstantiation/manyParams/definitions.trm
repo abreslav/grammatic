@@ -1,0 +1,9 @@
+{
+  @abstraction foo {
+    parameters = [@variable a{}, @variable b{}],
+    body = @Class {
+      a = @variableUsage {variable = @a},
+      b = @variableUsage {variable = @b}
+    }
+  }
+}

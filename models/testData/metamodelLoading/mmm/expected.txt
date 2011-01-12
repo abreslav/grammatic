@@ -1,0 +1,31 @@
+abstract class "Type" {
+}
+abstract class "ClassType" : "Type" {
+  "ClassType.class" : ref(?
+}
+class "NullableType" : "Type" {
+  "NullableType.type" : val("Type")
+}
+class "ReferenceType" : "ClassType" {
+}
+class "ObjectType" : "ClassType" {
+}
+class "PrimitiveType" : "Type" {
+  "PrimitiveType.type" : String
+}
+abstract class "CollectionType" : "Type" {
+  "CollectionType.nonEmpty" : Boolean
+  "CollectionType.elementType" : val("Type")
+}
+class "SetType" : "CollectionType" {
+}
+class "ListType" : "CollectionType" {
+}
+class "PropertyDescriptor" {
+  "PropertyDescriptor.type" : val("Type")
+}
+class "Class" {
+  "Class.abstract" : Boolean
+  "Class.superclasses" : {ref(?*}
+  "Class.propertyDescriptors" : {val("PropertyDescriptor")*}
+}
