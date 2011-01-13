@@ -1,0 +1,80 @@
+{
+  @Class MyTerm {
+    @Class.superclasses = {@Term},
+    @Class.abstract = false,
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor data {
+        @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
+      },
+      @PropertyDescriptor term1 {
+        @PropertyDescriptor.type = @NullableType { @NullableType.type = @ObjectType { @ClassType.class = @Term } }
+      },
+      @PropertyDescriptor term2 {
+        @PropertyDescriptor.type = @NullableType { @NullableType.type = @ObjectType { @ClassType.class = @Term } }
+      }
+    }
+  }
+  ,
+
+  @Abstraction template {
+    @Abstraction.parameters = [
+      @Variable a {},
+      @Variable b {}
+    ],
+    @Abstraction.body = @MyTerm {
+      @data = @ObjectType { @ClassType.class = @Class },
+      @term1 = @VariableUsage { @VariableUsage.variable = @a},
+      @term2 = @VariableUsage { @VariableUsage.variable = @b}
+    }
+  }
+
+//  @Class Term {
+//    @Class.abstract = true,
+//    @Class.superclasses = {},
+//    @Class.propertyDescriptors = {}
+//  },
+//  @Class Abstraction {
+//    @Class.abstract = false,
+//    @Class.superclasses = {},
+//    @Class.propertyDescriptors = {
+//      @PropertyDescriptor Abstraction.parameters {
+//         @PropertyDescriptor.type = @ListType {
+//           @CollectionType.elementType = @ObjectType { @ClassType.class = @Variable },
+//           @CollectionType.nonEmpty = false
+//         }
+//      },
+//      @PropertyDescriptor Abstraction.body {
+//         @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Term}
+//      }
+//    }
+//  },
+//  @Class Variable {
+//    @Class.abstract = false,
+//    @Class.superclasses = {},
+//    @Class.propertyDescriptors = {}
+//  },
+//  @Class Application {
+//    @Class.abstract = false,
+//    @Class.superclasses = {@Term},
+//    @Class.propertyDescriptors = {
+//      @PropertyDescriptor Application.abstraction {
+//        @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Abstraction}
+//      },
+//      @PropertyDescriptor Application.arguments {
+//        @PropertyDescriptor.type = @ListType {
+//          @CollectionType.nonEmpty = false,
+//          @CollectionType.elementType = @ObjectType {@ClassType.class = @Term}
+//        }
+//      }
+//    }
+//  },
+//  @Class VariableUsage {
+//    @Class.abstract = false,
+//    @Class.superclasses = {@Term},
+//    @Class.propertyDescriptors = {
+//      @PropertyDescriptor VariableUsage.variable {
+//        @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Variable}
+//      }
+//    }
+//  }
+}

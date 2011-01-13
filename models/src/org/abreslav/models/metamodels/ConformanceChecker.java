@@ -4,7 +4,6 @@ import org.abreslav.metametamodel.*;
 import org.abreslav.models.*;
 import org.abreslav.models.StringValue;
 import org.abreslav.models.util.ObjectWrapper;
-import org.abreslav.models.wellformedness.IContext;
 
 import java.util.*;
 
@@ -15,57 +14,29 @@ public class ConformanceChecker {
    // Metamodel: no inheritance cycles
 
     // Class references are references to objects of class Class
-    // An object has all properties declared in its class and all of its superclasses
-       // TODO: overriding by flag
-    // An object does not have any other properties
-    // Every property has a value that agrees with the type declared by its descriptor
 
-    public Collection<IDiagnostic> check(IContext context, final IContext mmmContext, Set<? extends IValue> model) {
-        Collection<IDiagnostic> diagnostics = new ArrayList<IDiagnostic>();
+    // Every property has a value that agrees with the type declared by its descriptor
+    // An object does not have any other properties
+    // TODO: overriding by flag
+    // An object has all properties declared in its class and all of its superclasses
+
+    public static Collection<IDiagnostic> check(Set<? extends IValue> model) {
+        return new ConformanceChecker().checkModel(model);
+    }
+
+    private static final String META_CLASS_NAME = "Class";
+
+    private Collection<IDiagnostic> diagnostics = new ArrayList<IDiagnostic>();
+
+    private ConformanceChecker() {}
+
+    public Collection<IDiagnostic> checkModel(Set<? extends IValue> model) {
 
         for (IValue value : model) {
             value.accept(new IValueVisitor.Adapter<Void, Collection<IDiagnostic>>() {
                 @Override
                 public Void visitObject(ObjectValue value, Collection<IDiagnostic> diagnostics) {
-                    ReferenceValue classReference = value.getClassReference();
-                    ObjectValue classObject = classReference.getReferredObject();
-
-                    // Class references are references to objects of class Class
-                    if (classObject != mmmContext.getObject(new StringValue("Class"))) {
-                        diagnostics.add(new ClassReferenceDiagnostic(value, "Must be a reference to a an instance of the Class meta-meta-class"));
-                    }
-
-                    // TODO: change the exception type
-                    ModelClass modelClass = null;
-                    try {
-                        modelClass = new ModelClass(classObject);
-                    } catch (IllegalArgumentException e) {
-                        diagnostics.add(new ClassReferenceDiagnostic(value, e.getMessage()));
-                    }
-
-                    if (modelClass != null) {
-                        // An object has all properties declared in its class and all of its superclasses
-                        Set<IValue> validPropertyIdentities = new LinkedHashSet<IValue>();
-                        Collection<IPropertyDescriptor> allPropertyDescriptors = MetaModelUtils.getAllPropertyDescriptors(modelClass);
-                        for (IPropertyDescriptor descriptor : allPropertyDescriptors) {
-                            IValue propertyDescriptorIdentity = ((ObjectWrapper) descriptor).getObject().getIdentity();
-                            validPropertyIdentities.add(propertyDescriptorIdentity);
-                            IValue propertyValue = value.getPropertyValue(new ReferenceValue(propertyDescriptorIdentity));
-                            if (propertyValue == null) {
-                                diagnostics.add(new PropertyDiagnostic(value, descriptor, "Property not present"));
-                            } else {
-                                // Every property has a value that agrees with the type declared by its descriptor
-                                checkType(propertyValue, descriptor.getType());
-                            }
-                        }
-                        // An object does not have any other properties
-                        for (Map.Entry<IValue, IValue> property : value.getProperties()) {
-                            IValue propertyIdentity = property.getKey();
-                            if (!validPropertyIdentities.contains(propertyIdentity)) {
-                                diagnostics.add(new PropertyDiagnostic(value, propertyIdentity, "This property is not declared in the metamodel"));
-                            }
-                        }
-                    }
+                    checkObject(value);
                     return null;
                 }
 
@@ -80,6 +51,62 @@ public class ConformanceChecker {
         }
 
         return diagnostics;
+    }
+
+    private IClass checkObject(ObjectValue value) {
+//        System.out.println("Checked: " + value);
+        ModelClass modelClass = getIClass(value);
+
+        if (modelClass == null) {
+            return null;
+        }
+
+        // An object has all properties declared in its class and all of its superclasses
+        Set<IValue> validPropertyIdentities = new LinkedHashSet<IValue>();
+        Collection<IPropertyDescriptor> allPropertyDescriptors = MetaModelUtils.getAllPropertyDescriptors(modelClass);
+        for (IPropertyDescriptor descriptor : allPropertyDescriptors) {
+            IValue propertyDescriptorIdentity = ((ObjectWrapper) descriptor).getObject().getIdentity();
+            validPropertyIdentities.add(new ReferenceValue(propertyDescriptorIdentity));
+            IValue propertyValue = value.getPropertyValue(new ReferenceValue(propertyDescriptorIdentity));
+            if (propertyValue == null) {
+                diagnostics.add(new PropertyDiagnostic(value, descriptor, "Property not present"));
+            } else {
+                // Every property has a value that agrees with the type declared by its descriptor
+                IType expectedType = descriptor.getType();
+                if (!checkType(propertyValue, expectedType)) {
+                    diagnostics.add(new PropertyDiagnostic(value, descriptor, propertyValue + " is not a value of type " + expectedType));
+                }
+            }
+        }
+        // An object does not have any other properties
+        for (Map.Entry<IValue, IValue> property : value.getProperties()) {
+            IValue propertyIdentity = property.getKey();
+            if (!validPropertyIdentities.contains(propertyIdentity)) {
+                diagnostics.add(new PropertyDiagnostic(value, propertyIdentity, "This property is not declared in the metamodel"));
+            }
+        }
+
+        return modelClass;
+    }
+
+    private ModelClass getIClass(ObjectValue value) {
+        ReferenceValue classReference = value.getClassReference();
+        ObjectValue classObject = classReference.getReferredObject();
+
+        // Class references are references to objects of class Class
+        if (!new StringValue(META_CLASS_NAME).equals(classObject.getClassReference().getReferredIdentity())) {
+            diagnostics.add(new ClassReferenceDiagnostic(value,
+                    "Must be a reference to a an instance of the Class meta-meta-class"));
+        }
+
+        // TODO: change the exception type
+        ModelClass modelClass = null;
+        try {
+            modelClass = new ModelClass(classObject);
+        } catch (IllegalArgumentException e) {
+            diagnostics.add(new ClassReferenceDiagnostic(value, e.getMessage()));
+        }
+        return modelClass;
     }
 
     private boolean checkType(IValue value, IType type) {
@@ -101,9 +128,7 @@ public class ConformanceChecker {
                 if (false == type instanceof IListType) {
                     return false;
                 }
-                if (checkCollectionType(value, (ICollectionType) type)) return false;
-
-                return true;
+                return checkCollectionType(value, (ICollectionType) type);
             }
 
             public Boolean visitSet(SetValue value, IType type) {
@@ -111,9 +136,7 @@ public class ConformanceChecker {
                 if (false == type instanceof ISetType) {
                     return false;
                 }
-                if (checkCollectionType(value, (ICollectionType) type)) return false;
-
-                return true;
+                return checkCollectionType(value, (ICollectionType) type);
             }
 
             public Boolean visitNull(NullValue value, IType type) {
@@ -121,37 +144,57 @@ public class ConformanceChecker {
             }
 
             public Boolean visitObject(ObjectValue value, IType type) {
-                return null;
+                type = unwrapNullable(type);
+                if (false == type instanceof IObjectType) {
+                    return false;
+                }
+                checkObject(value);
+                return checkClassType(value, type);
             }
 
             public Boolean visitReference(ReferenceValue value, IType type) {
-                // TODO: not implemented
-                return null;
+                type = unwrapNullable(type);
+                if (false == type instanceof IReferenceType) {
+                    return false;
+                }
+                return checkClassType(value.getReferredObject(), type);
             }
         }, type);
+    }
+
+    private Boolean checkClassType(ObjectValue value, IType type) {
+        IClass valueClass = getIClass(value);
+        if (valueClass == null) {
+            return true; // there is an error inside already
+        }
+        type = unwrapNullable(type);
+        IClassType objectType = (IClassType) type;
+        return checkSubclass(valueClass, objectType);
+    }
+
+    private boolean checkSubclass(IClass valueClass, IClassType objectType) {
+        return MetaModelUtils.getAllSuperclasesAndMe(valueClass).contains(objectType.getUnderlyingClass());
     }
 
     private boolean checkCollectionType(ICollectionValue value, ICollectionType type) {
         CollectionType collectionType = (CollectionType) type;
         Collection<IValue> collection = value.getValue();
         if (collection.isEmpty() && collectionType.isNonempty()) {
-            return true;
+            return false;
         }
 
         IType elementType = collectionType.getElementType();
         for (IValue item : collection) {
             if (!checkType(item, elementType)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private boolean assurePrimitiveType(IType type, String primitiveTypeName) {
         type = unwrapNullable(type);
-        if (type instanceof INullableType) {
-            return true;
-        } else if (type instanceof IPrimitiveType) {
+        if (type instanceof IPrimitiveType) {
             if (primitiveTypeName.equals(((IPrimitiveType) type).getType())) {
                 return true;
             }
@@ -166,10 +209,6 @@ public class ConformanceChecker {
         return type;
     }
 
-    public interface IDiagnostic {
-        String getMessage();
-    }
-
     private abstract class Diagnostic implements IDiagnostic {
 
         private final String message;
@@ -181,20 +220,49 @@ public class ConformanceChecker {
         public String getMessage() {
             return message;
         }
+
+        @Override
+        public String toString() {
+            return "Diagnostic{" +
+                    "message='" + message + '\'' +
+                    '}';
+        }
     }
 
     private class ClassReferenceDiagnostic extends Diagnostic implements IDiagnostic {
+        private final ObjectValue object;
+
         public ClassReferenceDiagnostic(ObjectValue value, String message) {
             super(message);
+            this.object = value;
+        }
+
+        @Override
+        public String toString() {
+            return getMessage() + " on " + object;
         }
     }
+
     private class PropertyDiagnostic extends Diagnostic implements IDiagnostic {
+
+        private final ObjectValue object;
+        private final IValue propertyIdentity;
+
         public PropertyDiagnostic(ObjectValue value, IPropertyDescriptor descriptor, String message) {
             super(message);
+            this.object = value;
+            this.propertyIdentity = ((ObjectWrapper) descriptor).getObject().getIdentity();
         }
 
         public PropertyDiagnostic(ObjectValue value, IValue propertyIdentity, String message) {
             super(message);
+            this.object = value;
+            this.propertyIdentity= propertyIdentity;
+        }
+
+        @Override
+        public String toString() {
+            return getMessage() + " on " + object.getIdentity() + "." + propertyIdentity;
         }
     }
 }

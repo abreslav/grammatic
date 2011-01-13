@@ -1,43 +1,38 @@
 package org.abreslav.models.metamodels;
 
 import org.abreslav.metametamodel.IType;
-import org.abreslav.metametamodel.ITypeVisitor;
-import org.abreslav.models.*;
-import org.abreslav.models.util.ObjectWrapper;
+import org.abreslav.models.IValue;
+import org.abreslav.models.ObjectValue;
+import org.abreslav.models.StringValue;
 
 import static org.abreslav.models.util.CastUtils.cast;
 
 /**
  * @author abreslav
  */
-public class Type extends ObjectWrapper implements IType {
-    private final IType typedRepresentation;
+public class TypeUtil {
 
-    public Type(ObjectValue object) {
-        super(object);
-
+    public static IType createType(ObjectValue object) {
         IValue referredIdentity = object.getClassReference().getReferredIdentity();
         StringValue referredIdentityString = cast(referredIdentity, StringValue.class, "A class of a type must have a string identity");
         String clazz = referredIdentityString.getValue();
 
         if ("ReferenceType".equals(clazz)) {
-            this.typedRepresentation = new ReferenceType(object);
+            return new ReferenceType(object);
         } else if ("ObjectType".equals(clazz)) {
-            this.typedRepresentation = new ObjectType(object);
+            return new ObjectType(object);
         } else if ("ListType".equals(clazz)) {
-            this.typedRepresentation = new ListType(object);
+            return new ListType(object);
         } else if ("SetType".equals(clazz)) {
-            this.typedRepresentation = new SetType(object);
+            return new SetType(object);
         } else if ("PrimitiveType".equals(clazz)) {
-            this.typedRepresentation = new PrimitiveType(object);
+            return new PrimitiveType(object);
         } else if ("NullableType".equals(clazz)) {
-            this.typedRepresentation = new NullableType(object);
+            return new NullableType(object);
         } else {
             throw new IllegalArgumentException("Unknown type");
         }
     }
 
-    public <R, D> R accept(ITypeVisitor<R, D> visitor, D data) {
-        return typedRepresentation.accept(visitor, data);
-    }
+    private TypeUtil() {}
 }

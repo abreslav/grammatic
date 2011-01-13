@@ -24,4 +24,9 @@ public abstract class ClassType extends ObjectWrapper implements IClassType {
     public IClass getUnderlyingClass() {
         return underlyingClass;
     }
+
+    @Override
+    public String toString() {
+        return ((ObjectWrapper) underlyingClass).getObject().getIdentity().toString();
+    }
 }

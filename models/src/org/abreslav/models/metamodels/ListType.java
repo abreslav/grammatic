@@ -15,4 +15,9 @@ public class ListType extends CollectionType implements IListType {
     public <R, D> R accept(ITypeVisitor<R, D> visitor, D data) {
         return visitor.visitListType(this, data);
     }
+
+    @Override
+    public String toString() {
+        return "[" + getElementType() + (isNonempty() ? "+" : "*") + "]";
+    }
 }

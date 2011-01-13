@@ -29,4 +29,9 @@ public class PrimitiveType extends ObjectWrapper implements IPrimitiveType {
     public <R, D> R accept(ITypeVisitor<R, D> visitor, D data) {
         return visitor.visitPrimitiveType(this, data);
     }
+
+    @Override
+    public String toString() {
+        return type;
+    }
 }

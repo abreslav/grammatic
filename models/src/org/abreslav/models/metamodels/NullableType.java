@@ -20,8 +20,8 @@ public class NullableType extends ObjectWrapper implements INullableType {
         super(object);
 
         IValue elementType = object.getPropertyValue(ref("NullableType.type"));
-        ObjectValue elementTypeObject = cast(elementType, ObjectValue.class, "Type must be an object");
-        this.type = new Type(elementTypeObject);
+        ObjectValue elementTypeObject = cast(elementType, ObjectValue.class, "TypeUtil must be an object");
+        this.type = TypeUtil.createType(elementTypeObject);
     }
 
     public IType getType() {
@@ -30,5 +30,10 @@ public class NullableType extends ObjectWrapper implements INullableType {
 
     public <R, D> R accept(ITypeVisitor<R, D> visitor, D data) {
         return visitor.visitNullableType(this, data);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + type + ")?";
     }
 }

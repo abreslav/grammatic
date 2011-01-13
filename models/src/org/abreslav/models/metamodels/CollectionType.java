@@ -25,7 +25,7 @@ public abstract class CollectionType extends ObjectWrapper implements ICollectio
 
         IValue elementType = object.getPropertyValue(ref("CollectionType.elementType"));
         ObjectValue elementTypeObject = cast(elementType, ObjectValue.class, "CollectionType.elementType must be an object");
-        this.elementType = new Type(elementTypeObject);
+        this.elementType = TypeUtil.createType(elementTypeObject);
     }
 
     public boolean isNonempty() {

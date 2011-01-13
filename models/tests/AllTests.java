@@ -1,5 +1,7 @@
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.abreslav.models.metamodels.ConformanceCheckerTest;
+import org.abreslav.models.metamodels.MMMConformanceCheckerTest;
 import org.abreslav.models.metamodels.MetaMetamodelLoadingTest;
 import org.abreslav.models.metamodels.MetamodelLoadingTest;
 import org.abreslav.templates.TemplateInstantiatorTest;
@@ -19,6 +21,8 @@ public class AllTests {
         testSuite.addTest(TemplateInstantiatorTest.suite());
         testSuite.addTest(MetamodelLoadingTest.suite());
         testSuite.addTestSuite(MetaMetamodelLoadingTest.class);
+        testSuite.addTestSuite(MMMConformanceCheckerTest.class);
+        testSuite.addTest(ConformanceCheckerTest.suite());
         return testSuite;
     }
 }

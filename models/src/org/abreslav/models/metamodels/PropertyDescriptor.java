@@ -18,10 +18,10 @@ public class PropertyDescriptor extends ObjectWrapper implements IPropertyDescri
         super(object);
     }
 
-    private Type computeType(ObjectValue object) {
+    private IType computeType(ObjectValue object) {
         IValue type = object.getPropertyValue(ref("PropertyDescriptor.type"));
         ObjectValue typeObject = cast(type, ObjectValue.class, "A type must be an object");
-        return new Type(typeObject);
+        return TypeUtil.createType(typeObject);
     }
 
     public IType getType() {
