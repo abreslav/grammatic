@@ -1,0 +1,7 @@
+{
+  @Class A {
+    @Class.abstract = true,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {}
+  }
+}

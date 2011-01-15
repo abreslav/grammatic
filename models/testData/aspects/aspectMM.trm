@@ -1,0 +1,12 @@
+// import templateMM.trm
+
+{
+  @Class Wildcard {
+    @Class.abstract = false,
+    @Class.superclasses = {@Term},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor Wildcard.type = @ObjectType { @ClassType.type = @Type }
+    }
+  }
+
+}

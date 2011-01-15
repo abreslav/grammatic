@@ -19,6 +19,8 @@ public class ConformanceChecker {
     // An object does not have any other properties
     // TODO: overriding by flag
     // An object has all properties declared in its class and all of its superclasses
+    // Abstract classes have no instances
+
 
     public static Collection<IDiagnostic> check(Set<? extends IValue> model) {
         return new ConformanceChecker().checkModel(model);
@@ -59,6 +61,11 @@ public class ConformanceChecker {
 
         if (modelClass == null) {
             return null;
+        }
+
+        // Abstract classes have no instances
+        if (modelClass.isAbstract()) {
+            diagnostics.add(new ClassReferenceDiagnostic(value, "An instance of an abstract class"));
         }
 
         // An object has all properties declared in its class and all of its superclasses
