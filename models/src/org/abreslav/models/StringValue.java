@@ -3,7 +3,7 @@ package org.abreslav.models;
 /**
  * @author abreslav
  */
-public class StringValue implements IValue {
+public class StringValue implements IPrimitiveValue<String> {
     private final String value;
 
     public StringValue(String value) {

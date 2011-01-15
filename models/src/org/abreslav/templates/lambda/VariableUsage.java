@@ -6,6 +6,7 @@ import org.abreslav.lambda.IVariableUsage;
 import org.abreslav.models.*;
 import org.abreslav.models.util.ObjectWrapper;
 
+import static org.abreslav.models.metamodels.ReferenceUtil.ref;
 import static org.abreslav.models.util.CastUtils.cast;
 
 /**
@@ -16,7 +17,7 @@ public class VariableUsage extends ObjectWrapper implements IVariableUsage {
 
     public VariableUsage(ObjectValue object) {
         super(object);
-        IValue variable = object.getPropertyValue(new StringValue("variable"));
+        IValue variable = object.getPropertyValue(ref("VariableUsage.variable"));
         ReferenceValue variableReference = cast(variable, ReferenceValue.class, "VariableUsage.variable must be a reference");
         this.variable = new Variable(variableReference.getReferredObject());
     }

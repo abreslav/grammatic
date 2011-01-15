@@ -1,6 +1,6 @@
 {
-  @abstraction foo {
-    parameters = [],
-    body = @foo
+  @Abstraction foo {
+    @Abstraction.parameters = [],
+    @Abstraction.body = @foo
   }
 }

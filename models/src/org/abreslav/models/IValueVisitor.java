@@ -16,11 +16,11 @@ public interface IValueVisitor<R, D> {
     class Adapter<R, D> implements IValueVisitor<R, D> {
 
         public R visitBoolean(BooleanValue value, D data) {
-            return visitValue(value, data);
+            return visitPrimitiveValue(value, data);
         }
 
         public R visitInteger(IntegerValue value, D data) {
-            return visitValue(value, data);
+            return visitPrimitiveValue(value, data);
         }
 
         public R visitList(ListValue value, D data) {
@@ -44,10 +44,14 @@ public interface IValueVisitor<R, D> {
         }
 
         public R visitString(StringValue value, D data) {
-            return visitValue(value, data);
+            return visitPrimitiveValue(value, data);
         }
 
         public R visitCollectionValue(ICollectionValue value, D data) {
+            return visitValue(value, data);
+        }
+
+        public <T> R visitPrimitiveValue(IPrimitiveValue<T> value, D data) {
             return visitValue(value, data);
         }
 

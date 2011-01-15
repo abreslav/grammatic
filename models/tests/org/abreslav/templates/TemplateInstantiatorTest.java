@@ -6,6 +6,7 @@ import junit.framework.TestSuite;
 import org.abreslav.TestUtils;
 import org.abreslav.lambda.ITerm;
 import org.abreslav.models.SetValue;
+import org.abreslav.models.metamodels.ConformanceChecker;
 import org.abreslav.models.wellformedness.CompositeContext;
 import org.abreslav.models.wellformedness.Context;
 import org.abreslav.models.wellformedness.IContext;
@@ -54,10 +55,14 @@ public class TemplateInstantiatorTest extends TestCase {
 
         Context mmmContext = new Context(mmm);
         WellFormednessChecker.INSTANCE.checkWellFormedness(mmmContext, templateMM.getValue());
+
         IContext mmContext = new CompositeContext(mmmContext, new Context(templateMM));
         WellFormednessChecker.INSTANCE.checkWellFormedness(mmContext, templateDefTest.getValue());
+        ConformanceChecker.check(templateDefTest.getValue());
+
         IContext defContext = new CompositeContext(mmContext, new Context(templateDefTest));
         WellFormednessChecker.INSTANCE.checkWellFormedness(defContext, templateUsageTest.getValue());
+        ConformanceChecker.check(templateUsageTest.getValue());
 
         ITerm term = TemplateInstantiator.INSTANCE.instantiate(ITemplateContext.EMPTY, new TemplateTerm(templateUsageTest));
         String result = ((TemplateTerm) term).getValue().toString();

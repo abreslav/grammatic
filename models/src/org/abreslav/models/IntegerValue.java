@@ -3,14 +3,14 @@ package org.abreslav.models;
 /**
  * @author abreslav
  */
-public class IntegerValue implements IValue {
+public class IntegerValue implements IPrimitiveValue<Integer> {
     private final int value;
 
     public IntegerValue(int value) {
         this.value = value;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 

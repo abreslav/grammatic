@@ -9,6 +9,7 @@ import org.abreslav.models.util.ObjectWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.abreslav.models.metamodels.ReferenceUtil.ref;
 import static org.abreslav.models.util.CastUtils.cast;
 
 /**
@@ -20,14 +21,14 @@ public class Abstraction extends ObjectWrapper implements IAbstraction {
 
     public Abstraction(ObjectValue object) {
         super(object);
-        IValue parameters = object.getPropertyValue(new StringValue("parameters"));
+        IValue parameters = object.getPropertyValue(ref("Abstraction.parameters"));
         ListValue parametersList = cast(parameters, ListValue.class, "Parameters must be a list");
         for (IValue parameter : parametersList.getValue()) {
             ObjectValue parameterObject = cast(parameter, ObjectValue.class, "Parameter must be an object");
             this.parameters.add(new Variable(parameterObject));
         }
 
-        this.body = new TemplateTerm(object.getPropertyValue(new StringValue("body")));
+        this.body = new TemplateTerm(object.getPropertyValue(ref("Abstraction.body")));
     }
 
     public List<IVariable> getParameters() {

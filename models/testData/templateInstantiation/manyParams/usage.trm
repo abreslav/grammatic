@@ -1,7 +1,7 @@
 {
-  @application {
-    abstraction = @foo,
-    arguments = [1, @Class {}]
+  @Application {
+    @Application.abstraction = @foo,
+    @Application.arguments = [1, @Class {}]
   }
 
 }

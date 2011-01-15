@@ -34,9 +34,9 @@ public class TemplateTerm implements ITerm {
                     @Override
                     public ITerm visitString(StringValue value, ObjectValue object) {
                         String className = value.getValue();
-                        if ("application".equals(className)) {
+                        if ("Application".equals(className)) {
                             return new Application(object);
-                        } else if ("variableUsage".equals(className)) {
+                        } else if ("VariableUsage".equals(className)) {
                             return new VariableUsage(object);
                         } else {
                             return TemplateTerm.this;

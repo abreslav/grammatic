@@ -3,7 +3,7 @@ package org.abreslav.models;
 /**
  * @author abreslav
  */
-public enum BooleanValue implements  IValue {
+public enum BooleanValue implements IPrimitiveValue<Boolean> {
     TRUE(true), FALSE(false);
 
     private final boolean value;
@@ -12,7 +12,7 @@ public enum BooleanValue implements  IValue {
         this.value = value;
     }
 
-    public boolean getValue() {
+    public Boolean getValue() {
         return value;
     }
 
