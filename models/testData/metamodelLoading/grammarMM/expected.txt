@@ -23,7 +23,7 @@ class "Alternative" : "Expression" {
 }
 class "Iteration" : "Expression" {
   "Iteration.expression" : val("Expression")
-  "Iteration.kind" : enum ["mm.xml", 11]
+  "Iteration.kind" : enum "IterationKind"
 }
 enum "IterationKind"{
   "ONE",

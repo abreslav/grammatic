@@ -133,6 +133,14 @@ public class ConformanceChecker {
             }
 
             public Boolean visitString(StringValue value, IType type) {
+                IType nonnullableType = unwrapNullable(type);
+                if (false == nonnullableType instanceof IPrimitiveType) {
+                    return false;
+                }
+                IPrimitiveType primitiveType = (IPrimitiveType) nonnullableType;
+                if ("Character".equals(primitiveType.getType())) {
+                    return value.getValue().length() == 1;
+                }
                 return assurePrimitiveType(type, "String");
             }
 
@@ -167,12 +175,27 @@ public class ConformanceChecker {
 
             public Boolean visitReference(ReferenceValue value, IType type) {
                 type = unwrapNullable(type);
+                if (type instanceof IEnumType) {
+                    return checkEnumValue(value, (IEnumType) type);
+                }
                 if (false == type instanceof IReferenceType) {
                     return false;
                 }
                 return checkClassType(value.getReferredObject(), type);
             }
         }, type);
+    }
+
+    private boolean checkEnumValue(ReferenceValue value, IEnumType type) {
+        Set<IEnumLiteral> literals = type.getEnum().getLiterals();
+        ObjectValue referredObject = value.getReferredObject();
+        for (IEnumLiteral literal : literals) {
+            ObjectValue literalObject = ((ObjectWrapper) literal).getObject();
+            if (literalObject.equals(referredObject)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Boolean checkClassType(ObjectValue value, IType type) {

@@ -112,7 +112,7 @@ public class ClassPrinter {
 
             @Override
             public Void visitEnumType(IEnumType type, Void data) {
-                print("enum " + getIdentity(type));
+                print("enum " + getIdentity(type.getEnum()));
                 return null;
             }
 
