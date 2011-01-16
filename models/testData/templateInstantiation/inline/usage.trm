@@ -1,0 +1,7 @@
+{
+  @Application {
+    @Application.abstraction = @foo,
+    @Application.arguments = [["a", "b", []], {1, {}, 2}]
+  }
+
+}

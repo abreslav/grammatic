@@ -1,0 +1,26 @@
+{
+  @Class class {
+    @Class.abstract = false,
+    @Class.superclasses = {@Term},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor af {
+        @PropertyDescriptor.type = @AnyType{}
+      },
+      @PropertyDescriptor aaf {
+        @PropertyDescriptor.type = @AnyType{}
+      },
+      @PropertyDescriptor bf {
+        @PropertyDescriptor.type = @AnyType {}
+      }
+    }
+  },
+
+  @Abstraction foo {
+    @Abstraction.parameters = [@Variable a{}, @Variable b{}],
+    @Abstraction.body = @class c {
+      @af = [1, 2, "3", @VariableUsage {@VariableUsage.variable = @a, @VariableUsage.inlineCollection = true}, true],
+      @bf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @VariableUsage.inlineCollection = true}, false},
+      @aaf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @VariableUsage.inlineCollection = false}, false}
+    }
+  }
+}
