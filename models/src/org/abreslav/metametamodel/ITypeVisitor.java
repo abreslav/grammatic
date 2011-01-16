@@ -4,6 +4,7 @@ package org.abreslav.metametamodel;
  * @author abreslav
  */
 public interface ITypeVisitor<R, D> {
+    R visitAnyType(IAnyType type, D data);
     R visitListType(IListType type, D data);
     R visitObjectType(IObjectType type, D data);
     R visitPrimitiveType(IPrimitiveType type, D data);
@@ -12,6 +13,10 @@ public interface ITypeVisitor<R, D> {
     R visitNullableType(INullableType type, D data);
 
     class Adapter<R, D> implements ITypeVisitor<R, D> {
+
+        public R visitAnyType(IAnyType type, D data) {
+            return visitType(type, data);
+        }
 
         public R visitListType(IListType type, D data) {
             return visitCollectionType(type, data);

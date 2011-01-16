@@ -29,6 +29,8 @@ public class TypeUtil {
             return new PrimitiveType(object);
         } else if ("NullableType".equals(clazz)) {
             return new NullableType(object);
+        } else if ("AnyType".equals(clazz)) {
+            return new AnyType(object);
         } else {
             throw new IllegalArgumentException("Unknown type");
         }

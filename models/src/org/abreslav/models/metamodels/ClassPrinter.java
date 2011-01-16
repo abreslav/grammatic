@@ -105,6 +105,12 @@ public class ClassPrinter {
             }
 
             @Override
+            public Void visitAnyType(IAnyType type, Void data) {
+                print("_");
+                return null;
+            }
+
+            @Override
             public Void visitType(IType type, Void data) {
                 throw new IllegalStateException("Unknown type: " + type);
             }

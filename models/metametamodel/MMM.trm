@@ -4,6 +4,11 @@
     @Class.superclasses = {},
     @Class.propertyDescriptors = {}
   },
+  @Class AnyType {
+    @Class.abstract = false,
+    @Class.superclasses = {@Type},
+    @Class.propertyDescriptors = {}
+  },
   @Class ClassType {
     @Class.abstract = true,
     @Class.superclasses = {@Type},

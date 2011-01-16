@@ -1,6 +1,6 @@
 {
   @Abstraction foo {
     @Abstraction.parameters = [ @Variable p1 {} ],
-    @Abstraction.body = @VariableUsage { @VariableUsage.variable = @p1 }
+    @Abstraction.body = @VariableUsage { @VariableUsage.variable = @p1, @VariableUsage.inlineCollection = false }
   }
 }

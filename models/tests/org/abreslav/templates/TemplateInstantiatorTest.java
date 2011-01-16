@@ -7,6 +7,7 @@ import org.abreslav.TestUtils;
 import org.abreslav.lambda.ITerm;
 import org.abreslav.models.SetValue;
 import org.abreslav.models.metamodels.ConformanceChecker;
+import org.abreslav.models.metamodels.IDiagnostic;
 import org.abreslav.models.wellformedness.CompositeContext;
 import org.abreslav.models.wellformedness.Context;
 import org.abreslav.models.wellformedness.IContext;
@@ -16,6 +17,8 @@ import org.abreslav.templates.lambda.TemplateTerm;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.abreslav.TestUtils.termToXml;
 
@@ -58,11 +61,17 @@ public class TemplateInstantiatorTest extends TestCase {
 
         IContext mmContext = new CompositeContext(mmmContext, new Context(templateMM));
         WellFormednessChecker.INSTANCE.checkWellFormedness(mmContext, templateDefTest.getValue());
-        ConformanceChecker.check(templateDefTest.getValue());
+        Collection<IDiagnostic> check = ConformanceChecker.check(templateDefTest.getValue());
+        if (!check.isEmpty()) {
+            fail(check.toString());
+        }
 
         IContext defContext = new CompositeContext(mmContext, new Context(templateDefTest));
         WellFormednessChecker.INSTANCE.checkWellFormedness(defContext, templateUsageTest.getValue());
-        ConformanceChecker.check(templateUsageTest.getValue());
+        Collection<IDiagnostic> checkUsage = ConformanceChecker.check(templateUsageTest.getValue());
+        if (!checkUsage.isEmpty()) {
+            fail(checkUsage.toString());
+        }
 
         ITerm term = TemplateInstantiator.INSTANCE.instantiate(ITemplateContext.EMPTY, new TemplateTerm(templateUsageTest));
         String result = ((TemplateTerm) term).getValue().toString();
@@ -78,7 +87,9 @@ public class TemplateInstantiatorTest extends TestCase {
 
         TestSuite suite = new TestSuite(TemplateInstantiatorTest.class.getSimpleName());
 
-        for (File dir : new File(mmDir).listFiles()) {
+        File[] files = new File(mmDir).listFiles();
+        Arrays.sort(files);
+        for (File dir : files) {
             if (dir.isDirectory()) {
                 suite.addTest(new TemplateInstantiatorTest(dir.getName(), mmDir, dir.getAbsolutePath()));
             }

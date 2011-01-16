@@ -1,15 +1,40 @@
 {
-  @Abstraction foo {
-    @Abstraction.parameters = [@Variable a{}, @Variable b{}],
-    @Abstraction.body = @Class {
-      a = @VariableUsage {@VariableUsage.variable = @a},
-      b = @VariableUsage {@VariableUsage.variable = @b},
-      c = @Application {@Application.abstraction = @bar, @Application.arguments = [@VariableUsage {@VariableUsage.variable = @b}]}
+
+  @Class abc {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor pa {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor pb {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor pc {
+        @PropertyDescriptor.type = @AnyType {}
+      }
     }
   },
-  @Class y {},
+
+  @Abstraction foo {
+    @Abstraction.parameters = [@Variable a{}, @Variable b{}],
+    @Abstraction.body = @abc {
+      @pa = @VariableUsage {@VariableUsage.variable = @a},
+      @pb = @VariableUsage {@VariableUsage.variable = @b},
+      @pc = @Application {@Application.abstraction = @bar, @Application.arguments = [@VariableUsage {@VariableUsage.variable = @b, @VariableUsage.inlineCollection = false}]}
+    }
+  },
+  @Class y {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor x {
+        @PropertyDescriptor.type = @AnyType {}
+      }
+    }
+  },
   @Abstraction bar {
     @Abstraction.parameters = [@Variable c{}],
-    @Abstraction.body = @y {x = @VariableUsage {@VariableUsage.variable = @c}}
+    @Abstraction.body = @y {@x = @VariableUsage {@VariableUsage.variable = @c, @VariableUsage.inlineCollection = false}}
   }
 }

@@ -15,7 +15,7 @@
          }
       },
       @PropertyDescriptor Abstraction.body {
-         @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Term}
+         @PropertyDescriptor.type = @NullableType {@NullableType.type = @AnyType {}}
       }
     }
   },
@@ -34,7 +34,7 @@
       @PropertyDescriptor Application.arguments {
         @PropertyDescriptor.type = @ListType {
           @CollectionType.nonEmpty = false,
-          @CollectionType.elementType = @ObjectType {@ClassType.class = @Term}
+          @CollectionType.elementType = @NullableType {@NullableType.type = @AnyType {}}
         }
       }
     }
@@ -45,6 +45,9 @@
     @Class.propertyDescriptors = {
       @PropertyDescriptor VariableUsage.variable {
         @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Variable}
+      },
+      @PropertyDescriptor VariableUsage.inlineCollection {
+        @PropertyDescriptor.type = @PrimitiveType {@PrimitiveType.type = "Boolean"}
       }
     }
   }

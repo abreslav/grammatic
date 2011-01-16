@@ -117,6 +117,12 @@ public class ConformanceChecker {
     }
 
     private boolean checkType(IValue value, IType type) {
+        if (value != NullValue.NULL) {
+            IType nonNullable = unwrapNullable(type);
+            if (nonNullable instanceof IAnyType) {
+                return true;
+            }
+        }
         return value.accept(new IValueVisitor<Boolean, IType>() {
             public Boolean visitBoolean(BooleanValue value, IType type) {
                 return assurePrimitiveType(type, "Boolean");

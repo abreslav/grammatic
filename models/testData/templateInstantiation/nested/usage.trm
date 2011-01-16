@@ -1,5 +1,9 @@
 {
-  @Class x {},
+  @Class x {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {}
+  },
   @Application {
     @Application.abstraction = @foo,
     @Application.arguments = [1, @x {}]

@@ -1,15 +1,44 @@
 {
-  @Class bar {},
+  @Class bar {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor abstraction {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor arguments {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor x {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor y {
+        @PropertyDescriptor.type = @NullableType { @NullableType.type = @AnyType {}}
+      },
+      @PropertyDescriptor z {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor w {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor s {
+        @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor t {
+        @PropertyDescriptor.type = @AnyType {}
+      }
+    }
+  },
 
   @bar {
-    abstraction = @foo,
-    arguments = ["bar"],
-    x = @bar {},
-    y = null,
-    z = {1},
-    w = -1,
-    s = "sdf",
-    t = true
+    @abstraction = @foo,
+    @arguments = ["bar"],
+    @x = @bar {},
+    @y = null,
+    @z = {1},
+    @w = -1,
+    @s = "sdf",
+    @t = true
   }
 
 }
