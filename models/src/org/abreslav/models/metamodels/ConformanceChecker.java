@@ -4,6 +4,7 @@ import org.abreslav.metametamodel.*;
 import org.abreslav.models.*;
 import org.abreslav.models.StringValue;
 import org.abreslav.models.util.ObjectWrapper;
+import org.abreslav.models.util.TraverseValueTreeVisitor;
 
 import java.util.*;
 
@@ -120,7 +121,20 @@ public class ConformanceChecker {
         if (value != NullValue.NULL) {
             IType nonNullable = unwrapNullable(type);
             if (nonNullable instanceof IAnyType) {
-                return true;
+                return value.accept(new TraverseValueTreeVisitor<Boolean, Void>() {
+                    @Override
+                    public Boolean visitObject(ObjectValue value, Void data) {
+                        if (checkObject(value) == null) {
+                            return false;
+                        }
+                        return super.visitObject(value, data);
+                    }
+
+                    @Override
+                    public Boolean visitValue(IValue value, Void data) {
+                        return true;
+                    }
+                }, null);
             }
         }
         return value.accept(new IValueVisitor<Boolean, IType>() {

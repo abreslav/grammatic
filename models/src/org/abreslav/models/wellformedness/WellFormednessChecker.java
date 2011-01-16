@@ -51,7 +51,7 @@ public class WellFormednessChecker {
         }
 
 //      - every identity is assigned to only one object
-        Context preModelContext = new Context();
+        Context preModelContext = new Context(context);
         for (ObjectValue object : allObjects) {
             preModelContext.putObject(object); // this throws an exception if the identity is reused
         }

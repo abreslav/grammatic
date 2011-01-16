@@ -1,1 +1,1 @@
-{@"Class" "x"{@"Class.abstract"=false, @"Class.superclasses"={}, @"Class.propertyDescriptors"={}}, @"abc" ["definitions.xml", 3]{@"pa"=1, @"pb"=@"x" ["usage.xml", 1]{}, @"pc"=@"y" ["definitions.xml", 9]{@"x"=@"x" ["usage.xml", 1]{}}}}
+{@"Class" "xx"{@"Class.abstract"=false, @"Class.superclasses"={}, @"Class.propertyDescriptors"={}}, @"abc" ["definitions.xml", 3]{@"pa"=1, @"pb"=@"xx" ["usage.xml", 1]{}, @"pc"=@"y" ["definitions.xml", 9]{@"x"=@"xx" ["usage.xml", 1]{}}}}

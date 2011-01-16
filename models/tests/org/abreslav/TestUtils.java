@@ -92,7 +92,7 @@ public class TestUtils {
             }
             fileReader.close();
 
-            Assert.assertEquals(stringBuilder.toString(), result);
+            Assert.assertEquals(stringBuilder.toString() + "\n", result + "\n");
         }
     }
 }

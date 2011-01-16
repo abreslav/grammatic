@@ -29,11 +29,17 @@ public class Context implements IContext {
         }, null);
     }
 
+    public Context(IContext context) {
+        for (ObjectValue objectValue : context.getAllObjects()) {
+            putObject(objectValue);
+        }
+    }
+
     public ObjectValue getObject(IValue identity) {
         return objects.get(identity);
     }
 
-    public void putObject(ObjectValue object) {
+    public final void putObject(ObjectValue object) {
         assert object != null;
         IValue identity = object.getIdentity();
         assert identity != null;

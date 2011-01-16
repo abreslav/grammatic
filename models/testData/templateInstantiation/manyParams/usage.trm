@@ -1,7 +1,11 @@
 {
   @Application {
     @Application.abstraction = @foo,
-    @Application.arguments = [1, @Class {}]
+    @Application.arguments = [1, @Class {
+      @Class.abstract = false,
+      @Class.superclasses = {},
+      @Class.propertyDescriptors = {}
+    }]
   }
 
 }

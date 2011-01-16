@@ -16,4 +16,9 @@ public class AnyType extends ObjectWrapper implements IAnyType {
     public <R, D> R accept(ITypeVisitor<R, D> visitor, D data) {
         return visitor.visitAnyType(this, data);
     }
+
+    @Override
+    public String toString() {
+        return "_";
+    }
 }

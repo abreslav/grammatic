@@ -8,6 +8,7 @@ import org.abreslav.models.ObjectValue;
 import org.abreslav.templates.lambda.TemplateTerm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +32,8 @@ public class TemplateInstantiator {
         public IValue visitCollectionValue(ICollectionValue value, ITemplateContext context) {
             ArrayList<IValue> newValues = new ArrayList<IValue>();
             for (IValue v : value.getValue()) {
-                ITerm newTerm = instantiate(context, new TemplateTerm(v));
-                newValues.add(((TemplateTerm) newTerm).getValue());
+                Collection<IValue> values = instantiateInsideCollection(context, new TemplateTerm(v));
+                newValues.addAll(values);
             }
             return value.createNewFromList(newValues);
         }
@@ -48,6 +49,34 @@ public class TemplateInstantiator {
             return newObject;
         }
     };
+
+    private Collection<IValue> instantiateInsideCollection(final ITemplateContext context, final TemplateTerm templateTerm) {
+        final Collection<IValue> result = new ArrayList<IValue>();
+
+        templateTerm.accept(new ITermVisitor<Void, Void>() {
+            public Void visitApplication(IApplication application, Void data) {
+                result.add(((TemplateTerm) instantiate(context, templateTerm)).getValue());
+                return null;
+            }
+
+            public Void visitVariableUsage(IVariableUsage variableUsage, Void data) {
+                IValue value = ((TemplateTerm) instantiate(context, templateTerm)).getValue();
+                ITerm instantiate = instantiate(context, templateTerm);
+                if (!variableUsage.isInlineCollection() || false == value instanceof ICollectionValue) {
+                    result.add(value);
+                    return null;
+                }
+                result.addAll(((ICollectionValue) value).getValue());
+                return null;
+            }
+
+            public Void visitTerm(ITerm term, Void data) {
+                result.add(((TemplateTerm) instantiate(context, templateTerm)).getValue());
+                return null;
+            }
+        }, null);
+        return result;
+    }
 
     private final ITermVisitor<ITerm,ITemplateContext> termVisitor = new ITermVisitor<ITerm, ITemplateContext>() {
         public ITerm visitApplication(IApplication application, ITemplateContext context) {

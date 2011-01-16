@@ -5,4 +5,5 @@ package org.abreslav.lambda;
  */
 public interface IVariableUsage extends ITerm {
     IVariable getVariable();
+    boolean isInlineCollection();
 }

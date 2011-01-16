@@ -1,1 +1,1 @@
-{@"class" "c"{@"af"=1, @"bf"=@"Class" ["usage.xml", 1]{}}}
+{@"class" "c"{@"af"=1, @"bf"=@"Class" ["usage.xml", 1]{@"Class.abstract"=false, @"Class.superclasses"={}, @"Class.propertyDescriptors"={}}}}
