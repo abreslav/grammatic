@@ -11,6 +11,7 @@ public interface ITypeVisitor<R, D> {
     R visitReferenceType(IReferenceType type, D data);
     R visitSetType(ISetType type, D data);
     R visitNullableType(INullableType type, D data);
+    R visitEnumType(IEnumType type, D data);
 
     class Adapter<R, D> implements ITypeVisitor<R, D> {
 
@@ -40,6 +41,10 @@ public interface ITypeVisitor<R, D> {
 
         public R visitNullableType(INullableType type, D data) {
             return visitType(type.getType(), data);
+        }
+
+        public R visitEnumType(IEnumType type, D data) {
+            return visitType(type, data);
         }
 
         public R visitClassType(IClassType type, D data) {

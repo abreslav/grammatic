@@ -7,9 +7,9 @@ class "Abstraction" {
 class "Variable" {
 }
 class "Application" : "Term" {
-  "Application.abstraction" : ref(?
+  "Application.abstraction" : ref("Abstraction")
   "Application.arguments" : [val("Term")*]
 }
 class "VariableUsage" : "Term" {
-  "VariableUsage.variable" : ref(?
+  "VariableUsage.variable" : ref("Variable")
 }

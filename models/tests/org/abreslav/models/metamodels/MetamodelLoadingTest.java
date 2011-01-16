@@ -13,6 +13,8 @@ import org.abreslav.models.xml.XMLParser;
 
 import java.io.File;
 
+import static org.abreslav.models.metamodels.ReferenceUtil.ref;
+
 /**
  * @author abreslav
  */
@@ -38,7 +40,12 @@ public class MetamodelLoadingTest extends TestCase {
         Appendable out = new StringBuilder();
         ClassPrinter classPrinter = new ClassPrinter(out);
         for (IValue value : mm.getValue()) {
-            classPrinter.printClass(new ModelClass((ObjectValue) value));
+            ObjectValue objectValue = (ObjectValue) value;
+            if (objectValue.getClassReference().equals(ref("Class"))) {
+                classPrinter.printClass(new ModelClass(objectValue));
+            } else {
+                classPrinter.printEnum(new Enum(objectValue));
+            }
         }
         TestUtils.assertStringEqualsToFile(testDir, out.toString(), "expected.txt");
         new File(xmlFileName).delete();

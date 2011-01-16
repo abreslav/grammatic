@@ -31,8 +31,10 @@ public class TypeUtil {
             return new NullableType(object);
         } else if ("AnyType".equals(clazz)) {
             return new AnyType(object);
+        } else if ("EnumType".equals(clazz)) {
+            return new EnumType(object);
         } else {
-            throw new IllegalArgumentException("Unknown type");
+            throw new IllegalArgumentException("Unknown type: " + object);
         }
     }
 

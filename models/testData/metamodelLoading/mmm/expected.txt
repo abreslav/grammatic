@@ -3,7 +3,7 @@ abstract class "Type" {
 class "AnyType" : "Type" {
 }
 abstract class "ClassType" : "Type" {
-  "ClassType.class" : ref(?
+  "ClassType.class" : ref("Class")
 }
 class "NullableType" : "Type" {
   "NullableType.type" : val("Type")
@@ -23,11 +23,19 @@ class "SetType" : "CollectionType" {
 }
 class "ListType" : "CollectionType" {
 }
+class "EnumType" : "Type" {
+  "EnumType.enum" : ref("Enum")
+}
 class "PropertyDescriptor" {
   "PropertyDescriptor.type" : val("Type")
 }
+class "Enum" {
+  "Enum.literals" : {val("EnumLiteral")*}
+}
+class "EnumLiteral" {
+}
 class "Class" {
   "Class.abstract" : Boolean
-  "Class.superclasses" : {ref(?*}
+  "Class.superclasses" : {ref("Class")*}
   "Class.propertyDescriptors" : {val("PropertyDescriptor")*}
 }

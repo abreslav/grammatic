@@ -68,6 +68,15 @@
     @Class.superclasses = {@CollectionType},
     @Class.propertyDescriptors = {}
   },
+  @Class EnumType {
+    @Class.abstract = false,
+    @Class.superclasses = {@Type},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor EnumType.enum {
+        @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Enum}
+      }
+    }
+  },
   @Class PropertyDescriptor {
     @Class.abstract = false,
     @Class.superclasses = {},
@@ -76,6 +85,23 @@
         @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
       }
     }
+  },
+  @Class Enum {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor Enum.literals {
+        @PropertyDescriptor.type = @SetType {
+          @CollectionType.nonEmpty = false,
+          @CollectionType.elementType = @ObjectType {@ClassType.class = @EnumLiteral}
+        }
+      }
+    }
+  },
+  @Class EnumLiteral {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {}
   },
   @Class Class {
     @Class.abstract = false,

@@ -83,7 +83,7 @@ public class ClassPrinter {
 
             @Override
             public Void visitReferenceType(IReferenceType type, Void data) {
-                print("ref(" + getIdentity(type.getUnderlyingClass() + ")"));
+                print("ref(" + getIdentity(type.getUnderlyingClass()) + ")");
                 return null;
             }
 
@@ -107,6 +107,12 @@ public class ClassPrinter {
             @Override
             public Void visitAnyType(IAnyType type, Void data) {
                 print("_");
+                return null;
+            }
+
+            @Override
+            public Void visitEnumType(IEnumType type, Void data) {
+                print("enum " + getIdentity(type));
                 return null;
             }
 
@@ -142,5 +148,22 @@ public class ClassPrinter {
             return ((ObjectWrapper) object).getObject().getIdentity().toString();
         }
         return "?";
+    }
+
+    public void printEnum(Enum anEnum) {
+        print(indent + "enum ");
+        print(anEnum.getObject().getIdentity().toString());
+        print("{");
+        newline();
+        increaseIndent();
+        for (Iterator<IEnumLiteral> iterator = anEnum.getLiterals().iterator(); iterator.hasNext();) {
+            IEnumLiteral literal = iterator.next();
+            print(indent + getIdentity(literal));
+            if (iterator.hasNext()) {
+                print(",");
+            }
+            newline();
+        }
+        print("}");
     }
 }
