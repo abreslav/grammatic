@@ -153,7 +153,7 @@ public class ClassPrinter {
     public void printEnum(Enum anEnum) {
         print(indent + "enum ");
         print(anEnum.getObject().getIdentity().toString());
-        print("{");
+        print(" {");
         newline();
         increaseIndent();
         for (Iterator<IEnumLiteral> iterator = anEnum.getLiterals().iterator(); iterator.hasNext();) {

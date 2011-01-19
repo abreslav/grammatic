@@ -25,7 +25,7 @@ class "Iteration" : "Expression" {
   "Iteration.expression" : val("Expression")
   "Iteration.kind" : enum "IterationKind"
 }
-enum "IterationKind"{
+enum "IterationKind" {
   "ONE",
   "ONE_OR_MORE",
   "ZERO_OR_ONE",
