@@ -1,0 +1,4 @@
+Result{
+error='Model value @"SymbolReference" ["m.trm.xml", 1]{@"SymbolReference.symbol"=@"application"} does not match the pattern TemplateTerm{21}'
+multiEnvironment=null
+}

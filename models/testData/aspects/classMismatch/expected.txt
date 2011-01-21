@@ -1,0 +1,4 @@
+Result{
+error='Model value class @"CharacterRange" does not match @"SymbolReference"'
+multiEnvironment=null
+}

@@ -117,14 +117,18 @@ public class TestUtils {
     }
 
     public static void checkMetaModel(SetValue mm) throws JDOMException, IOException {
-        checkModel(mm, loadMetaMetaModel());
+        checkModels(mm, loadMetaMetaModel());
     }
 
-    public static void checkModel(SetValue m, SetValue mm) throws JDOMException, IOException {
-        WellFormednessChecker.INSTANCE.checkWellFormedness(new CompositeContext(new Context(mm), new Context(loadMetaMetaModel())), m.getValue());
-        Collection<IDiagnostic> result = ConformanceChecker.check(m.getValue());
-        if (!result.isEmpty()) {
-            fail(result.toString());
+    public static void checkModels(SetValue... models) throws JDOMException, IOException {
+        IContext context = new Context(loadMetaMetaModel());
+        for (SetValue model : models) {
+            WellFormednessChecker.INSTANCE.checkWellFormedness(context, model.getValue());
+            Collection<IDiagnostic> result = ConformanceChecker.check(model.getValue());
+            if (!result.isEmpty()) {
+                fail(result.toString());
+            }
+            context = new CompositeContext(context, new Context(model));
         }
     }
 
@@ -134,11 +138,13 @@ public class TestUtils {
         return mm;
     }
 
-    public static SetValue parseModel(String modelFileName, String metaModelFileName) throws InterruptedException, IOException, JDOMException {
-        SetValue mm = parseMetaModel(metaModelFileName);
+    public static SetValue parseModel(String... modelFileNames) throws InterruptedException, IOException, JDOMException {
+        SetValue[] models = new SetValue[modelFileNames.length];
+        for (int i = 0, metaModelFileNamesLength = modelFileNames.length; i < metaModelFileNamesLength; i++) {
+            models[i] = parseTerm(modelFileNames[i]);
+        }
 
-        SetValue m = parseTerm(modelFileName);
-        checkModel(m, mm);
-        return m;
+        checkModels(models);
+        return models[models.length - 1];
     }
 }

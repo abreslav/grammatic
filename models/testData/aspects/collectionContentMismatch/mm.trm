@@ -1,0 +1,98 @@
+{
+  @Class Symbol {
+      @Class.abstract = false,
+      @Class.superclasses = {},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor Symbol.productions {
+          @PropertyDescriptor.type = @ListType {
+            @CollectionType.nonEmpty = true,
+            @CollectionType.elementType = @AnyType {}
+          }
+        }
+      }
+  },
+  @Class Expression {
+      @Class.abstract = true,
+      @Class.superclasses = {},
+      @Class.propertyDescriptors = {}
+  },
+  @Class SymbolReference {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor SymbolReference.symbol {
+          @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Symbol}
+        }
+      }
+  },
+  @Class Empty {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {}
+  },
+  @Class Literal {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor Literal.data {
+          @PropertyDescriptor.type = @PrimitiveType {@PrimitiveType.type = "String"}
+        }
+      }
+  },
+  @Class CharacterRange {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor CharacterRange.from {
+          @PropertyDescriptor.type = @PrimitiveType {@PrimitiveType.type = "Character"}
+        },
+        @PropertyDescriptor CharacterRange.to {
+          @PropertyDescriptor.type = @PrimitiveType {@PrimitiveType.type = "Character"}
+        }
+      }
+  },
+  @Class Sequence {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor Sequence.expressions {
+          @PropertyDescriptor.type = @ListType {
+            @CollectionType.nonEmpty = true,
+            @CollectionType.elementType = @ObjectType { @ClassType.class = @Expression }
+          }
+        }
+      }
+  },
+  @Class Alternative {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor Alternative.expressions {
+          @PropertyDescriptor.type = @SetType {
+            @CollectionType.nonEmpty = true,
+            @CollectionType.elementType = @ObjectType { @ClassType.class = @Expression }
+          }
+        }
+      }
+  },
+  @Class Iteration {
+      @Class.abstract = false,
+      @Class.superclasses = {@Expression},
+      @Class.propertyDescriptors = {
+        @PropertyDescriptor Iteration.expression {
+          @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Expression }
+        },
+        @PropertyDescriptor Iteration.kind {
+          @PropertyDescriptor.type = @EnumType { @EnumType.enum = @IterationKind }
+        }
+      }
+  },
+  @Enum IterationKind {
+    @Enum.literals = {
+      @EnumLiteral ONE{},
+      @EnumLiteral ONE_OR_MORE{},
+      @EnumLiteral ZERO_OR_ONE{},
+      @EnumLiteral ZERO_OR_MORE{}
+    }
+  }
+}

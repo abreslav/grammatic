@@ -23,30 +23,31 @@ import java.util.*;
  */
 public class PatternMatcher {
 
-    public static IMultiEnvironment match(IValue value, ITerm pattern) {
+    public static Result match(IValue value, ITerm pattern) {
         PatternMatcher matcher = new PatternMatcher(value);
-        if (matcher.doMatch(new ModelPath(), pattern)) {
-            return matcher.multiEnvironment;
+        IExitCode code = matcher.doMatch(new ModelPath(), pattern);
+        if (code.ok()) {
+            return new Result(matcher.multiEnvironment);
         }
-        return null;
+        return new Result(code.message());
     }
 
     private final MultiEnvironment multiEnvironment = new MultiEnvironment();
+
     private final Map<IVariable, ITerm> variableBindings = new LinkedHashMap<IVariable, ITerm>();
     // pattern identity -> value identity
     private final Map<IValue, IValue> identityMap = new LinkedHashMap<IValue, IValue>();
     private final IValue modelRoot;
-
     private PatternMatcher(IValue modelRoot) {
         this.modelRoot = modelRoot;
     }
 
-    public boolean doMatch(ModelPath currentPath, ITerm pattern) {
+    public IExitCode doMatch(ModelPath currentPath, ITerm pattern) {
         return pattern.accept(termSwitch, currentPath);
     }
 
-    private final ITermVisitor<Boolean, ModelPath> termSwitch = new ITermVisitor<Boolean, ModelPath>() {
-        public Boolean visitApplication(IApplication application, ModelPath path) {
+    private final ITermVisitor<IExitCode, ModelPath> termSwitch = new ITermVisitor<IExitCode, ModelPath>() {
+        public IExitCode visitApplication(IApplication application, ModelPath path) {
             List<IVariable> parameters = application.getAbstraction().getParameters();
             List<ITerm> arguments = application.getArguments();
 
@@ -60,7 +61,7 @@ public class PatternMatcher {
             return doMatch(path, application.getAbstraction().getBody());
         }
 
-        public Boolean visitVariableUsage(IVariableUsage variableUsage, ModelPath path) {
+        public IExitCode visitVariableUsage(IVariableUsage variableUsage, ModelPath path) {
             IVariable variable = variableUsage.getVariable();
             Collection<ModelPath> valuePaths = multiEnvironment.getValues(variable);
             if (valuePaths.isEmpty()) {
@@ -68,21 +69,22 @@ public class PatternMatcher {
                 if (pattern == null) {
                     throw new IllegalArgumentException("Unbound variable: " + variable);
                 }
-                if (!doMatch(path, pattern)) {
-                    return false;
+                IExitCode exitCode = doMatch(path, pattern);
+                if (!exitCode.ok()) {
+                    return exitCode;
                 }
             } else {
                 IValue sampleValue = resolvePath(valuePaths.iterator().next());
                 IValue value = resolvePath(path);
                 if (!sampleValue.equals(value)) {
-                    return false;
+                    return fail("Model value " + value + " does not match a value " + sampleValue + " of the variable " + variable);
                 }
             }
             multiEnvironment.addValue(variable, path);
-            return true;
+            return ok();
         }
 
-        public Boolean visitTerm(ITerm term, ModelPath path) {
+        public IExitCode visitTerm(ITerm term, ModelPath path) {
             return matchValue(term, path);
         }
     };
@@ -91,19 +93,19 @@ public class PatternMatcher {
         return ModelPathInterpreter.INSTANCE.getValueByPath(modelRoot, path);
     }
 
-    private boolean matchValue(ITerm pattern, final ModelPath path) {
+    private IExitCode matchValue(ITerm pattern, final ModelPath path) {
         IValue value = resolvePath(path);
-        return value.accept(new IValueVisitor.Adapter<Boolean, TemplateTerm>() {
+        return value.accept(new IValueVisitor.Adapter<IExitCode, TemplateTerm>() {
             @Override
-            public <T> Boolean visitPrimitiveValue(IPrimitiveValue<T> value, TemplateTerm pattern) {
+            public <T> IExitCode visitPrimitiveValue(IPrimitiveValue<T> value, TemplateTerm pattern) {
                 return matchPrimitiveValue(value, pattern);
             }
 
             @Override
-            public Boolean visitReference(ReferenceValue value, TemplateTerm pattern) {
+            public IExitCode visitReference(ReferenceValue value, TemplateTerm pattern) {
                 IValue patternValue = pattern.getValue();
                 if (false == patternValue instanceof ReferenceValue) {
-                    return false;
+                    return fail(value, pattern);
                 }
                 ReferenceValue patternReference = (ReferenceValue) patternValue;
 
@@ -113,22 +115,27 @@ public class PatternMatcher {
             }
 
             @Override
-            public Boolean visitNull(NullValue value, TemplateTerm pattern) {
-                return pattern.getValue().equals(value);
+            public IExitCode visitNull(NullValue value, TemplateTerm pattern) {
+                if (pattern.getValue().equals(value)) {
+                    return ok();
+                }
+                return fail(value, pattern);
             }
 
             @Override
-            public Boolean visitObject(ObjectValue value, TemplateTerm pattern) {
+            public IExitCode visitObject(ObjectValue value, TemplateTerm pattern) {
                 IValue patternValue = pattern.getValue();
                 if (false == patternValue instanceof ObjectValue) {
-                    return false;
+                    return fail(value, pattern);
                 }
 
                 ObjectValue patternObject = (ObjectValue) patternValue;
 
-                Map<IPropertyDescriptor, IPropertyDescriptor> propertyMap = matchClasses(patternObject.getClassReference(), value.getClassReference());
+                ReferenceValue patternClassReference = patternObject.getClassReference();
+                ReferenceValue valueClassReference = value.getClassReference();
+                Map<IPropertyDescriptor, IPropertyDescriptor> propertyMap = matchClasses(patternClassReference, valueClassReference);
                 if (propertyMap == null) {
-                    return false;
+                    return fail("Model value class " + valueClassReference + " does not match " + patternClassReference);
                 }
 
                 for (Map.Entry<IPropertyDescriptor, IPropertyDescriptor> entry : propertyMap.entrySet()) {
@@ -137,13 +144,13 @@ public class PatternMatcher {
                     ReferenceValue patternPropertyKey = new ReferenceValue(patternPropertyDescriptor.getObject().getIdentity());
                     IValue patternPropertyValue = patternObject.getPropertyValue(patternPropertyKey);
                     if (patternPropertyValue == null) {
-                        System.out.println("Pattern " + patternObject + " does not have property: " + patternPropertyKey);
-                        return false;
+                        return fail("Pattern " + patternObject + " does not have property: " + patternPropertyKey);
                     }
 
-                    if (!doMatch(path.append(new PropertyPathEntry(new ReferenceValue(valuePropertyDescriptor.getObject().getIdentity()))),
-                            new TemplateTerm(patternPropertyValue))) {
-                        return false;
+                    IExitCode exitCode = doMatch(path.append(new PropertyPathEntry(new ReferenceValue(valuePropertyDescriptor.getObject().getIdentity()))),
+                            new TemplateTerm(patternPropertyValue));
+                    if (!exitCode.ok()) {
+                        return exitCode;
                     }
                 }
 
@@ -151,34 +158,41 @@ public class PatternMatcher {
             }
 
             @Override
-            public Boolean visitCollectionValue(ICollectionValue value, TemplateTerm pattern) {
+            public IExitCode visitCollectionValue(ICollectionValue value, TemplateTerm pattern) {
                 IValue patternValue = pattern.getValue();
                 if (false == patternValue instanceof ICollectionValue) {
-                    return false;
+                    return fail(value, pattern);
                 }
 
                 ICollectionValue patternCollection = (ICollectionValue) patternValue;
-                if (patternCollection.getValue().size() != value.getValue().size()) {
-                    return false; // TODO
+                Collection<IValue> patternValues = patternCollection.getValue();
+                Collection<IValue> modelValues = value.getValue();
+                if (patternValues.size() != modelValues.size()) {
+                    return fail("Temporary: collection sizes do not match: " + modelValues.size() + " and " + patternValues.size()); // TODO
                 }
 
                 // TODO: wildcards, sets
-                Iterator<IValue> patternIterator = patternCollection.getValue().iterator();
-                for (int i = 0; i < value.getValue().size(); i++) {
+                Iterator<IValue> patternIterator = patternValues.iterator();
+                for (int i = 0; i < modelValues.size(); i++) {
                     ITerm patternItem = new TemplateTerm(patternIterator.next());
-                    if (!doMatch(path.append(new CollectionItemPathEntry(i)), patternItem)) {
-                        return false;
+                    IExitCode exitCode = doMatch(path.append(new CollectionItemPathEntry(i)), patternItem);
+                    if (!exitCode.ok()) {
+                        return exitCode;
                     }
                 }
 
-                return true;
+                return ok();
             }
 
             @Override
-            public Boolean visitValue(IValue value, TemplateTerm pattern) {
+            public IExitCode visitValue(IValue value, TemplateTerm pattern) {
                 throw new IllegalArgumentException("Unknown value: " + value);
             }
         }, (TemplateTerm) pattern);
+    }
+
+    private IExitCode fail(IValue value, ITerm pattern) {
+        return fail("Model value " + value + " does not match the pattern " + pattern);
     }
 
     // Return pattern property -> value property
@@ -189,7 +203,7 @@ public class PatternMatcher {
             return null;
         }
 
-        if (!matchIdentities(patternClassReference, valueClassReference)) {
+        if (!matchIdentities(patternClassReference, valueClassReference).ok()) {
             return null;
         }
 
@@ -202,18 +216,24 @@ public class PatternMatcher {
         return result;
     }
 
-    private boolean matchIdentities(IValue patternIdentity, IValue valueIdentity) {
+    private IExitCode matchIdentities(IValue patternIdentity, IValue valueIdentity) {
         IValue mappedIdentity = identityMap.get(patternIdentity);
         if (mappedIdentity == null) {
             identityMap.put(patternIdentity, valueIdentity);
-            return true;
+            return ok();
         } else {
-            return mappedIdentity.equals(valueIdentity);
+            if (mappedIdentity.equals(valueIdentity)) {
+                return ok();
+            }
+            return fail("Model value identity " + valueIdentity + " does not match with " + mappedIdentity);
         }
     }
 
-    private <T> boolean matchPrimitiveValue(IPrimitiveValue<T> value, TemplateTerm pattern) {
-        return value.equals(pattern.getValue());
+    private <T> IExitCode matchPrimitiveValue(IPrimitiveValue<T> value, TemplateTerm pattern) {
+        if (value.equals(pattern.getValue())) {
+            return ok();
+        }
+        return fail(value, pattern);
     }
 
     private void addBinding(IVariable parameter, ITerm argument) {
@@ -222,9 +242,40 @@ public class PatternMatcher {
         }
     }
 
-    private class MultiEnvironment implements  IMultiEnvironment {
-        private final Map<IVariable, Set<ModelPath>> data = new LinkedHashMap<IVariable, Set<ModelPath>>();
+    private static interface IExitCode {
+        IExitCode OK = new IExitCode() {
+            public boolean ok() {
+                return true;
+            }
 
+            public String message() {
+                throw new UnsupportedOperationException();
+            }
+        };
+
+        boolean ok();
+        String message();
+    }
+
+    private static IExitCode ok() {
+        return IExitCode.OK;
+    }
+
+    private static IExitCode fail(final String message) {
+        return new IExitCode() {
+            public boolean ok() {
+                return false;
+            }
+
+            public String message() {
+                return message;
+            }
+        };
+    }
+
+    private class MultiEnvironment implements  IMultiEnvironment {
+
+        private final Map<IVariable, Set<ModelPath>> data = new LinkedHashMap<IVariable, Set<ModelPath>>();
         public Collection<ModelPath> getValues(IVariable variable) {
             return Collections.unmodifiableCollection(getModelPaths(variable));
         }
@@ -246,6 +297,45 @@ public class PatternMatcher {
         public String toString() {
             return "MultiEnvironment{" +
                     "data=" + data +
+                    '}';
+        }
+
+    }
+
+    public static class Result {
+        private final MultiEnvironment multiEnvironment;
+        private final String message;
+
+        private Result(MultiEnvironment multiEnvironment, String message) {
+            this.multiEnvironment = multiEnvironment;
+            this.message = message;
+        }
+
+        private Result(MultiEnvironment multiEnvironment) {
+            this(multiEnvironment, null);
+        }
+
+        private Result(String message) {
+            this(null, message);
+        }
+
+        public boolean isSuccess() {
+            return multiEnvironment != null;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public IMultiEnvironment getMultiEnvironment() {
+            return multiEnvironment;
+        }
+
+        @Override
+        public String toString() {
+            return "Result{\n" +
+                    (isSuccess() ? "ok\n" : "error='" + message + "'\n") +
+                    "multiEnvironment=" + multiEnvironment + "\n" +
                     '}';
         }
     }
