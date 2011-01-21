@@ -4,6 +4,15 @@
     @Class.superclasses = {},
     @Class.propertyDescriptors = {}
   },
+  @Class PredefinedTerm {
+    @Class.abstract = true,
+    @Class.superclasses = {@Term},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor PredefinedTerm.inlineCollection {
+        @PropertyDescriptor.type = @PrimitiveType { @PrimitiveType.type = Boolean }
+      }
+    }
+  },
   @Class Abstraction {
     @Class.abstract = false,
     @Class.superclasses = {},
@@ -26,7 +35,7 @@
   },
   @Class Application {
     @Class.abstract = false,
-    @Class.superclasses = {@Term},
+    @Class.superclasses = {@PredefinedTerm},
     @Class.propertyDescriptors = {
       @PropertyDescriptor Application.abstraction {
         @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Abstraction}
@@ -41,13 +50,10 @@
   },
   @Class VariableUsage {
     @Class.abstract = false,
-    @Class.superclasses = {@Term},
+    @Class.superclasses = {@PredefinedTerm},
     @Class.propertyDescriptors = {
       @PropertyDescriptor VariableUsage.variable {
         @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Variable}
-      },
-      @PropertyDescriptor VariableUsage.inlineCollection {
-        @PropertyDescriptor.type = @PrimitiveType {@PrimitiveType.type = "Boolean"}
       }
     }
   }

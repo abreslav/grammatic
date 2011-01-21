@@ -3,7 +3,6 @@ package org.abreslav.lambda;
 /**
  * @author abreslav
  */
-public interface IVariableUsage extends IPredefinedTerm {
-    IVariable getVariable();
+public interface IPredefinedTerm extends ITerm {
     boolean isInlineCollection();
 }

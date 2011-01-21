@@ -15,8 +15,14 @@
   @Abstraction foo {
     @Abstraction.parameters = [@Variable a{}, @Variable b{}],
     @Abstraction.body = @class c {
-      @af = @VariableUsage {@VariableUsage.variable = @a, @VariableUsage.inlineCollection = false},
-      @bf = @VariableUsage {@VariableUsage.variable = @b, @VariableUsage.inlineCollection = false}
+      @af = @VariableUsage {
+          @VariableUsage.variable = @a,
+          @PredefinedTerm.inlineCollection = false
+        },
+      @bf = @VariableUsage {
+          @VariableUsage.variable = @b,
+          @PredefinedTerm.inlineCollection = false
+        }
     }
   }
 }

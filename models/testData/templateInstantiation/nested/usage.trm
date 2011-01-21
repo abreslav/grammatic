@@ -6,7 +6,8 @@
   },
   @Application {
     @Application.abstraction = @foo,
-    @Application.arguments = [1, @xx {}]
+    @Application.arguments = [1, @xx {}],
+    @PredefinedTerm.inlineCollection = false
   }
 
 }

@@ -4,8 +4,10 @@ import org.abreslav.lambda.IAbstraction;
 import org.abreslav.lambda.IApplication;
 import org.abreslav.lambda.ITerm;
 import org.abreslav.lambda.ITermVisitor;
-import org.abreslav.models.*;
-import org.abreslav.models.util.ObjectWrapper;
+import org.abreslav.models.IValue;
+import org.abreslav.models.ListValue;
+import org.abreslav.models.ObjectValue;
+import org.abreslav.models.ReferenceValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ import static org.abreslav.models.util.CastUtils.cast;
 /**
  * @author abreslav
  */
-public class Application extends ObjectWrapper implements IApplication {
+public class Application extends PredefinedTerm implements IApplication {
     private final IAbstraction abstraction;
     private final List<ITerm> arguments = new ArrayList<ITerm>();
 

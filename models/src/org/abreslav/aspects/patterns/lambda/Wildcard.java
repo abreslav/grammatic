@@ -6,7 +6,7 @@ import org.abreslav.metametamodel.IType;
 import org.abreslav.models.IValue;
 import org.abreslav.models.ObjectValue;
 import org.abreslav.models.metamodels.TypeUtil;
-import org.abreslav.models.util.ObjectWrapper;
+import org.abreslav.templates.lambda.PredefinedTerm;
 
 import static org.abreslav.models.metamodels.ReferenceUtil.ref;
 import static org.abreslav.models.util.CastUtils.cast;
@@ -14,7 +14,7 @@ import static org.abreslav.models.util.CastUtils.cast;
 /**
  * @author abreslav
  */
-public class Wildcard extends ObjectWrapper implements ITerm {
+public class Wildcard extends PredefinedTerm implements ITerm {
 
     private final IType type;
 

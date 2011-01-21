@@ -1,7 +1,8 @@
 {
   @Application {
     @Application.abstraction = @foo,
-    @Application.arguments = [["a", "b", []], {1, {}, 2}]
+    @Application.arguments = [["a", "b", []], {1, {}, 2}],
+    @PredefinedTerm.inlineCollection = false
   }
 
 }

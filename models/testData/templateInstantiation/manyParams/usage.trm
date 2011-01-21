@@ -5,7 +5,8 @@
       @Class.abstract = false,
       @Class.superclasses = {},
       @Class.propertyDescriptors = {}
-    }]
+    }],
+    @PredefinedTerm.inlineCollection = false
   }
 
 }

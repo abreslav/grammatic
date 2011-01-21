@@ -82,12 +82,14 @@ public class TemplateInstantiatorTest extends TestCase {
     }
 
     public static Test suite() {
-        String mmDir = "testData/templateInstantiation";
+        String mmDir = "metamodels";
         generateTemplateMetaModelXml(mmDir);
 
         TestSuite suite = new TestSuite(TemplateInstantiatorTest.class.getSimpleName());
 
-        File[] files = new File(mmDir).listFiles();
+        String testDir = "testData/templateInstantiation";
+
+        File[] files = new File(testDir).listFiles();
         Arrays.sort(files);
         for (File dir : files) {
             if (dir.isDirectory()) {

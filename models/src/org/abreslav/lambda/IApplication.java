@@ -5,8 +5,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface IApplication extends ITerm {
+public interface IApplication extends IPredefinedTerm {
     IAbstraction getAbstraction();
     List<ITerm> getArguments();
-
 }

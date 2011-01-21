@@ -18,9 +18,9 @@
   @Abstraction foo {
     @Abstraction.parameters = [@Variable a{}, @Variable b{}],
     @Abstraction.body = @class c {
-      @af = [1, 2, "3", @VariableUsage {@VariableUsage.variable = @a, @VariableUsage.inlineCollection = true}, true],
-      @bf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @VariableUsage.inlineCollection = true}, false},
-      @aaf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @VariableUsage.inlineCollection = false}, false}
+      @af = [1, 2, "3", @VariableUsage {@VariableUsage.variable = @a, @PredefinedTerm.inlineCollection = true}, true],
+      @bf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @PredefinedTerm.inlineCollection = true}, false},
+      @aaf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @PredefinedTerm.inlineCollection = false}, false}
     }
   }
 }
