@@ -15,13 +15,22 @@ import static org.abreslav.models.util.CastUtils.cast;
  * @author abreslav
  */
 public class ModelPathInterpreter {
-    public IValue getValueByPath(IValue start, Iterable<IModelPathEntry> path) {
+
+    public static final ModelPathInterpreter INSTANCE = new ModelPathInterpreter();
+
+    private ModelPathInterpreter() {}
+
+    public IValue getValueByPath(IValue start, Iterable<? extends IModelPathEntry> path) {
         IValue result = start;
         for (IModelPathEntry entry : path) {
             result = entry.accept(new IModelPathVisitor<IValue, IValue>() {
                 public IValue visitProperty(PropertyPathEntry entry, IValue data) {
                     ObjectValue objectValue = cast(data, ObjectValue.class, "Object expected but " + data + " found at " + entry);
-                    return objectValue.getPropertyValue(entry.getPropertyKey());
+                    IValue propertyValue = objectValue.getPropertyValue(entry.getPropertyKey());
+                    if (propertyValue == null) {
+                        throw new IllegalArgumentException("Property not present: " + entry.getPropertyKey() + " in " + data);
+                    }
+                    return propertyValue;
                 }
 
                 public IValue visitCollectionRange(CollectionRangePathEntry entry, IValue data) {
@@ -44,15 +53,15 @@ public class ModelPathInterpreter {
                 public IValue visitCollectionItem(CollectionItemPathEntry entry, IValue data) {
                     ICollectionValue collectionValue = cast(data, ICollectionValue.class, "Collection expected but " + data + " found at " + entry);
                     Collection<IValue> value = collectionValue.getValue();
+                    int index = entry.getIndex();
+                    if (index < 0 || value.size() <= index) {
+                        throw new IllegalArgumentException("Unexisting index " + index + " in collection " + collectionValue);
+                    }
                     Iterator<IValue> iterator = value.iterator();
-                    IValue result = null;
-                    for (int i = 0; i < entry.getIndex() - 1; i++) {
-                        result = iterator.next();
+                    for (int i = 0; i < index; i++) {
+                        iterator.next();
                     }
-                    if (result == null) {
-                        throw new IllegalArgumentException("Unexisting index " + entry.getIndex() + " in collection " + collectionValue);
-                    }
-                    return result;
+                    return iterator.next();
                 }
             }, result);
         }
