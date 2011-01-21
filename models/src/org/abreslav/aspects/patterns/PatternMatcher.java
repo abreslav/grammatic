@@ -5,12 +5,13 @@ import org.abreslav.metametamodel.IPropertyDescriptor;
 import org.abreslav.models.*;
 import org.abreslav.models.metamodels.ModelClass;
 import org.abreslav.models.metamodels.PropertyDescriptor;
+import org.abreslav.models.paths.CollectionItemPathEntry;
+import org.abreslav.models.paths.ModelPath;
+import org.abreslav.models.paths.ModelPathInterpreter;
+import org.abreslav.models.paths.PropertyPathEntry;
 import org.abreslav.templates.lambda.TemplateTerm;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -18,20 +19,34 @@ import java.util.Map;
  * TODO: object template, reference template
  *
  * A reference in a model matches a refence in a pattern when the identities agree:
- *    all other reference that match the same identity point to the same object
+ *    all other reference that doMatch the same identity point to the same object
  */
 public class PatternMatcher {
+
+    public static IMultiEnvironment match(IValue value, ITerm pattern) {
+        PatternMatcher matcher = new PatternMatcher(value);
+        if (matcher.doMatch(new ModelPath(), pattern)) {
+            return matcher.multiEnvironment;
+        }
+        return null;
+    }
+
     private final MultiEnvironment multiEnvironment = new MultiEnvironment();
     private final Map<IVariable, ITerm> variableBindings = new LinkedHashMap<IVariable, ITerm>();
     // pattern identity -> value identity
     private final Map<IValue, IValue> identityMap = new LinkedHashMap<IValue, IValue>();
+    private final IValue modelRoot;
 
-    public boolean match(IValue value, ITerm pattern) {
-        return pattern.accept(termSwitch, value);
+    private PatternMatcher(IValue modelRoot) {
+        this.modelRoot = modelRoot;
     }
 
-    private final ITermVisitor<Boolean, IValue> termSwitch = new ITermVisitor<Boolean, IValue>() {
-        public Boolean visitApplication(IApplication application, IValue value) {
+    public boolean doMatch(ModelPath currentPath, ITerm pattern) {
+        return pattern.accept(termSwitch, currentPath);
+    }
+
+    private final ITermVisitor<Boolean, ModelPath> termSwitch = new ITermVisitor<Boolean, ModelPath>() {
+        public Boolean visitApplication(IApplication application, ModelPath path) {
             List<IVariable> parameters = application.getAbstraction().getParameters();
             List<ITerm> arguments = application.getArguments();
 
@@ -42,36 +57,42 @@ public class PatternMatcher {
                 addBinding(parameter, argument);
             }
 
-            return match(value, application.getAbstraction().getBody());
+            return doMatch(path, application.getAbstraction().getBody());
         }
 
-        public Boolean visitVariableUsage(IVariableUsage variableUsage, IValue value) {
+        public Boolean visitVariableUsage(IVariableUsage variableUsage, ModelPath path) {
             IVariable variable = variableUsage.getVariable();
-            Collection<IValue> values = multiEnvironment.getValues(variable);
-            if (values.isEmpty()) {
+            Collection<ModelPath> valuePaths = multiEnvironment.getValues(variable);
+            if (valuePaths.isEmpty()) {
                 ITerm pattern = variableBindings.get(variable);
                 if (pattern == null) {
                     throw new IllegalArgumentException("Unbound variable: " + variable);
                 }
-                if (!match(value, pattern)) {
+                if (!doMatch(path, pattern)) {
                     return false;
                 }
             } else {
-                IValue sampleValue = values.iterator().next();
+                IValue sampleValue = resolvePath(valuePaths.iterator().next());
+                IValue value = resolvePath(path);
                 if (!sampleValue.equals(value)) {
                     return false;
                 }
             }
-            multiEnvironment.addValue(variable, value);
+            multiEnvironment.addValue(variable, path);
             return true;
         }
 
-        public Boolean visitTerm(ITerm term, IValue value) {
-            return matchValue(term, value);
+        public Boolean visitTerm(ITerm term, ModelPath path) {
+            return matchValue(term, path);
         }
     };
 
-    private boolean matchValue(ITerm pattern, IValue value) {
+    private IValue resolvePath(ModelPath path) {
+        return ModelPathInterpreter.INSTANCE.getValueByPath(modelRoot, path);
+    }
+
+    private boolean matchValue(ITerm pattern, final ModelPath path) {
+        IValue value = resolvePath(path);
         return value.accept(new IValueVisitor.Adapter<Boolean, TemplateTerm>() {
             @Override
             public <T> Boolean visitPrimitiveValue(IPrimitiveValue<T> value, TemplateTerm pattern) {
@@ -113,15 +134,44 @@ public class PatternMatcher {
                 for (Map.Entry<IPropertyDescriptor, IPropertyDescriptor> entry : propertyMap.entrySet()) {
                     PropertyDescriptor patternPropertyDescriptor = (PropertyDescriptor) entry.getKey();
                     PropertyDescriptor valuePropertyDescriptor = (PropertyDescriptor) entry.getValue();
-                    IValue valuePropertyValue = value.getPropertyValue(valuePropertyDescriptor.getObject().getIdentity());
-                    IValue patternPropertyValue = patternObject.getPropertyValue(patternPropertyDescriptor.getObject().getIdentity());
+                    ReferenceValue patternPropertyKey = new ReferenceValue(patternPropertyDescriptor.getObject().getIdentity());
+                    IValue patternPropertyValue = patternObject.getPropertyValue(patternPropertyKey);
+                    if (patternPropertyValue == null) {
+                        System.out.println("Pattern " + patternObject + " does not have property: " + patternPropertyKey);
+                        return false;
+                    }
 
-                    if (!match(valuePropertyValue, new TemplateTerm(patternPropertyValue))) {
+                    if (!doMatch(path.append(new PropertyPathEntry(new ReferenceValue(valuePropertyDescriptor.getObject().getIdentity()))),
+                            new TemplateTerm(patternPropertyValue))) {
                         return false;
                     }
                 }
 
                 return matchIdentities(patternObject.getIdentity(), value.getIdentity());
+            }
+
+            @Override
+            public Boolean visitCollectionValue(ICollectionValue value, TemplateTerm pattern) {
+                IValue patternValue = pattern.getValue();
+                if (false == patternValue instanceof ICollectionValue) {
+                    return false;
+                }
+
+                ICollectionValue patternCollection = (ICollectionValue) patternValue;
+                if (patternCollection.getValue().size() != value.getValue().size()) {
+                    return false; // TODO
+                }
+
+                // TODO: wildcards, sets
+                Iterator<IValue> patternIterator = patternCollection.getValue().iterator();
+                for (int i = 0; i < value.getValue().size(); i++) {
+                    ITerm patternItem = new TemplateTerm(patternIterator.next());
+                    if (!doMatch(path.append(new CollectionItemPathEntry(i)), patternItem)) {
+                        return false;
+                    }
+                }
+
+                return true;
             }
 
             @Override
@@ -173,13 +223,30 @@ public class PatternMatcher {
     }
 
     private class MultiEnvironment implements  IMultiEnvironment {
-        public Collection<IValue> getValues(IVariable variable) {
-            // TODO: not implemented
-            return null;
+        private final Map<IVariable, Set<ModelPath>> data = new LinkedHashMap<IVariable, Set<ModelPath>>();
+
+        public Collection<ModelPath> getValues(IVariable variable) {
+            return Collections.unmodifiableCollection(getModelPaths(variable));
         }
 
-        public void addValue(IVariable variable, IValue value) {
-            // TODO: Not implemented
+        private Set<ModelPath> getModelPaths(IVariable variable) {
+            Set<ModelPath> modelPaths = data.get(variable);
+            if (modelPaths == null) {
+                modelPaths = new LinkedHashSet<ModelPath>();
+                data.put(variable, modelPaths);
+            }
+            return modelPaths;
+        }
+
+        public void addValue(IVariable variable, ModelPath value) {
+            getModelPaths(variable).add(value);
+        }
+
+        @Override
+        public String toString() {
+            return "MultiEnvironment{" +
+                    "data=" + data +
+                    '}';
         }
     }
 }

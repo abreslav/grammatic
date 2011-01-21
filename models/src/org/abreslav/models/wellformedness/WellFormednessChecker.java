@@ -71,7 +71,7 @@ public class WellFormednessChecker {
             ObjectValue oldReferred = reference.getReferredObject();
             if (oldReferred != null) {
                 if (oldReferred != referredObject) {
-                    throw new IllegalArgumentException("Same identity points to different places over time");
+                    throw new IllegalArgumentException("Same identity points to different places over time: " + referredIdentity);
                 }
             } else {
                 reference.setReferredObject(referredObject);

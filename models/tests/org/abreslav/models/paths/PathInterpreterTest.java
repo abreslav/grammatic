@@ -3,9 +3,7 @@ package org.abreslav.models.paths;
 import junit.framework.TestCase;
 import org.abreslav.TestUtils;
 import org.abreslav.models.*;
-import org.abreslav.models.xml.XMLParser;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -18,11 +16,7 @@ public class PathInterpreterTest extends TestCase {
 
     @Override
     public void setUp() throws Exception {
-        String xmlFileName = testDir + "/data.xml";
-        File xmlFile = new File(xmlFileName);
-        xmlFile.delete();
-        TestUtils.termToXml(testDir + "/" + testFile, xmlFileName);
-        model = new XMLParser().parse(xmlFile);
+        this.model = TestUtils.parseTerm(testDir + "/" + testFile);
     }
 
     public void testEmptyPath() throws Exception {
@@ -34,7 +28,7 @@ public class PathInterpreterTest extends TestCase {
         int i = 0;
         for (Iterator<IValue> iterator = model.getValue().iterator(); iterator.hasNext();) {
             IValue value = iterator.next();
-            IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model, Collections.singletonList(new CollectionItemPathEntry(i)));
+            IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model, new ModelPath(new CollectionItemPathEntry(i)));
             assertEquals("Index: " + i, value, result);
             i++;
         }
@@ -45,7 +39,7 @@ public class PathInterpreterTest extends TestCase {
         for (int width = 0; width < model.getValue().size(); width++) {
             for (int start = 0; start < model.getValue().size() - width; start++) {
                 int end = start + width;
-                IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model, Collections.singletonList(new CollectionRangePathEntry(start, end)));
+                IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model, new ModelPath(new CollectionRangePathEntry(start, end)));
                 assertEquals("start: " + start + " width: " + width,
                         values.subList(start, end + 1), new ArrayList<IValue>(((ICollectionValue) result).getValue()));
             }
@@ -54,20 +48,20 @@ public class PathInterpreterTest extends TestCase {
 
     public void testOneStepPathToProperty() throws Exception {
         ObjectValue value = (ObjectValue) ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                Collections.singletonList(new CollectionItemPathEntry(8)));
+                new ModelPath(new CollectionItemPathEntry(8)));
         for (Map.Entry<IValue, IValue> entry : value.getProperties()) {
             IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(value,
-                    Collections.singletonList(new PropertyPathEntry(entry.getKey())));
+                    new ModelPath(new PropertyPathEntry(entry.getKey())));
             assertEquals("Property: " + entry.getKey(), entry.getValue(), result);
         }
     }
 
     public void testTwoStepPathToProperty() throws Exception {
         ObjectValue value = (ObjectValue) ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                Collections.singletonList(new CollectionItemPathEntry(8)));
+                new ModelPath(new CollectionItemPathEntry(8)));
         for (Map.Entry<IValue, IValue> entry : value.getProperties()) {
             IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                    Arrays.asList(new CollectionItemPathEntry(8),
+                    new ModelPath(new CollectionItemPathEntry(8),
                             new PropertyPathEntry(entry.getKey())
                     ));
             assertEquals("Property: " + entry.getKey(), entry.getValue(), result);
@@ -76,14 +70,14 @@ public class PathInterpreterTest extends TestCase {
 
     public void testMultiStepPathToProperty() throws Exception {
         IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                Arrays.asList(new CollectionItemPathEntry(8),
+                new ModelPath(new CollectionItemPathEntry(8),
                         new PropertyPathEntry(new StringValue("set")),
                         new CollectionItemPathEntry(0),
                         new PropertyPathEntry(new StringValue("a"))
                 ));
         assertEquals(new IntegerValue(1), result);
         result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                Arrays.asList(new CollectionItemPathEntry(8),
+                new ModelPath(new CollectionItemPathEntry(8),
                         new PropertyPathEntry(new StringValue("set")),
                         new CollectionItemPathEntry(1)
                 ));
@@ -93,14 +87,14 @@ public class PathInterpreterTest extends TestCase {
     public void testPathWithError() throws Exception {
         try {
             IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                    Arrays.asList(new CollectionItemPathEntry(9)
+                    new ModelPath(new CollectionItemPathEntry(9)
                     ));
             fail();
         } catch (IllegalArgumentException e) {/* OK */}
 
         try {
             IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                    Arrays.asList(new CollectionItemPathEntry(8),
+                    new ModelPath(new CollectionItemPathEntry(8),
                             new PropertyPathEntry(new StringValue("set1"))
                     ));
             fail();
@@ -108,7 +102,7 @@ public class PathInterpreterTest extends TestCase {
 
         try {
             IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                    Arrays.asList(new CollectionItemPathEntry(8),
+                    new ModelPath(new CollectionItemPathEntry(8),
                             new PropertyPathEntry(new StringValue("set")),
                             new CollectionItemPathEntry(-1),
                             new PropertyPathEntry(new StringValue("a"))
@@ -118,7 +112,7 @@ public class PathInterpreterTest extends TestCase {
 
         try {
             IValue result = ModelPathInterpreter.INSTANCE.getValueByPath(model,
-                    Arrays.asList(new CollectionItemPathEntry(8),
+                    new ModelPath(new CollectionItemPathEntry(8),
                             new PropertyPathEntry(new StringValue("set")),
                             new CollectionRangePathEntry(0, 1),
                             new PropertyPathEntry(new StringValue("a"))

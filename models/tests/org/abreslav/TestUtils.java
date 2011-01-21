@@ -2,12 +2,17 @@ package org.abreslav;
 
 import junit.framework.Assert;
 import org.abreslav.models.SetValue;
+import org.abreslav.models.metamodels.ConformanceChecker;
+import org.abreslav.models.metamodels.IDiagnostic;
+import org.abreslav.models.wellformedness.CompositeContext;
+import org.abreslav.models.wellformedness.Context;
 import org.abreslav.models.wellformedness.IContext;
 import org.abreslav.models.wellformedness.WellFormednessChecker;
 import org.abreslav.models.xml.XMLParser;
 import org.jdom.JDOMException;
 
 import java.io.*;
+import java.util.Collection;
 
 import static junit.framework.Assert.fail;
 
@@ -18,10 +23,15 @@ public class TestUtils {
     private static final String SDF_HOME = "/media/data/work/asfsdf";
     private static final String MMM_DIR = "metametamodel";
 
+    private static SetValue MMM;
+
     public static SetValue loadMetaMetaModel() throws JDOMException, IOException {
-        SetValue mmm = new XMLParser().parse(new File(MMM_DIR + "/MMM.xml"));
-        WellFormednessChecker.INSTANCE.checkWellFormedness(IContext.EMPTY, mmm.getValue());
-        return mmm;
+        if (MMM == null) {
+            MMM = new XMLParser().parse(new File(MMM_DIR + "/MMM.xml"));
+            WellFormednessChecker.INSTANCE.checkWellFormedness(IContext.EMPTY, MMM.getValue());
+            ConformanceChecker.check(MMM.getValue());
+        }
+        return MMM;
     }
 
     public static void gererateMetaMetaModelXml() {
@@ -94,5 +104,41 @@ public class TestUtils {
 
             Assert.assertEquals(stringBuilder.toString() + "\n", result + "\n");
         }
+    }
+
+    public static SetValue parseTerm(String termFileName) throws InterruptedException, IOException, JDOMException {
+        String xmlFileName = termFileName + ".xml";
+        File xmlFile = new File(xmlFileName);
+        xmlFile.delete();
+        termToXml(termFileName, xmlFileName);
+        SetValue model = new XMLParser().parse(xmlFile);
+        xmlFile.delete();
+        return model;
+    }
+
+    public static void checkMetaModel(SetValue mm) throws JDOMException, IOException {
+        checkModel(mm, loadMetaMetaModel());
+    }
+
+    public static void checkModel(SetValue m, SetValue mm) throws JDOMException, IOException {
+        WellFormednessChecker.INSTANCE.checkWellFormedness(new CompositeContext(new Context(mm), new Context(loadMetaMetaModel())), m.getValue());
+        Collection<IDiagnostic> result = ConformanceChecker.check(m.getValue());
+        if (!result.isEmpty()) {
+            fail(result.toString());
+        }
+    }
+
+    public static SetValue parseMetaModel(String termFileName) throws InterruptedException, IOException, JDOMException {
+        SetValue mm = parseTerm(termFileName);
+        checkMetaModel(mm);
+        return mm;
+    }
+
+    public static SetValue parseModel(String modelFileName, String metaModelFileName) throws InterruptedException, IOException, JDOMException {
+        SetValue mm = parseMetaModel(metaModelFileName);
+
+        SetValue m = parseTerm(modelFileName);
+        checkModel(m, mm);
+        return m;
     }
 }

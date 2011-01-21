@@ -1,0 +1,54 @@
+{
+  @Class Term {
+    @Class.abstract = true,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {}
+  },
+  @Class Abstraction {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor Abstraction.parameters {
+         @PropertyDescriptor.type = @ListType {
+           @CollectionType.elementType = @ObjectType { @ClassType.class = @Variable },
+           @CollectionType.nonEmpty = false
+         }
+      },
+      @PropertyDescriptor Abstraction.body {
+         @PropertyDescriptor.type = @NullableType {@NullableType.type = @AnyType {}}
+      }
+    }
+  },
+  @Class Variable {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {}
+  },
+  @Class Application {
+    @Class.abstract = false,
+    @Class.superclasses = {@Term},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor Application.abstraction {
+        @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Abstraction}
+      },
+      @PropertyDescriptor Application.arguments {
+        @PropertyDescriptor.type = @ListType {
+          @CollectionType.nonEmpty = false,
+          @CollectionType.elementType = @NullableType {@NullableType.type = @AnyType {}}
+        }
+      }
+    }
+  },
+  @Class VariableUsage {
+    @Class.abstract = false,
+    @Class.superclasses = {@Term},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor VariableUsage.variable {
+        @PropertyDescriptor.type = @ReferenceType {@ClassType.class = @Variable}
+      },
+      @PropertyDescriptor VariableUsage.inlineCollection {
+        @PropertyDescriptor.type = @PrimitiveType {@PrimitiveType.type = "Boolean"}
+      }
+    }
+  }
+}

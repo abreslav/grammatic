@@ -20,6 +20,10 @@ public class ModelPathInterpreter {
 
     private ModelPathInterpreter() {}
 
+    public IValue getValueByPath(IValue start, ModelPath path) {
+        return getValueByPath(start, path.getEntries());
+    }
+
     public IValue getValueByPath(IValue start, Iterable<? extends IModelPathEntry> path) {
         IValue result = start;
         for (IModelPathEntry entry : path) {

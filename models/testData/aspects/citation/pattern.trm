@@ -1,0 +1,75 @@
+{
+  @Symbol term {
+    @Symbol.productions = [
+      @SymbolReference {@SymbolReference.symbol = @abstraction},
+      @SymbolReference {@SymbolReference.symbol = @application},
+      @SymbolReference {@SymbolReference.symbol = @variable},
+      @Sequence {
+        @Sequence.expressions = [
+          @CharacterRange {
+            @CharacterRange.from = "(",
+            @CharacterRange.to = "("
+          },
+          @SymbolReference {@SymbolReference.symbol = @term},
+          @CharacterRange {
+            @CharacterRange.from = ")",
+            @CharacterRange.to = ")"
+          }
+        ]
+      }
+    ]
+  },
+  @Symbol application {
+    @Symbol.productions = [
+      @SymbolReference { @SymbolReference.symbol = @term},
+      @SymbolReference { @SymbolReference.symbol = @term}
+    ]
+  },
+  @Symbol abstraction {
+    @Symbol.productions = [
+      @Literal {@Literal.data = "\\"},
+      @SymbolReference { @SymbolReference.symbol = @variable},
+      @Literal {@Literal.data = "."},
+      @SymbolReference { @SymbolReference.symbol = @term}
+    ]
+  },
+  @Symbol variable {
+    @Symbol.productions = [
+      @Sequence {
+        @Sequence.expressions = [
+          @Alternative {
+            @Alternative.expressions = {
+              @CharacterRange {
+                @CharacterRange.from = "a",
+                @CharacterRange.to = "z"
+              },
+              @CharacterRange {
+                @CharacterRange.from = "A",
+                @CharacterRange.to = "Z"
+              }
+            }
+          },
+          @Iteration {
+            @Iteration.expression = @Alternative {
+                @Alternative.expressions = {
+                  @CharacterRange {
+                    @CharacterRange.from = "a",
+                    @CharacterRange.to = "z"
+                  },
+                  @CharacterRange {
+                    @CharacterRange.from = "A",
+                    @CharacterRange.to = "Z"
+                  },
+                  @CharacterRange {
+                    @CharacterRange.from = "0",
+                    @CharacterRange.to = "9"
+                  }
+                }
+              },
+            @Iteration.kind = @ZERO_OR_MORE
+          }
+        ]
+      }
+    ]
+  }
+}
