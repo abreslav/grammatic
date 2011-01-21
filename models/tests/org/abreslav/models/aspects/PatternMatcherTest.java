@@ -33,13 +33,13 @@ public class PatternMatcherTest extends TestCase {
         SetValue pattern;
         if (!new File(additional).exists()) {
             pattern = TestUtils.parseModel(
-                    testRootDir + "/templateMM.trm",
+                    "metamodels/templateMM.trm",
                     testDir + "/mm.trm",
                     testDir + "/pattern.trm"
             );
         } else {
             pattern = TestUtils.parseModel(
-                    testRootDir + "/templateMM.trm",
+                    "metamodels/templateMM.trm",
                     testDir + "/mm.trm",
                     additional,
                     testDir + "/pattern.trm"
