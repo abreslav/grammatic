@@ -11,6 +11,9 @@
       },
       @PropertyDescriptor bf {
         @PropertyDescriptor.type = @AnyType {}
+      },
+      @PropertyDescriptor fc {
+        @PropertyDescriptor.type = @AnyType {}
       }
     }
   },
@@ -20,7 +23,19 @@
     @Abstraction.body = @class c {
       @af = [1, 2, "3", @VariableUsage {@VariableUsage.variable = @a, @PredefinedTerm.inlineCollection = true}, true],
       @bf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @PredefinedTerm.inlineCollection = true}, false},
-      @aaf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @PredefinedTerm.inlineCollection = false}, false}
+      @aaf = {"3", 0, null, @VariableUsage {@VariableUsage.variable = @b, @PredefinedTerm.inlineCollection = false}, false},
+      @fc = {1,
+      @Application {
+          @Application.abstraction = @l,
+          @Application.arguments = [["a", "b", []], {1, {}, 2}],
+          @PredefinedTerm.inlineCollection = true
+        }, true}
     }
+  },
+
+  @Abstraction l {
+    @Abstraction.parameters = [@Variable la{}, @Variable lb{}],
+    @Abstraction.body =
+      [12, 2, "3", @VariableUsage {@VariableUsage.variable = @la, @PredefinedTerm.inlineCollection = true}, false]
   }
 }

@@ -38,6 +38,8 @@ public class TemplateInstantiatorTest extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
+        System.err.println("start--------------------------------" + getName());
+
         String definitionsFileName = testDir + "/definitions.xml";
         new File(definitionsFileName).delete();
         termToXml(testDir + "/definitions.trm", definitionsFileName);
@@ -79,6 +81,7 @@ public class TemplateInstantiatorTest extends TestCase {
         TestUtils.assertStringEqualsToFile(testDir, result, "expected.trm");
         new File(usageFileName).delete();
         new File(definitionsFileName).delete();
+        System.err.println("end--------------------------------");
     }
 
     public static Test suite() {

@@ -3,6 +3,10 @@
     @Application.abstraction = @foo,
     @Application.arguments = [["a", "b", []], {1, {}, 2}],
     @PredefinedTerm.inlineCollection = false
-  }
-
+  },
+  @Application {
+      @Application.abstraction = @l,
+      @Application.arguments = [["a", "b", []], {1, {}, 2}],
+      @PredefinedTerm.inlineCollection = true
+    }
 }

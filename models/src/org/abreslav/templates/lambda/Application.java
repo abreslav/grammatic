@@ -24,6 +24,7 @@ public class Application extends PredefinedTerm implements IApplication {
 
     public Application(ObjectValue object) {
         super(object);
+
         IValue abstraction = object.getPropertyValue(ref("Application.abstraction"));
         ReferenceValue abstractionReference = cast(abstraction, ReferenceValue.class, "Abstraction must be a reference");
         this.abstraction = new Abstraction(abstractionReference.getReferredObject());

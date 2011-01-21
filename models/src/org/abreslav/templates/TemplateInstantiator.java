@@ -53,16 +53,16 @@ public class TemplateInstantiator {
     private Collection<IValue> instantiateInsideCollection(final ITemplateContext context, final TemplateTerm templateTerm) {
         final Collection<IValue> result = new ArrayList<IValue>();
 
-        templateTerm.accept(new ITermVisitor<Void, Void>() {
+        templateTerm.accept(new ITermVisitor.Adapter<Void, Void>() {
+            @Override
             public Void visitApplication(IApplication application, Void data) {
-                result.add(((TemplateTerm) instantiate(context, templateTerm)).getValue());
-                return null;
+                return super.visitApplication(application, data);
             }
 
-            public Void visitVariableUsage(IVariableUsage variableUsage, Void data) {
+            @Override
+            public Void visitPredefinedTerm(IPredefinedTerm term, Void data) {
                 IValue value = ((TemplateTerm) instantiate(context, templateTerm)).getValue();
-                ITerm instantiate = instantiate(context, templateTerm);
-                if (!variableUsage.isInlineCollection() || false == value instanceof ICollectionValue) {
+                if (!term.isInlineCollection() || false == value instanceof ICollectionValue) {
                     result.add(value);
                     return null;
                 }
