@@ -1,6 +1,5 @@
 package org.abreslav.aspects.patterns.lambda;
 
-import org.abreslav.lambda.ITerm;
 import org.abreslav.lambda.ITermVisitor;
 import org.abreslav.metametamodel.IType;
 import org.abreslav.models.IValue;
@@ -14,7 +13,7 @@ import static org.abreslav.models.util.CastUtils.cast;
 /**
  * @author abreslav
  */
-public class Wildcard extends PredefinedTerm implements ITerm {
+public class Wildcard extends PredefinedTerm {
 
     private final IType type;
 

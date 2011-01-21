@@ -1,0 +1,22 @@
+{
+  @Application {
+    @Application.arguments = [],
+    @Application.abstraction = @abstr1,
+    @PredefinedTerm.inlineCollection = false
+  },
+  @Application {
+    @Application.arguments = [],
+    @Application.abstraction = @abstr2,
+    @PredefinedTerm.inlineCollection = false
+  },
+  @Application {
+    @Application.arguments = [],
+    @Application.abstraction = @abstr3,
+    @PredefinedTerm.inlineCollection = false
+  },
+  @Application {
+    @Application.arguments = [],
+    @Application.abstraction = @abstr4,
+    @PredefinedTerm.inlineCollection = false
+  }
+}

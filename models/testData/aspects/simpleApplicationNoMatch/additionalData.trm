@@ -2,18 +2,18 @@
   @Abstraction abstr1 {
     @Abstraction.parameters = [],
     @Abstraction.body =
-      @Symbol term {
+      @Symbol pterm {
         @Symbol.productions = [
-          @SymbolReference {@SymbolReference.symbol = @abstraction},
-          @SymbolReference {@SymbolReference.symbol = @abstraction},
-          @SymbolReference {@SymbolReference.symbol = @variable},
+          @SymbolReference {@SymbolReference.symbol = @pabstraction},
+          @SymbolReference {@SymbolReference.symbol = @pabstraction},
+          @SymbolReference {@SymbolReference.symbol = @pvariable},
           @Sequence {
             @Sequence.expressions = [
               @CharacterRange {
                 @CharacterRange.from = "(",
                 @CharacterRange.to = "("
               },
-              @SymbolReference {@SymbolReference.symbol = @term},
+              @SymbolReference {@SymbolReference.symbol = @pterm},
               @CharacterRange {
                 @CharacterRange.from = ")",
                 @CharacterRange.to = ")"
@@ -26,29 +26,29 @@
   @Abstraction abstr2 {
     @Abstraction.parameters = [],
     @Abstraction.body =
-      @Symbol application {
+      @Symbol papplication {
         @Symbol.productions = [
-          @SymbolReference { @SymbolReference.symbol = @term},
-          @SymbolReference { @SymbolReference.symbol = @term}
+          @SymbolReference { @SymbolReference.symbol = @pterm},
+          @SymbolReference { @SymbolReference.symbol = @pterm}
         ]
       }
   },
   @Abstraction abstr3 {
     @Abstraction.parameters = [],
     @Abstraction.body =
-      @Symbol abstraction {
+      @Symbol pabstraction {
         @Symbol.productions = [
           @Literal {@Literal.data = "\\"},
-          @SymbolReference { @SymbolReference.symbol = @variable},
+          @SymbolReference { @SymbolReference.symbol = @pvariable},
           @Literal {@Literal.data = "."},
-          @SymbolReference { @SymbolReference.symbol = @term}
+          @SymbolReference { @SymbolReference.symbol = @pterm}
         ]
       }
   },
   @Abstraction abstr4 {
     @Abstraction.parameters = [],
     @Abstraction.body =
-      @Symbol variable {
+      @Symbol pvariable {
         @Symbol.productions = [
           @Sequence {
             @Sequence.expressions = [

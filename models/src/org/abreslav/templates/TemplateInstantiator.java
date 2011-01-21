@@ -5,6 +5,7 @@ import org.abreslav.models.ICollectionValue;
 import org.abreslav.models.IValue;
 import org.abreslav.models.IValueVisitor;
 import org.abreslav.models.ObjectValue;
+import org.abreslav.templates.lambda.ITermFactory;
 import org.abreslav.templates.lambda.TemplateTerm;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import static org.abreslav.models.util.CastUtils.cast;
  */
 public class TemplateInstantiator {
     public static final TemplateInstantiator INSTANCE = new TemplateInstantiator();
+    private static final ITermFactory factory = ITermFactory.TEMPLATE_TERM_FACTORY;
 
     // TODO: template validator for recursivity and stuff
 
@@ -32,7 +34,7 @@ public class TemplateInstantiator {
         public IValue visitCollectionValue(ICollectionValue value, ITemplateContext context) {
             ArrayList<IValue> newValues = new ArrayList<IValue>();
             for (IValue v : value.getValue()) {
-                Collection<IValue> values = instantiateInsideCollection(context, new TemplateTerm(v));
+                Collection<IValue> values = instantiateInsideCollection(context, factory.createTerm(v));
                 newValues.addAll(values);
             }
             return value.createNewFromList(newValues);
@@ -43,14 +45,14 @@ public class TemplateInstantiator {
             // TODO: we don't instantiate classes here, although we could...
             ObjectValue newObject = new ObjectValue(value.getClassReference(), value.getIdentity());
             for (Map.Entry<IValue, IValue> property : value.getProperties()) {
-                ITerm instantiate = instantiate(context, new TemplateTerm(property.getValue()));
+                ITerm instantiate = instantiate(context, factory.createTerm(property.getValue()));
                 newObject.setProperty(property.getKey(), ((TemplateTerm) instantiate).getValue());
             }
             return newObject;
         }
     };
 
-    private Collection<IValue> instantiateInsideCollection(final ITemplateContext context, final TemplateTerm templateTerm) {
+    private Collection<IValue> instantiateInsideCollection(final ITemplateContext context, final ITerm templateTerm) {
         final Collection<IValue> result = new ArrayList<IValue>();
 
         templateTerm.accept(new ITermVisitor.Adapter<Void, Void>() {
@@ -96,7 +98,7 @@ public class TemplateInstantiator {
         public ITerm visitTerm(ITerm term, ITemplateContext context) {
             TemplateTerm templateTerm = cast(term, TemplateTerm.class, "A non-template term: " + term.getClass().getSimpleName());
             IValue newValue = templateTerm.getValue().accept(valueVisitor, context);
-            return new TemplateTerm(newValue);
+            return factory.createTerm(newValue);
         }
     };
 

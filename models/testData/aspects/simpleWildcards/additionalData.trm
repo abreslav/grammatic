@@ -1,0 +1,55 @@
+{
+  @Abstraction abstr1 {
+    @Abstraction.parameters = [],
+    @Abstraction.body =
+      @Wildcard {
+        @Wildcard.type = @ObjectType { @ClassType.class = @Symbol},
+        @PredefinedTerm.inlineCollection = false
+      }
+  },
+  @Abstraction abstr2 {
+    @Abstraction.parameters = [],
+    @Abstraction.body =
+      @Symbol papplication {
+        @Symbol.productions = [
+          @Wildcard {
+            @Wildcard.type = @ObjectType { @ClassType.class = @SymbolReference},
+            @PredefinedTerm.inlineCollection = false
+          },
+          @SymbolReference { @SymbolReference.symbol = @term}
+        ]
+      }
+  },
+  @Abstraction abstr3 {
+    @Abstraction.parameters = [],
+    @Abstraction.body =
+      @Symbol pabstraction {
+        @Symbol.productions = [
+          @Literal {@Literal.data = @Wildcard {
+            @Wildcard.type = @PrimitiveType { @PrimitiveType.type = String},
+            @PredefinedTerm.inlineCollection = false
+          }},
+          @SymbolReference { @SymbolReference.symbol = @pvariable},
+          @Literal {@Literal.data = "."},
+          @SymbolReference { @SymbolReference.symbol = @term}
+        ]
+      }
+  },
+  @Abstraction abstr4 {
+    @Abstraction.parameters = [],
+    @Abstraction.body =
+      @Symbol pvariable {
+        @Symbol.productions = [
+          @Sequence {
+            @Sequence.expressions = @Wildcard {
+              @Wildcard.type = @ListType {
+                @CollectionType.nonEmpty = false,
+                @CollectionType.elementType = @ObjectType {@ClassType.class = @Expression}
+              },
+              @PredefinedTerm.inlineCollection = false
+            }
+          }
+        ]
+      }
+  }
+}

@@ -5,7 +5,9 @@
     @Class.abstract = false,
     @Class.superclasses = {@PredefinedTerm},
     @Class.propertyDescriptors = {
-      @PropertyDescriptor Wildcard.type = @ObjectType { @ClassType.type = @Type }
+      @PropertyDescriptor Wildcard.type {
+         @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
+      }
     }
   }
 

@@ -19,7 +19,7 @@ public class Abstraction extends ObjectWrapper implements IAbstraction {
     private final List<IVariable> parameters = new ArrayList<IVariable>();
     private final ITerm body;
 
-    public Abstraction(ObjectValue object) {
+    public Abstraction(ObjectValue object, ITermFactory factory) {
         super(object);
         IValue parameters = object.getPropertyValue(ref("Abstraction.parameters"));
         ListValue parametersList = cast(parameters, ListValue.class, "Parameters must be a list");
@@ -28,7 +28,7 @@ public class Abstraction extends ObjectWrapper implements IAbstraction {
             this.parameters.add(new Variable(parameterObject));
         }
 
-        this.body = new TemplateTerm(object.getPropertyValue(ref("Abstraction.body")));
+        this.body = factory.createTerm(object.getPropertyValue(ref("Abstraction.body")));
     }
 
     public List<IVariable> getParameters() {

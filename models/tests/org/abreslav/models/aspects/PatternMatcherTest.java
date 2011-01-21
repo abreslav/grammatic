@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 import org.abreslav.TestUtils;
 import org.abreslav.aspects.patterns.PatternMatcher;
 import org.abreslav.models.SetValue;
-import org.abreslav.templates.lambda.TemplateTerm;
+import org.abreslav.templates.lambda.ITermFactory;
 
 import java.io.File;
 import java.util.Arrays;
@@ -40,12 +40,14 @@ public class PatternMatcherTest extends TestCase {
         } else {
             pattern = TestUtils.parseModel(
                     "metamodels/templateMM.trm",
+                    "metamodels/aspectMM.trm",
                     testDir + "/mm.trm",
+                    testDir + "/m.trm",
                     additional,
                     testDir + "/pattern.trm"
             );
         }
-        PatternMatcher.Result result = PatternMatcher.match(m, new TemplateTerm(pattern));
+        PatternMatcher.Result result = PatternMatcher.match(m, ITermFactory.TEMPLATE_TERM_FACTORY.createTerm(pattern));
         TestUtils.assertStringEqualsToFile(testDir, result + "", "expected.txt");
     }
 

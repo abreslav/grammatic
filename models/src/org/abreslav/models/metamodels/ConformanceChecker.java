@@ -27,6 +27,10 @@ public class ConformanceChecker {
         return new ConformanceChecker().checkModel(model);
     }
 
+    public static boolean checkType(IValue value, IType type) {
+        return new ConformanceChecker().checkValueType(value, type);
+    }
+
     private static final String META_CLASS_NAME = "Class";
 
     private Collection<IDiagnostic> diagnostics = new ArrayList<IDiagnostic>();
@@ -81,7 +85,7 @@ public class ConformanceChecker {
             } else {
                 // Every property has a value that agrees with the type declared by its descriptor
                 IType expectedType = descriptor.getType();
-                if (!checkType(propertyValue, expectedType)) {
+                if (!checkValueType(propertyValue, expectedType)) {
                     diagnostics.add(new PropertyDiagnostic(value, descriptor, propertyValue + " is not a value of type " + expectedType));
                 }
             }
@@ -117,7 +121,7 @@ public class ConformanceChecker {
         return modelClass;
     }
 
-    private boolean checkType(IValue value, IType type) {
+    private boolean checkValueType(IValue value, IType type) {
         if (value != NullValue.NULL) {
             IType nonNullable = unwrapNullable(type);
             if (nonNullable instanceof IAnyType) {
@@ -235,7 +239,7 @@ public class ConformanceChecker {
 
         IType elementType = collectionType.getElementType();
         for (IValue item : collection) {
-            if (!checkType(item, elementType)) {
+            if (!checkValueType(item, elementType)) {
                 return false;
             }
         }

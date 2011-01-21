@@ -22,17 +22,17 @@ public class Application extends PredefinedTerm implements IApplication {
     private final IAbstraction abstraction;
     private final List<ITerm> arguments = new ArrayList<ITerm>();
 
-    public Application(ObjectValue object) {
+    public Application(ObjectValue object, ITermFactory factory) {
         super(object);
 
         IValue abstraction = object.getPropertyValue(ref("Application.abstraction"));
         ReferenceValue abstractionReference = cast(abstraction, ReferenceValue.class, "Abstraction must be a reference");
-        this.abstraction = new Abstraction(abstractionReference.getReferredObject());
+        this.abstraction = new Abstraction(abstractionReference.getReferredObject(), factory);
 
         IValue arguments = object.getPropertyValue(ref("Application.arguments"));
         ListValue argList = cast(arguments, ListValue.class, "Arguments must be a list");
         for (IValue argument : argList.getValue()) {
-            this.arguments.add(new TemplateTerm(argument));
+            this.arguments.add(factory.createTerm(argument));
         }
     }
 

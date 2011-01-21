@@ -9,43 +9,12 @@ import org.abreslav.models.*;
  */
 public class TemplateTerm implements ITerm {
     private final IValue value;
-    private ITerm structuredTerm;
 
-    public TemplateTerm(IValue value) {
+    /*package*/ TemplateTerm(IValue value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Value is null");
+        }
         this.value = value;
-        value.accept(new IValueVisitor.Adapter<Void, Void>() {
-            @Override
-            public Void visitValue(IValue value, Void data) {
-                structuredTerm = TemplateTerm.this;
-                return null;
-            }
-
-            @Override
-            public Void visitObject(ObjectValue value, Void data) {
-                ReferenceValue classReference = value.getClassReference();
-                // class identity must be a primitive value (well-formedness)
-                IValue referredIdentity = classReference.getReferredIdentity();
-                structuredTerm = referredIdentity.accept(new Adapter<ITerm, ObjectValue>() {
-                    @Override
-                    public ITerm visitValue(IValue value, ObjectValue data) {
-                        return TemplateTerm.this;
-                    }
-
-                    @Override
-                    public ITerm visitString(StringValue value, ObjectValue object) {
-                        String className = value.getValue();
-                        if ("Application".equals(className)) {
-                            return new Application(object);
-                        } else if ("VariableUsage".equals(className)) {
-                            return new VariableUsage(object);
-                        } else {
-                            return TemplateTerm.this;
-                        }
-                    }
-                }, value);
-                return null;
-            }
-        }, null);
     }
 
     public IValue getValue() {
@@ -53,10 +22,7 @@ public class TemplateTerm implements ITerm {
     }
 
     public <R, D> R accept(final ITermVisitor<R, D> visitor, final D data) {
-        if (structuredTerm == this) {
-            return visitor.visitTerm(this, data);
-        }
-        return structuredTerm.accept(visitor, data);
+        return visitor.visitTerm(this, data);
     }
 
     @Override

@@ -1,14 +1,17 @@
 package org.abreslav.aspects.patterns;
 
+import org.abreslav.aspects.patterns.lambda.Wildcard;
 import org.abreslav.lambda.*;
 import org.abreslav.metametamodel.IPropertyDescriptor;
 import org.abreslav.models.*;
+import org.abreslav.models.metamodels.ConformanceChecker;
 import org.abreslav.models.metamodels.ModelClass;
 import org.abreslav.models.metamodels.PropertyDescriptor;
 import org.abreslav.models.paths.CollectionItemPathEntry;
 import org.abreslav.models.paths.ModelPath;
 import org.abreslav.models.paths.ModelPathInterpreter;
 import org.abreslav.models.paths.PropertyPathEntry;
+import org.abreslav.templates.lambda.ITermFactory;
 import org.abreslav.templates.lambda.TemplateTerm;
 
 import java.util.*;
@@ -22,6 +25,16 @@ import java.util.*;
  *    all other reference that doMatch the same identity point to the same object
  */
 public class PatternMatcher {
+
+    private static final ITermFactory factory = new ITermFactory.TermFactory() {
+        @Override
+        protected ITerm otherClass(String className, ObjectValue object) {
+            if (className.equals("Wildcard")) {
+                return new Wildcard(object);
+            }
+            return super.otherClass(className, object);
+        }
+    };
 
     public static Result match(IValue value, ITerm pattern) {
         PatternMatcher matcher = new PatternMatcher(value);
@@ -85,6 +98,17 @@ public class PatternMatcher {
         }
 
         public IExitCode visitTerm(ITerm term, ModelPath path) {
+            if (term instanceof Wildcard) {
+                Wildcard wildcard = (Wildcard) term;
+
+                IValue value = resolvePath(path);
+                if (ConformanceChecker.checkType(value, wildcard.getType())) {
+                    return ok();
+                } else {
+                    return fail("Stub");
+                }
+            }
+
             return matchValue(term, path);
         }
     };
@@ -148,13 +172,19 @@ public class PatternMatcher {
                     }
 
                     IExitCode exitCode = doMatch(path.append(new PropertyPathEntry(new ReferenceValue(valuePropertyDescriptor.getObject().getIdentity()))),
-                            new TemplateTerm(patternPropertyValue));
+                            factory.createTerm(patternPropertyValue));
                     if (!exitCode.ok()) {
                         return exitCode;
                     }
                 }
 
                 return matchIdentities(patternObject.getIdentity(), value.getIdentity());
+            }
+
+            @Override
+            public IExitCode visitList(ListValue value, TemplateTerm data) {
+                // TODO: Not implemented
+                return super.visitList(value, data);
             }
 
             @Override
@@ -174,7 +204,7 @@ public class PatternMatcher {
                 // TODO: wildcards, sets
                 Iterator<IValue> patternIterator = patternValues.iterator();
                 for (int i = 0; i < modelValues.size(); i++) {
-                    ITerm patternItem = new TemplateTerm(patternIterator.next());
+                    ITerm patternItem = factory.createTerm(patternIterator.next());
                     IExitCode exitCode = doMatch(path.append(new CollectionItemPathEntry(i)), patternItem);
                     if (!exitCode.ok()) {
                         return exitCode;

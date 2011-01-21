@@ -13,6 +13,7 @@ import org.abreslav.models.wellformedness.Context;
 import org.abreslav.models.wellformedness.IContext;
 import org.abreslav.models.wellformedness.WellFormednessChecker;
 import org.abreslav.models.xml.XMLParser;
+import org.abreslav.templates.lambda.ITermFactory;
 import org.abreslav.templates.lambda.TemplateTerm;
 
 import java.io.File;
@@ -75,7 +76,7 @@ public class TemplateInstantiatorTest extends TestCase {
             fail(checkUsage.toString());
         }
 
-        ITerm term = TemplateInstantiator.INSTANCE.instantiate(ITemplateContext.EMPTY, new TemplateTerm(templateUsageTest));
+        ITerm term = TemplateInstantiator.INSTANCE.instantiate(ITemplateContext.EMPTY, ITermFactory.TEMPLATE_TERM_FACTORY.createTerm(templateUsageTest));
         String result = ((TemplateTerm) term).getValue().toString();
 
         TestUtils.assertStringEqualsToFile(testDir, result, "expected.trm");
