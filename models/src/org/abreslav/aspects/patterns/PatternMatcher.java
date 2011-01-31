@@ -105,6 +105,7 @@ public class PatternMatcher {
                 if (ConformanceChecker.checkType(value, wildcard.getType())) {
                     return ok();
                 } else {
+                    // TODO
                     return fail("Stub");
                 }
             }
@@ -182,9 +183,12 @@ public class PatternMatcher {
             }
 
             @Override
-            public IExitCode visitList(ListValue value, TemplateTerm data) {
-                // TODO: Not implemented
-                return super.visitList(value, data);
+            public IExitCode visitList(ListValue value, TemplateTerm pattern) {
+                IValue patternValue = pattern.getValue();
+                if (false == patternValue instanceof ListValue) {
+                    return fail("Value " + value + " does not match " + pattern + " which is not a list pattern");
+                }
+                return matchList(value.getValue(), ((ListValue) patternValue).getValue());
             }
 
             @Override
@@ -219,6 +223,12 @@ public class PatternMatcher {
                 throw new IllegalArgumentException("Unknown value: " + value);
             }
         }, (TemplateTerm) pattern);
+    }
+
+    private IExitCode matchList(List<IValue> value, List<IValue> pattern) {
+        IValue patternEntry = pattern.get(0);
+
+        return fail("Value " + value + " does not match the pattern " + pattern);
     }
 
     private IExitCode fail(IValue value, ITerm pattern) {
