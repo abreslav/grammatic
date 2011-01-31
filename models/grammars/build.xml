@@ -1,0 +1,12 @@
+<project >
+
+    <target name="build">
+        <java classname="xtc.parser.Rats" classpath="/home/abreslav/work/rats/rats.jar">
+            <arg value="-out"/>
+            <arg value="../src"/>
+            <arg value="-lgpl"/>
+            <arg value="grammar.rats"/>
+        </java>
+
+    </target>
+</project>

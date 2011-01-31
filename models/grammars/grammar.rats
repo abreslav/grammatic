@@ -1,0 +1,10 @@
+module grammar;
+
+header { /*foo*/ }
+body { /*body*/ }
+footer { /*footer*/ }
+option parser(Grammar);
+
+
+public Grammar Grammar = symbols:Symbol* ;
+Symbol Symbol = value:"symbol" ;
