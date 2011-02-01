@@ -33,13 +33,16 @@ footer { /*footer*/ }
 option parser(Grammar);
 
 
-public List<ISymbol> Grammar = Symbols EOF { yyValue = resolveReferences(); } ;
+public List<ISymbol> Grammar = Spacing Symbols EOF { yyValue = resolveReferences(); } ;
 void Symbols = (Symbol+) ;
-ISymbol Symbol = id:Identifier prods:(COLON Expression)+ SEMI {
-  ISymbol symbol = new SymbolImpl(id, new AlternativeImpl(prods));
+ISymbol Symbol = labels:Label* id:Identifier prods:(COLON Expression)+ SEMI {
+  ISymbol symbol = new SymbolImpl(labels, id, new AlternativeImpl(prods));
   addSymbol(symbol);
   yyValue = symbol;
 };
+
+String Label = At Id Spacing;
+void At = "@";
 
 IExpression Expression
   = Alternative
@@ -87,9 +90,9 @@ ISymbolReference SymbolReference = id:Identifier {
 IEmpty Empty = "empty":Id Spacing { yyValue = EmptyImpl.INSTANCE; };
 ILiteral Literal = str:StringLiteral Spacing { yyValue = new LiteralImpl(str);} ;
 ICharacterRange CharacterRange
-  = ch:CharacterLiteral Spacing {yyValue = new CharacterRangeImpl(ch.charAt(0), ch.charAt(0));}
-  / "[" Spacing from:CharacterLiteral Spacing "-" Spacing to:CharacterLiteral Spacing "]" Spacing {
-    yyValue = new CharacterRangeImpl(from.charAt(0), to.charAt(0));
+  = neg:"!"? ch:CharacterLiteral Spacing {yyValue = new CharacterRangeImpl(neg != null, ch.charAt(0), ch.charAt(0));}
+  / "[" Spacing neg:"!"? Spacing from:CharacterLiteral Spacing "-" Spacing to:CharacterLiteral Spacing "]" Spacing {
+    yyValue = new CharacterRangeImpl(neg != null, from.charAt(0), to.charAt(0));
   }
   ;
 

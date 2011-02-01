@@ -6,4 +6,5 @@ package org.abreslav.grammar;
 public interface ICharacterRange extends IExpression {
     char getFrom();
     char getTo();
+    boolean isNegated();
 }

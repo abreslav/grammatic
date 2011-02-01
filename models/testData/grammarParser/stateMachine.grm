@@ -9,9 +9,11 @@ action
   : "case" Int ":" Name ";"
   ;
 
-Int : Digit+;
-Digit : ['0'-'9'];
+@token Int : Digit+;
+@helper Digit : ['0'-'9'];
 
-Name : NameStartCharacter NameCharacter*;
-NameCharacter : NameStartCharacter | Digit;
-NameStartCharacter : ['A'-'Z'] | ['a'-'z'] | '_';
+@token Name : NameStartCharacter NameCharacter*;
+@helper NameCharacter : NameStartCharacter | Digit;
+@helper NameStartCharacter : ['A'-'Z'] | ['a'-'z'] | '_';
+
+@whitespace WS : ['\u0000'-'\u0020'] ;
