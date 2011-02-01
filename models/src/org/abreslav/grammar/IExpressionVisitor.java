@@ -35,4 +35,8 @@ public class IExpressionVisitor<R, D> {
     public R visitOption(IOption option, D data) {
         return visitExpression(option, data);
     }
+
+    public R visitRepetition(IRepetition repetition, D data) {
+        return visitExpression(repetition, data);
+    }
 }

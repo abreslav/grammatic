@@ -55,7 +55,7 @@ IExpression Alternative
   };
 
 IExpression Sequence
-  = v1:Option rest:Option* {
+  = v1:Iteration rest:Iteration* {
     if (rest.isEmpty()) {
       yyValue = v1;
     } else {
@@ -71,8 +71,10 @@ IExpression AtomicExpression
   / "(" Spacing v:Expression Spacing ")" Spacing { yyValue = v; }
   ;
 
-IExpression Option
+IExpression Iteration
   = e:AtomicExpression Spacing "?" Spacing { yyValue = new OptionImpl(e); }
+  / e:AtomicExpression Spacing "*" Spacing { yyValue = new RepetitionImpl(e, RepetitionKind.ZERO_OR_MORE); }
+  / e:AtomicExpression Spacing "+" Spacing { yyValue = new RepetitionImpl(e, RepetitionKind.ONE_OR_MORE); }
   / AtomicExpression
   ;
 
@@ -84,7 +86,12 @@ ISymbolReference SymbolReference = id:Identifier {
 
 IEmpty Empty = "empty":Id Spacing { yyValue = EmptyImpl.INSTANCE; };
 ILiteral Literal = str:StringLiteral Spacing { yyValue = new LiteralImpl(str);} ;
-ICharacterRange CharacterRange = ch:CharacterLiteral Spacing {yyValue = new CharacterRangeImpl(ch.charAt(0), ch.charAt(0));};
+ICharacterRange CharacterRange
+  = ch:CharacterLiteral Spacing {yyValue = new CharacterRangeImpl(ch.charAt(0), ch.charAt(0));}
+  / "[" Spacing from:CharacterLiteral Spacing "-" Spacing to:CharacterLiteral Spacing "]" Spacing {
+    yyValue = new CharacterRangeImpl(from.charAt(0), to.charAt(0));
+  }
+  ;
 
 void COLON = ":" Spacing;
 void SEMI = ";" Spacing;
@@ -96,9 +103,9 @@ String Id            = [a-zA-Z] [a-zA-Z0-9]* ;
 void Spacing       = (Space / SLComment / MLComment)* ;
 void FSpacing      = (Space / SLComment / MLComment)+ ;
 void Space         = ' ' / '\t' / '\f' / EOL ;
-void SLComment     = "//" (![\n\r] _)* EOL ;
+void SLComment     = "//" (![\n\r] _)* (EOL / EOF) ;
 void MLComment     = "/*" ('*' !'/' / !'*' _)* "*/" ;
-void EOL           = '\r' '\n' / '\r' / '\n' ;
+void EOL           = '\r' '\n' / '\r' / '\n';
 void EOF           = !_ ;
 
 
