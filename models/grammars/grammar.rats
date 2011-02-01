@@ -1,10 +1,132 @@
 module grammar;
 
-header { /*foo*/ }
-body { /*body*/ }
+header {
+import org.abreslav.grammar.*;
+import org.abreslav.grammar.impl.*;
+import java.util.*;
+}
+
+body {
+    private final Map<String, ISymbol> symbols = new LinkedHashMap<String, ISymbol>();
+    private final Map<SymbolReferenceImpl, String> references = new HashMap<SymbolReferenceImpl, String>();
+
+    private void addSymbol(ISymbol symbol) {
+        if (symbols.put(symbol.getName(), symbol) != null) {
+            throw new IllegalArgumentException("Duplicate symbol: " + symbol.getName());
+        }
+    }
+
+    private List<ISymbol> resolveReferences() {
+        for (Map.Entry<SymbolReferenceImpl, String> entry : references.entrySet()) {
+            ISymbol symbol = symbols.get(entry.getValue());
+            if (symbol == null) {
+                throw new IllegalArgumentException("Unresolved symbol: " + entry.getValue());
+            }
+            entry.getKey().setReferencedSymbol(symbol);
+        }
+        return new ArrayList<ISymbol>(symbols.values());
+    }
+}
+
 footer { /*footer*/ }
+
 option parser(Grammar);
 
 
-public Grammar Grammar = symbols:Symbol* ;
-Symbol Symbol = value:"symbol" ;
+public List<ISymbol> Grammar = Symbols EOF { yyValue = resolveReferences(); } ;
+void Symbols = (Symbol+) ;
+ISymbol Symbol = id:Identifier prods:(COLON Expression)+ SEMI {
+  ISymbol symbol = new SymbolImpl(id, new AlternativeImpl(prods));
+  addSymbol(symbol);
+  yyValue = symbol;
+};
+
+IExpression Expression
+  = Alternative
+  ;
+
+IExpression Alternative
+  = v1:Sequence rest:(OR Sequence)* {
+    if (rest.isEmpty()) {
+      yyValue = v1;
+    } else {
+      yyValue = new AlternativeImpl(v1, rest);
+    }
+  };
+
+IExpression Sequence
+  = v1:Option rest:Option* {
+    if (rest.isEmpty()) {
+      yyValue = v1;
+    } else {
+      yyValue = new SequenceImpl(v1, rest);
+    }
+  };
+
+IExpression AtomicExpression
+  = Empty
+  / SymbolReference
+  / Literal
+  / CharacterRange
+  / "(" Spacing v:Expression Spacing ")" Spacing { yyValue = v; }
+  ;
+
+IExpression Option
+  = e:AtomicExpression Spacing "?" Spacing { yyValue = new OptionImpl(e); }
+  / AtomicExpression
+  ;
+
+ISymbolReference SymbolReference = id:Identifier {
+  SymbolReferenceImpl impl = new SymbolReferenceImpl(null);
+  yyValue = impl;
+  references.put(impl, id);
+};
+
+IEmpty Empty = "empty":Id Spacing { yyValue = EmptyImpl.INSTANCE; };
+ILiteral Literal = str:StringLiteral Spacing { yyValue = new LiteralImpl(str);} ;
+ICharacterRange CharacterRange = ch:CharacterLiteral Spacing {yyValue = new CharacterRangeImpl(ch.charAt(0), ch.charAt(0));};
+
+void COLON = ":" Spacing;
+void SEMI = ";" Spacing;
+void OR = "|" Spacing;
+
+String Identifier    = Id Spacing ;
+String Id            = [a-zA-Z] [a-zA-Z0-9]* ;
+
+void Spacing       = (Space / SLComment / MLComment)* ;
+void FSpacing      = (Space / SLComment / MLComment)+ ;
+void Space         = ' ' / '\t' / '\f' / EOL ;
+void SLComment     = "//" (![\n\r] _)* EOL ;
+void MLComment     = "/*" ('*' !'/' / !'*' _)* "*/" ;
+void EOL           = '\r' '\n' / '\r' / '\n' ;
+void EOF           = !_ ;
+
+
+String CharacterLiteral = ['] v:CharContents  ['] {yyValue = v;};
+String CharContents = ( EscapeSequence / !['\\] _ );
+String StringLiteral    = ["] v:StringContents ["] {yyValue = v;};
+String StringContents = ( EscapeSequence / !["\\] _ )*;
+String ClassChar        = EscapeSequence / ![\\\-\]] _ ;
+
+transient String EscapeSequence =
+   '\\' [btnfr"'\-\[\\\]] / UnicodeEscape / OctalEscape
+   ;
+
+transient String UnicodeEscape = '\\' 'u' HexQuad ;
+
+transient String OctalEscape =
+   '\\' [0-3] OctalDigit OctalDigit
+   / '\\' OctalDigit OctalDigit
+   / '\\' OctalDigit
+   ;
+
+String IntegerLiteral = HexNumeral / OctalNumeral / DecimalNumeral ;
+
+transient String HexNumeral     = '0' [xX] HexDigit+ ;
+transient String HexQuad        = HexDigit HexDigit HexDigit HexDigit ;
+transient String HexDigit       = [0-9a-fA-F] ;
+transient String OctalNumeral   = '0' OctalDigit+ ;
+transient String OctalDigit     = [0-7] ;
+transient String DecimalNumeral = '0' / NonZeroDigit Digit* ;
+transient String NonZeroDigit   = [1-9] ;
+transient String Digit          = [0-9] ;

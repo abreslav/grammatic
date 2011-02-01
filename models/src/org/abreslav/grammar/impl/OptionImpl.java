@@ -21,4 +21,9 @@ public class OptionImpl implements IOption {
     public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitOption(this, data);
     }
+
+    @Override
+    public String toString() {
+        return "(" + body + ")?";
+    }
 }

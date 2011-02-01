@@ -20,4 +20,9 @@ public class LiteralImpl implements ILiteral {
     public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitLiteral(this, data);
     }
+
+    @Override
+    public String toString() {
+        return "\"" + value + "\"";
+    }
 }

@@ -26,4 +26,12 @@ public class CharacterRangeImpl implements ICharacterRange {
     public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitCharacterRange(this, data);
     }
+
+    @Override
+    public String toString() {
+        if (from != to) {
+            return "['" + from + "'-'" + to + "']";
+        }
+        return "'" + from + "'";
+    }
 }
