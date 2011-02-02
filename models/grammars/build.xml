@@ -3,7 +3,7 @@
     <target name="build">
         <java classname="xtc.parser.Rats" classpath="/home/abreslav/work/rats/rats.jar">
             <arg value="-out"/>
-            <arg value="../src"/>
+            <arg value="../src/org/abreslav/grammar/parser"/>
             <arg value="-lgpl"/>
             <arg value="grammar.rats"/>
         </java>

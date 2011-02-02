@@ -17,3 +17,4 @@ action
 @helper NameStartCharacter : ['A'-'Z'] | ['a'-'z'] | '_';
 
 @whitespace WS : ['\u0000'-'\u0020'] ;
+@whitespace EOL_COMMENT : "//" !'\n' '\n';

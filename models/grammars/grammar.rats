@@ -26,11 +26,45 @@ body {
         }
         return new ArrayList<ISymbol>(symbols.values());
     }
+
+    private static char toChar(String str) {
+        if (str.length() == 1) {
+            return str.charAt(0);
+        }
+        assert str.charAt(0) == '\\';
+        switch (str.charAt(1)) {
+            case '\\' : return '\\';
+            case 'b'  : return '\b';
+            case 't'  : return '\t';
+            case 'n'  : return '\n';
+            case 'f'  : return '\f';
+            case 'r'  : return '\r';
+            case '\'' : return '\'';
+            case '\"' : return '\"';
+            case 'u' : return hexToChar(str.substring(2, 6));
+        }
+        throw new IllegalStateException();
+    }
+
+    private static char hexToChar(String substring) {
+        char result = 0;
+        for (int i = 0; i < substring.length(); i++) {
+            char c = substring.charAt(i);
+            if (Character.isDigit(c)) {
+                result = (char) (result * 16 + c - '0');
+            } else if (Character.isUpperCase(c)) {
+                result = (char) (result * 16 + c - 'A' + 10);
+            } else {
+                result = (char) (result * 16 + c - 'a' + 10);
+            }
+        }
+        return result;
+    }
 }
 
 footer { /*footer*/ }
 
-option parser(Grammar);
+option parser(org.abreslav.grammar.parser.Grammar);
 
 
 public List<ISymbol> Grammar = Spacing Symbols EOF { yyValue = resolveReferences(); } ;
@@ -90,18 +124,24 @@ ISymbolReference SymbolReference = id:Identifier {
 IEmpty Empty = "empty":Id Spacing { yyValue = EmptyImpl.INSTANCE; };
 ILiteral Literal = str:StringLiteral Spacing { yyValue = new LiteralImpl(str);} ;
 ICharacterRange CharacterRange
-  = neg:"!"? ch:CharacterLiteral Spacing {yyValue = new CharacterRangeImpl(neg != null, ch.charAt(0), ch.charAt(0));}
-  / "[" Spacing neg:"!"? Spacing from:CharacterLiteral Spacing "-" Spacing to:CharacterLiteral Spacing "]" Spacing {
-    yyValue = new CharacterRangeImpl(neg != null, from.charAt(0), to.charAt(0));
+  = neg:NEGATE? ch:CharacterLit {
+        yyValue = new CharacterRangeImpl(neg != null, toChar(ch), toChar(ch));
+      }
+  /  LBRACKET neg:NEGATE? from:CharacterLit MINUS to:CharacterLit RBRACKET {
+    yyValue = new CharacterRangeImpl(neg != null, toChar(from), toChar(to));
   }
   ;
 
+void LBRACKET = "[" Spacing;
+void RBRACKET = "]" Spacing;
+String NEGATE = "!" Spacing;
 void COLON = ":" Spacing;
 void SEMI = ";" Spacing;
 void OR = "|" Spacing;
+void MINUS = "-" Spacing;
 
 String Identifier    = Id Spacing ;
-String Id            = [a-zA-Z] [a-zA-Z0-9]* ;
+String Id            = [a-zA-Z_] [a-zA-Z0-9_]* ;
 
 void Spacing       = (Space / SLComment / MLComment)* ;
 void FSpacing      = (Space / SLComment / MLComment)+ ;
@@ -111,6 +151,8 @@ void MLComment     = "/*" ('*' !'/' / !'*' _)* "*/" ;
 void EOL           = '\r' '\n' / '\r' / '\n';
 void EOF           = !_ ;
 
+
+String CharacterLit = CharacterLiteral Spacing;
 
 String CharacterLiteral = ['] v:CharContents  ['] {yyValue = v;};
 String CharContents = ( EscapeSequence / !['\\] _ );

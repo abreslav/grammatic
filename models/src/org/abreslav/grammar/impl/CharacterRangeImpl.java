@@ -37,8 +37,20 @@ public class CharacterRangeImpl implements ICharacterRange {
     public String toString() {
         String neg = negated ? "!" : "";
         if (from != to) {
-            return "['" + neg + from + "'-'" + to + "']";
+            return "['" + neg + escape(from) + "'-'" + escape(to) + "']";
         }
-        return neg + "'" + from + "'";
+        return neg + "'" + escape(from) + "'";
+    }
+
+    private String escape(char c) {
+        switch (c) {
+            case '\b': return "\\b";
+            case '\f': return "\\f";
+            case '\n': return "\\n";
+            case '\t': return "\\t";
+            case '\r': return "\\r";
+            case '\u0000': return "\\u0000";
+        }
+        return c + "";
     }
 }
