@@ -1,6 +1,6 @@
 package org.abreslav.grammar.impl;
 
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 import org.abreslav.grammar.ILiteral;
 
 /**
@@ -17,7 +17,7 @@ public class LiteralImpl implements ILiteral {
         return value;
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitLiteral(this, data);
     }
 

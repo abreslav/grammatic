@@ -5,6 +5,6 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public interface IEnum {
+public interface IEnum extends IClassifier {
     Set<IEnumLiteral> getLiterals();
 }

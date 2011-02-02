@@ -10,16 +10,16 @@ import java.util.Set;
 public class MetaModelUtils {
     public static Collection<IPropertyDescriptor> getAllPropertyDescriptors(IClass classObject) {
         Set<IPropertyDescriptor> propertyDescriptors = new LinkedHashSet<IPropertyDescriptor>(classObject.getPropertyDescriptors());
-        for (IClass superclass : classObject.getSuperClasses()) {
+        for (IClass superclass : classObject.getSuperclasses()) {
             propertyDescriptors.addAll(getAllPropertyDescriptors(superclass));
         }
         return propertyDescriptors;
     }
 
     public static Set<IClass> getAllSuperclasesAndMe(IClass valueClass) {
-        Set<IClass> result = new LinkedHashSet<IClass>(valueClass.getSuperClasses());
+        Set<IClass> result = new LinkedHashSet<IClass>(valueClass.getSuperclasses());
         result.add(valueClass);
-        for (IClass aClass : valueClass.getSuperClasses()) {
+        for (IClass aClass : valueClass.getSuperclasses()) {
             result.addAll(getAllSuperclasesAndMe(aClass));
         }
         return result;

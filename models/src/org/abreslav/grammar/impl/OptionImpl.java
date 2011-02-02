@@ -1,7 +1,7 @@
 package org.abreslav.grammar.impl;
 
 import org.abreslav.grammar.IExpression;
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 import org.abreslav.grammar.IOption;
 
 /**
@@ -18,7 +18,7 @@ public class OptionImpl implements IOption {
         return body;
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitOption(this, data);
     }
 

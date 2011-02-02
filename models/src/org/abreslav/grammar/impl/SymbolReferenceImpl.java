@@ -1,6 +1,6 @@
 package org.abreslav.grammar.impl;
 
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 import org.abreslav.grammar.ISymbol;
 import org.abreslav.grammar.ISymbolReference;
 
@@ -23,7 +23,7 @@ public class SymbolReferenceImpl implements ISymbolReference {
         this.referencedSymbol = referencedSymbol;
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitSymbolReference(this, data);
     }
 

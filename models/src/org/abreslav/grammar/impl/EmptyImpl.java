@@ -1,7 +1,7 @@
 package org.abreslav.grammar.impl;
 
 import org.abreslav.grammar.IEmpty;
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 
 /**
  * @author abreslav
@@ -14,7 +14,7 @@ public enum EmptyImpl implements IEmpty {
         }
     };
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitEmpty(this, data);
     }
 }

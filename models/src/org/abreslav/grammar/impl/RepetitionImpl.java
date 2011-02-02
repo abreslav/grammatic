@@ -1,7 +1,7 @@
 package org.abreslav.grammar.impl;
 
+import org.abreslav.grammar.ExpressionVisitor;
 import org.abreslav.grammar.IExpression;
-import org.abreslav.grammar.IExpressionVisitor;
 import org.abreslav.grammar.IRepetition;
 import org.abreslav.grammar.RepetitionKind;
 
@@ -25,7 +25,7 @@ public class RepetitionImpl implements IRepetition {
         return kind;
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitRepetition(this, data);
     }
 

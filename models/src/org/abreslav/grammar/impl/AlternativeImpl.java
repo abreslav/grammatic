@@ -2,7 +2,7 @@ package org.abreslav.grammar.impl;
 
 import org.abreslav.grammar.IAlternative;
 import org.abreslav.grammar.IExpression;
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 
 import java.util.Iterator;
 
@@ -18,7 +18,7 @@ public class AlternativeImpl extends CollectionExpressionImpl implements IAltern
         super(first, rest);
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitAlternative(this, data);
     }
 

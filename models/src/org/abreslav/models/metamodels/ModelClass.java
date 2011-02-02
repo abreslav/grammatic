@@ -59,7 +59,7 @@ public class ModelClass extends ObjectWrapper implements IClass {
         return result;
     }
 
-    public Set<IClass> getSuperClasses() {
+    public Set<IClass> getSuperclasses() {
         return superclasses;
     }
 

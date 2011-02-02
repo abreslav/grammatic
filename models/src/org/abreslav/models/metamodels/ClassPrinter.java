@@ -29,7 +29,7 @@ public class ClassPrinter {
         String className = getIdentity(modelClass);
         String abstractModifier = modelClass.isAbstract() ? "abstract " : "";
         print(indent + abstractModifier + "class " + className);
-        Set<IClass> superClasses = modelClass.getSuperClasses();
+        Set<IClass> superClasses = modelClass.getSuperclasses();
         if (!superClasses.isEmpty()) {
             print(" : ");
             for (Iterator<IClass> iterator = superClasses.iterator(); iterator.hasNext();) {
@@ -147,7 +147,7 @@ public class ClassPrinter {
         if (object instanceof ObjectWrapper) {
             return ((ObjectWrapper) object).getObject().getIdentity().toString();
         }
-        return "?";
+        return "" + object;
     }
 
     public void printEnum(Enum anEnum) {

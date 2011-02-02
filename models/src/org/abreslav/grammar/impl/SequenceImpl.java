@@ -1,7 +1,7 @@
 package org.abreslav.grammar.impl;
 
 import org.abreslav.grammar.IExpression;
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 import org.abreslav.grammar.ISequence;
 
 import java.util.Iterator;
@@ -18,7 +18,7 @@ public class SequenceImpl extends CollectionExpressionImpl implements ISequence 
         super(first, rest);
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitSequence(this, data);
     }
 

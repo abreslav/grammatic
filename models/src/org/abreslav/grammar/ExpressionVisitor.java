@@ -3,8 +3,8 @@ package org.abreslav.grammar;
 /**
  * @author abreslav
  */
-public class IExpressionVisitor<R, D> {
-    private R visitExpression(IExpression expression, D data) {
+public class ExpressionVisitor<R, D> {
+    public R visitExpression(IExpression expression, D data) {
         return null;
     }
 

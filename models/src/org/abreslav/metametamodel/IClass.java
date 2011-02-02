@@ -5,8 +5,8 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public interface IClass {
-    Set<IClass> getSuperClasses();
+public interface IClass extends IClassifier {
+    Set<IClass> getSuperclasses();
     boolean isAbstract();
     Set<IPropertyDescriptor> getPropertyDescriptors();
 }

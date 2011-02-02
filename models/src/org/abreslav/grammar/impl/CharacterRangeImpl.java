@@ -1,7 +1,7 @@
 package org.abreslav.grammar.impl;
 
 import org.abreslav.grammar.ICharacterRange;
-import org.abreslav.grammar.IExpressionVisitor;
+import org.abreslav.grammar.ExpressionVisitor;
 
 /**
  * @author abreslav
@@ -29,7 +29,7 @@ public class CharacterRangeImpl implements ICharacterRange {
         return negated;
     }
 
-    public <R, D> R accept(IExpressionVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visitCharacterRange(this, data);
     }
 

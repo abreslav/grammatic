@@ -70,7 +70,9 @@ option parser(org.abreslav.grammar.parser.Grammar);
 public List<ISymbol> Grammar = Spacing Symbols EOF { yyValue = resolveReferences(); } ;
 void Symbols = (Symbol+) ;
 ISymbol Symbol = labels:Label* id:Identifier prods:(COLON Expression)+ SEMI {
-  ISymbol symbol = new SymbolImpl(labels, id, new AlternativeImpl(prods));
+  Iterator<IExpression> it = prods.iterator();
+  IExpression first = it.next();
+  ISymbol symbol = new SymbolImpl(labels, id, it.hasNext() ? new AlternativeImpl(prods) : first);
   addSymbol(symbol);
   yyValue = symbol;
 };
