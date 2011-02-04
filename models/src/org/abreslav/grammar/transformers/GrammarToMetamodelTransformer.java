@@ -1,5 +1,6 @@
-package org.abreslav.grammar;
+package org.abreslav.grammar.transformers;
 
+import org.abreslav.grammar.*;
 import org.abreslav.metametamodel.IClass;
 import org.abreslav.metametamodel.IPropertyDescriptor;
 import org.abreslav.metametamodel.IType;
